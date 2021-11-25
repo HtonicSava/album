@@ -8,7 +8,7 @@ import 'choosing_template_provider.dart';
 class ChoosingTemplate extends StatelessWidget {
   const ChoosingTemplate({Key? key}) : super(key: key);
 
-  void _changeActiveTemplate(BuildContext context, index) {
+  _changeActiveTemplate(BuildContext context, index) {
     ChoosingTemplateProvider choosingTemplateProvider =
         Provider.of(context, listen: false);
     // print('index is $index');
@@ -62,13 +62,10 @@ class ChoosingTemplate extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: sheets.length,
                 itemBuilder: (context, index) {
-                  return GestureDetector(
-                    onTap: () {
-                      _changeActiveTemplate(context, index);
-                    },
-                    child: SheetTemplate(
-                      photos: sheets[index],
-                    ),
+                  return SheetTemplate(
+                    isPreview: true,
+                    photos: sheets[index],
+                    callback: () => {_changeActiveTemplate(context, index)},
                   );
                 },
                 separatorBuilder: (context, index) {
@@ -78,41 +75,17 @@ class ChoosingTemplate extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: Consumer<ChoosingTemplateProvider>(
-                  builder: (context, choosingTemplateProvider, child) =>
-                      (SheetTemplate(
-                        photos: choosingTemplateProvider.activeSheet,
-                      ))))
+            child: Consumer<ChoosingTemplateProvider>(
+              builder: (context, choosingTemplateProvider, child) =>
+                  choosingTemplateProvider.activeSheet.isNotEmpty
+                      ? SheetTemplate(
+                          photos: choosingTemplateProvider.activeSheet,
+                          callback: () => {print('big sheet')})
+                      : const SizedBox(),
+            ),
+          ),
         ],
       ),
     );
-
-    // Column(
-    //   children: <Widget>[
-    //     Padding(
-    //       padding: const EdgeInsets.all(10.0),
-    //       child: SizedBox(
-    //         height: 150,
-    //         child: ListView.separated(
-    //           scrollDirection: Axis.horizontal,
-    //           itemCount: sheets.length,
-    //           itemBuilder: (context, index) {
-    //             return SheetTemplate(
-    //               photos: sheets[index],
-    //             );
-    //           },
-    //           separatorBuilder: (context, index) {
-    //             return const SizedBox(width: 16);
-    //           },
-    //         ),
-    //       ),
-    //     ),
-    //     Expanded(child:
-    //     SheetTemplate(
-    //       photos: sheets[3],
-    //     )
-    //     )
-    //   ],
-    // );
   }
 }

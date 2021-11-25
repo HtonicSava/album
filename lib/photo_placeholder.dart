@@ -21,13 +21,9 @@ class PhotoPlaceholder extends StatelessWidget {
       child: FractionallySizedBox(
           widthFactor: width,
           heightFactor: height,
-          child: GestureDetector(
-              onTap: () {
-                print('placeholder with position $left $top');
-              },
-              child: Container(
-                color: Colors.grey,
-              ))),
+          child: Container(
+            color: Colors.grey,
+          )),
     );
   }
 }
