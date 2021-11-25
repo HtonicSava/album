@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'profile.dart';
+import 'choosing_template.dart';
 import 'upload_image.dart';
-
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -14,7 +13,7 @@ class _HomeState extends State<Home> {
   int _selectedIndex = 0;
 
   static List<Widget> pages = <Widget>[
-    const Profile(),
+    const ChoosingTemplate(),
     const UploadImagePage()
   ];
 
@@ -35,6 +34,7 @@ class _HomeState extends State<Home> {
       ),
       // TODO: Show selected tab
       body: pages[_selectedIndex],
+
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: Theme.of(context).textSelectionTheme.selectionColor,
         currentIndex: _selectedIndex,
