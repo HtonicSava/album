@@ -13,6 +13,22 @@ class SheetTemplate extends StatelessWidget {
       required this.callback})
       : super(key: key);
 
+  createPlaceHolders(photos) {
+    List<Widget> result = [];
+    for (var element in photos) {
+      result.add(
+        PhotoPlaceholder(
+          width: element['width'],
+          height: element['height'],
+          top: element['top'],
+          left: element['left'],
+        ),
+      );
+    }
+    ;
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     return isPreview
@@ -23,26 +39,8 @@ class SheetTemplate extends StatelessWidget {
               child: Container(
                 color: Colors.red,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Stack(
-                    children: [
-                      PhotoPlaceholder(
-                          width: photos[0]['width'],
-                          height: photos[0]['height'],
-                          top: photos[0]['top'],
-                          left: photos[0]['left']),
-                      PhotoPlaceholder(
-                          width: photos[1]['width'],
-                          height: photos[1]['height'],
-                          top: photos[1]['top'],
-                          left: photos[1]['left']),
-                      PhotoPlaceholder(
-                          width: photos[2]['width'],
-                          height: photos[2]['height'],
-                          top: photos[2]['top'],
-                          left: photos[2]['left']),
-                    ],
-                  ),
+                  padding: const EdgeInsets.all(0),
+                  child: Stack(children: createPlaceHolders(photos)),
                 ),
               ),
             ),
@@ -52,7 +50,7 @@ class SheetTemplate extends StatelessWidget {
             child: Container(
               color: Colors.red,
               child: Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(0),
                 child: Stack(
                   children: [
                     GestureDetector(

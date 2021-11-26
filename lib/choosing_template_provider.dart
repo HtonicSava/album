@@ -10,9 +10,16 @@ class ChoosingTemplateProvider extends ChangeNotifier {
   // ];
 
   List activeSheet = [];
+  late Map activePhotoPlaceholder;
 
   void changeActiveTemplate(sheet) {
     activeSheet = sheet;
     notifyListeners();
+  }
+
+  void openPhotoPlaceholder(item) {
+    activePhotoPlaceholder = item;
+    notifyListeners();
+
   }
 }

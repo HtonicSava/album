@@ -15,6 +15,13 @@ class ChoosingTemplate extends StatelessWidget {
     choosingTemplateProvider.changeActiveTemplate(sheets[index]);
   }
 
+  _openPhotoRedactor(BuildContext context, item) {
+    ChoosingTemplateProvider choosingTemplateProvider =
+        Provider.of(context, listen: false);
+    // print('index is $index');
+    choosingTemplateProvider.openPhotoPlaceholder(item);
+  }
+
   static const List sheets = [
     [
       {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2},
@@ -80,7 +87,50 @@ class ChoosingTemplate extends StatelessWidget {
                   choosingTemplateProvider.activeSheet.isNotEmpty
                       ? SheetTemplate(
                           photos: choosingTemplateProvider.activeSheet,
-                          callback: () => {print('big sheet')})
+                          callback: () => {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return Dialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10)),
+                                        elevation: 1,
+                                        child: FractionallySizedBox(
+                                          widthFactor: 1.0,
+                                          heightFactor: 0.5,
+                                          child: Container(
+                                            child: Stack(
+                                              children: [
+                                                Center(
+                                                  child: Container(
+                                                    color: Colors.green
+                                                        .withOpacity(0.2),
+                                                    width: 100,
+                                                    height: 100,
+                                                  ),
+                                                ),
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 80),
+                                                  child: Center(
+                                                    child: AspectRatio(
+                                                      aspectRatio: 2,
+                                                      child: Container(
+                                                        color: Colors.red
+                                                            .withOpacity(0.4),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    })
+                              })
                       : const SizedBox(),
             ),
           ),
