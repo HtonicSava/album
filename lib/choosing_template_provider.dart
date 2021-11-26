@@ -10,15 +10,16 @@ class ChoosingTemplateProvider extends ChangeNotifier {
   // ];
 
   List activeSheet = [];
-  late Map activePhotoPlaceholder;
+  late double activePhotoPlaceholderAspectRatio;
 
   void changeActiveTemplate(sheet) {
     activeSheet = sheet;
     notifyListeners();
   }
 
-  void openPhotoPlaceholder(item) {
-    activePhotoPlaceholder = item;
+  void openPhotoPlaceholder(double proportion) {
+    activePhotoPlaceholderAspectRatio = proportion;
+    print(' proportion is $activePhotoPlaceholderAspectRatio');
     notifyListeners();
 
   }

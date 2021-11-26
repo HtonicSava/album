@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'sheet_template.dart';
 import 'choosing_template_provider.dart';
-
-// SheetTemplate()
+import 'sheet_preview.dart';
+import 'sheet_natural.dart';
 
 class ChoosingTemplate extends StatelessWidget {
   const ChoosingTemplate({Key? key}) : super(key: key);
@@ -11,15 +10,7 @@ class ChoosingTemplate extends StatelessWidget {
   _changeActiveTemplate(BuildContext context, index) {
     ChoosingTemplateProvider choosingTemplateProvider =
         Provider.of(context, listen: false);
-    // print('index is $index');
     choosingTemplateProvider.changeActiveTemplate(sheets[index]);
-  }
-
-  _openPhotoRedactor(BuildContext context, item) {
-    ChoosingTemplateProvider choosingTemplateProvider =
-        Provider.of(context, listen: false);
-    // print('index is $index');
-    choosingTemplateProvider.openPhotoPlaceholder(item);
   }
 
   static const List sheets = [
@@ -69,8 +60,7 @@ class ChoosingTemplate extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: sheets.length,
                 itemBuilder: (context, index) {
-                  return SheetTemplate(
-                    isPreview: true,
+                  return SheetPreview(
                     photos: sheets[index],
                     callback: () => {_changeActiveTemplate(context, index)},
                   );
@@ -85,7 +75,8 @@ class ChoosingTemplate extends StatelessWidget {
             child: Consumer<ChoosingTemplateProvider>(
               builder: (context, choosingTemplateProvider, child) =>
                   choosingTemplateProvider.activeSheet.isNotEmpty
-                      ? SheetTemplate(
+                      ? SheetNatural(
+                          provider: choosingTemplateProvider,
                           photos: choosingTemplateProvider.activeSheet,
                           callback: () => {
                                 showDialog(
@@ -116,7 +107,9 @@ class ChoosingTemplate extends StatelessWidget {
                                                       horizontal: 80),
                                                   child: Center(
                                                     child: AspectRatio(
-                                                      aspectRatio: 2,
+                                                      aspectRatio:
+                                                          choosingTemplateProvider
+                                                              .activePhotoPlaceholderAspectRatio,
                                                       child: Container(
                                                         color: Colors.red
                                                             .withOpacity(0.4),
