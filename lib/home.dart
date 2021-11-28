@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'choosing_template.dart';
+
+import 'UI/choosing_template.dart';
+
 import 'upload_image.dart';
 
 class Home extends StatefulWidget {

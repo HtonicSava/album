@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'photo_placeholder.dart';
-import 'UI/widgets/sheet_template.dart';
+import 'sheet_template.dart';
 
 class SheetPreview extends StatelessWidget implements SheetTemplate {
   @override
-   List photos;
+  List photos;
   final VoidCallback callback;
 
-   SheetPreview({Key? key, required this.photos, required this.callback})
+  SheetPreview({Key? key, required this.photos, required this.callback})
       : super(key: key);
 
   @override
