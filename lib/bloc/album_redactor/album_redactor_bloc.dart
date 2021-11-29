@@ -11,8 +11,8 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
-    if (event is AlbumRedactorShowSheet) {
-      yield NaturalSheetShowed(event.sheet);
+    if (event is GetAlbumRedactorNaturalSheet) {
+      yield AlbumRedactorShowNaturalSheet(event.sheet);
     }
   }
 }

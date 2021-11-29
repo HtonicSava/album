@@ -12,7 +12,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
     Key? key,
     required this.photos,
   }) : super(key: key);
-
+  //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
   createPlaceHolders(photos) {
     List<Widget> result = [];

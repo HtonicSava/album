@@ -7,9 +7,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../widgets/sheet_preview.dart';
 import '../widgets/sheet_natural.dart';
 
-class ChoosingTemplate extends StatelessWidget {
-  const ChoosingTemplate({Key? key}) : super(key: key);
+class AlbumRedactor extends StatelessWidget {
+  const AlbumRedactor({Key? key}) : super(key: key);
 
+  //TODO Заменить на подгрузку из репозитория
   static const List sheets = [
     [
       {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2},
@@ -42,12 +43,12 @@ class ChoosingTemplate extends StatelessWidget {
       {'width': 1.0, 'height': 0.3, 'top': 1.0, 'left': 0.0},
     ]
   ];
-  
-  void _changeActiveNaturalSheet(BuildContext context, sheet){
-    final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context)
-    ..add(AlbumRedactorShowSheet(sheet));
+
+  void _changeActiveNaturalSheet(BuildContext context, sheet) {
+    BlocProvider.of<AlbumRedactorBloc>(context)
+        .add(GetAlbumRedactorNaturalSheet(sheet));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -62,13 +63,12 @@ class ChoosingTemplate extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: sheets.length,
                 itemBuilder: (context, index) {
-                  return BlocListener(
+                  return BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
                     listener: (context, state) {},
                     child: SheetPreview(
                       photos: sheets[index],
-                      callback: () => {
-                        _changeActiveNaturalSheet(context, sheets[index])
-                      },
+                      callback: () =>
+                          {_changeActiveNaturalSheet(context, sheets[index])},
                     ),
                   );
                 },
@@ -81,10 +81,15 @@ class ChoosingTemplate extends StatelessWidget {
           Expanded(
             child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
               builder: (context, state) {
+                //TODO Так ли важна проверка состояний?
 
+                // if (state is NaturalSheetShowed) {
                 return SheetNatural(
                   photos: state.props,
                 );
+                // } else {
+                //   return Container();
+                // }
               },
             ),
           ),

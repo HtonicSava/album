@@ -11,12 +11,12 @@ class AlbumRedactorStateInitial extends AlbumRedactorState{
 
 }
 
-class NaturalSheetShowed extends AlbumRedactorState {
+class AlbumRedactorShowNaturalSheet extends AlbumRedactorState {
   final List<Object> sheet;
 
-  const NaturalSheetShowed(this.sheet);
+  const AlbumRedactorShowNaturalSheet(this.sheet);
 
   @override
-  List<Object> get props => [sheet];
+  List<Object> get props => sheet;
 
 }

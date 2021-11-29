@@ -1,4 +1,4 @@
-import 'package:album/choosing_template.dart';
+import 'album_redactor.dart';
 import 'package:flutter/material.dart';
 
 class Home extends StatelessWidget {
@@ -13,6 +13,6 @@ class Home extends StatelessWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
-        body: const ChoosingTemplate());
+        body: const AlbumRedactor());
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'photo_placeholder.dart';
-import 'UI/widgets/sheet_template.dart';
+import 'sheet_template.dart';
 
 class SheetPreview extends StatelessWidget implements SheetTemplate {
   @override

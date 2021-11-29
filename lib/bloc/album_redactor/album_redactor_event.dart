@@ -1,15 +1,14 @@
 import 'package:equatable/equatable.dart';
 
-abstract class AlbumRedactorEvent extends Equatable{
+abstract class AlbumRedactorEvent extends Equatable {
   const AlbumRedactorEvent();
 }
 
-class AlbumRedactorShowSheet extends AlbumRedactorEvent {
+class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
   final List<Object> sheet;
-  const AlbumRedactorShowSheet(this.sheet);
+
+  const GetAlbumRedactorNaturalSheet(this.sheet);
 
   @override
-  List<Object> get props => [sheet];
-
-
+  List<Object> get props => sheet;
 }
