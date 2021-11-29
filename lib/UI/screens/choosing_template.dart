@@ -1,11 +1,11 @@
-import 'package:album/bloc/album_redactor_bloc.dart';
-import 'package:album/bloc/album_redactor_event.dart';
-import 'package:album/bloc/album_redactor_state.dart';
+import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
+import 'package:album/bloc/album_redactor/album_redactor_event.dart';
+import 'package:album/bloc/album_redactor/album_redactor_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'widgets/sheet_preview.dart';
-import 'widgets/sheet_natural.dart';
+import '../widgets/sheet_preview.dart';
+import '../widgets/sheet_natural.dart';
 
 class ChoosingTemplate extends StatelessWidget {
   const ChoosingTemplate({Key? key}) : super(key: key);
@@ -42,11 +42,16 @@ class ChoosingTemplate extends StatelessWidget {
       {'width': 1.0, 'height': 0.3, 'top': 1.0, 'left': 0.0},
     ]
   ];
-
+  
+  void _changeActiveNaturalSheet(BuildContext context, sheet){
+    final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context)
+    ..add(AlbumRedactorShowSheet(sheet));
+  }
+  
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<AlbumRedactorBloc>(
-      create: (context) => AlbumRedactorBloc(),
+    return BlocProvider(
+      create: (context) => AlbumRedactorBloc(const AlbumRedactorStateInitial()),
       child: Column(
         children: <Widget>[
           Padding(
@@ -57,13 +62,14 @@ class ChoosingTemplate extends StatelessWidget {
                 scrollDirection: Axis.horizontal,
                 itemCount: sheets.length,
                 itemBuilder: (context, index) {
-                  return SheetPreview(
-                    photos: sheets[index],
-                    callback: () => {
-                      print('index is $index'),
-                      context.read<AlbumRedactorBloc>().mapEventToState(
-                          AlbumRedactorShowSheet(sheets[index]))
-                    },
+                  return BlocListener(
+                    listener: (context, state) {},
+                    child: SheetPreview(
+                      photos: sheets[index],
+                      callback: () => {
+                        _changeActiveNaturalSheet(context, sheets[index])
+                      },
+                    ),
                   );
                 },
                 separatorBuilder: (context, index) {
@@ -75,8 +81,9 @@ class ChoosingTemplate extends StatelessWidget {
           Expanded(
             child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
               builder: (context, state) {
+
                 return SheetNatural(
-                  photos: context.read<AlbumRedactorBloc>().state.props,
+                  photos: state.props,
                 );
               },
             ),

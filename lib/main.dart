@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'home.dart';
+import 'UI/screens/home.dart';
 
 void main() {
   runApp(const OnlineAlbum());
