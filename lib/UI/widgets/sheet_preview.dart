@@ -11,7 +11,7 @@ class SheetPreview extends StatelessWidget implements SheetTemplate {
       : super(key: key);
 
   @override
-  createPlaceHolders(photos) {
+  createPlaceHolders(photos, [context]) {
     List<Widget> result = [];
     for (var element in photos) {
       result.add(

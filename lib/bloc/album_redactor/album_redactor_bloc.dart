@@ -13,6 +13,9 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
     if (event is GetAlbumRedactorNaturalSheet) {
       yield AlbumRedactorShowNaturalSheet(event.sheet);
+    } else if (event is GetAlbumRedactorPlaceholderProportion) {
+      // print('${event.proportion}');
+      yield AlbumRedactorShowPopupSheetRedactor(event.proportion);
     }
   }
 }

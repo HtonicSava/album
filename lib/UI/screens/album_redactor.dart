@@ -14,7 +14,7 @@ class AlbumRedactor extends StatelessWidget {
   static const List sheets = [
     [
       {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      {'width': 0.6, 'height': 0.2, 'top': 0.4, 'left': 0.5},
+      // {'width': 0.6, 'height': 0.2, 'top': 0.4, 'left': 0.5},
       {'width': 0.6, 'height': 0.2, 'top': 0.1, 'left': 0.8},
     ],
     [
@@ -29,7 +29,7 @@ class AlbumRedactor extends StatelessWidget {
     ],
     [
       {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      {'width': 0.9, 'height': 0.2, 'top': 0.4, 'left': 0.1},
+      // {'width': 0.9, 'height': 0.2, 'top': 0.4, 'left': 0.1},
       {'width': 0.3, 'height': 0.2, 'top': 0.1, 'left': 0.8},
     ],
     [
@@ -39,14 +39,65 @@ class AlbumRedactor extends StatelessWidget {
     ],
     [
       {'width': 1.0, 'height': 0.3, 'top': 0.0, 'left': 0.0},
-      {'width': 1.0, 'height': 0.3, 'top': 0.5, 'left': 0.0},
-      {'width': 1.0, 'height': 0.3, 'top': 1.0, 'left': 0.0},
+      // {'width': 1.0, 'height': 0.3, 'top': 0.5, 'left': 0.0},
+      // {'width': 1.0, 'height': 0.3, 'top': 1.0, 'left': 0.0},
     ]
   ];
 
   void _changeActiveNaturalSheet(BuildContext context, sheet) {
     BlocProvider.of<AlbumRedactorBloc>(context)
         .add(GetAlbumRedactorNaturalSheet(sheet));
+  }
+
+  _invokePopupSheetRedactor(context) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Dialog(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            elevation: 1,
+            child: FractionallySizedBox(
+              widthFactor: 1.0,
+              heightFactor: 0.5,
+              child: Container(
+                child: Stack(
+                  children: [
+                    Center(
+                      child: Container(
+                        color: Colors.green.withOpacity(0.2),
+                        width: 100,
+                        height: 100,
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 80),
+                      child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                        builder: (context, state){
+
+                          if (state is AlbumRedactorShowPopupSheetRedactor){
+                            return Center(
+                              child: AspectRatio(
+                                aspectRatio: 2, //state.props,
+                                child: Container(
+                                  color: Colors.red.withOpacity(0.4),
+                                ),
+                              ),
+                            );
+                          } else {
+                            return const SizedBox(width: 20, height: 20,);
+                          }
+                        }
+                      ),
+
+
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -80,16 +131,32 @@ class AlbumRedactor extends StatelessWidget {
           ),
           Expanded(
             child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+              buildWhen: (previousState, state){
+                if (state is AlbumRedactorShowNaturalSheet || state is AlbumRedactorStateInitial){
+                  return true;
+                }
+
+                return false;
+              },
               builder: (context, state) {
                 //TODO Так ли важна проверка состояний?
 
-                // if (state is NaturalSheetShowed) {
+                if (state is AlbumRedactorShowNaturalSheet || state is AlbumRedactorStateInitial) {
                 return SheetNatural(
                   photos: state.props,
+                  callback: () => {
+                    // print('${state.props[0]}'),
+                    // _invokePopupSheetRedactor(context)
+                  },
                 );
-                // } else {
-                //   return Container();
-                // }
+                } else {
+                  print('$state');
+                  return Container(
+                    width: 5,
+                    height: 5,
+                    color: Colors.black,
+                  );
+                }
               },
             ),
           ),

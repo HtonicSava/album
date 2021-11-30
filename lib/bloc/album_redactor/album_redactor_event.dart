@@ -12,3 +12,12 @@ class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
   @override
   List<Object> get props => sheet;
 }
+
+class GetAlbumRedactorPlaceholderProportion extends AlbumRedactorEvent {
+  final List proportion;
+
+  const GetAlbumRedactorPlaceholderProportion(this.proportion);
+
+  @override
+  List get props => proportion;
+}

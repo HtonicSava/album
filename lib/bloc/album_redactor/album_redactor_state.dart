@@ -20,3 +20,13 @@ class AlbumRedactorShowNaturalSheet extends AlbumRedactorState {
   List<Object> get props => sheet;
 
 }
+
+class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
+  final List proportion;
+
+
+  const AlbumRedactorShowPopupSheetRedactor(this.proportion);
+  @override
+  List get props => proportion;
+
+}
