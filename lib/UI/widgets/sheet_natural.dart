@@ -1,3 +1,4 @@
+import 'package:album/UI/widgets/dialog_choosing_image_from_phone.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -8,9 +9,9 @@ import 'sheet_template.dart';
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
   @override
-  List photos;
+   final List photos;
 
-  late VoidCallback callback;
+   final VoidCallback callback;
 
   eventTrigger(BuildContext context, proportion) {
     BlocProvider.of<AlbumRedactorBloc>(context)
@@ -23,70 +24,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
         .add(GetAlbumRedactorPlaceholderProportion(proportion));
   }
 
-  //    BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-  //       builder: (context, state){
-  //
-  //       //   if (state is AlbumRedactorShowPopupSheetRedactor){
-  //       //     print('state is working');
-  //       //      showDialog(context: context, builder: (context){
-  //       //       return Dialog(
-  //       //         shape: RoundedRectangleBorder(
-  //       //             borderRadius: BorderRadius.circular(10)),
-  //       //         elevation: 1,
-  //       //         child: FractionallySizedBox(
-  //       //           widthFactor: 1.0,
-  //       //           heightFactor: 0.5,
-  //       //           child: Container(
-  //       //             child: Stack(
-  //       //               children: [
-  //       //                 Center(
-  //       //                   child: Container(
-  //       //                     color:
-  //       //                     Colors.green.withOpacity(0.2),
-  //       //                     width: 100,
-  //       //                     height: 100,
-  //       //                   ),
-  //       //                 ),
-  //       //               ],
-  //       //             ),
-  //       //           ),
-  //       //         ),
-  //       //       );
-  //       //     });
-  //       //   } else {
-  //       //
-  //       //     print('state is $state');
-  //       //     showDialog(context: context, builder: (context){return Dialog(
-  //       //         shape: RoundedRectangleBorder(
-  //       //             borderRadius: BorderRadius.circular(10)),
-  //       //         elevation: 1,
-  //       //         child: FractionallySizedBox(
-  //       //           widthFactor: 1.0,
-  //       //           heightFactor: 0.5,
-  //       //           child: Container(
-  //       //             child: Stack(
-  //       //               children: [
-  //       //                 Center(
-  //       //                   child: Container(
-  //       //                     color:
-  //       //                     Colors.red.withOpacity(0.2),
-  //       //                     width: 100,
-  //       //                     height: 100,
-  //       //                   ),
-  //       //                 ),
-  //       //               ],
-  //       //             ),
-  //       //           ),
-  //       //         ),
-  //       //       );
-  //       //     });
-  //       //
-  //       //   }
-  //       // }
-  //   );
-  // }
-  //
-  SheetNatural({
+  const SheetNatural({
     Key? key,
     required this.photos,
     required this.callback,
@@ -142,51 +80,32 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
                       print(state.props);
-                      showDialog(
-                          context: context,
-                          builder: (context) {
-                            return Dialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                elevation: 1,
-                                child: FractionallySizedBox(
-                                    widthFactor: 1.0,
-                                    heightFactor: 0.5,
-                                    child: Container(
-                                      child: Stack(
-                                        children: [
-                                          Center(
-                                            child: Container(
-                                              color:
-                                                  Colors.green.withOpacity(0.2),
-                                              width: 100,
-                                              height: 100,
-                                            ),
-                                          ),
-                                          Container(
-                                            padding: const EdgeInsets.all(20),
-                                            child: Center(
-                                              child: AspectRatio(
-                                                aspectRatio:
-                                                    state.props[0] * 0.5,
-                                                child: Container(
-                                                  color: Colors.red
-                                                      .withOpacity(0.4),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    )));
-                          }).then((exit) {
-                        if (exit == null) {
-                          eventCloseTrigger(context, [
-                            {'f'}
-                          ]);
-                          return;
-                        }
+                      showGeneralDialog(context: context,
+                          pageBuilder:(context, animation, secondaryAnimation){
+                            return DialogChoosingImage(state: state);
+                          } ).then((exit){
+
+                          if (exit == null) {
+                            eventCloseTrigger(context, [
+                              {'f'}
+                            ]);
+                            return;
+                          }
                       });
+
+
+                      // showDialog(
+                      //     context: context,
+                      //     builder: (context) {
+                      //       return DialogChoosingImage(state: state);
+                      //     }).then((exit) {
+                      //   if (exit == null) {
+                      //     eventCloseTrigger(context, [
+                      //       {'f'}
+                      //     ]);
+                      //     return;
+                      //   }
+                      // });
                     }
                   },
                   child: Stack(children: createPlaceHolders(photos, context)),
@@ -195,5 +114,10 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
             ),
           )
         : const SizedBox();
+  }
+
+  @override
+  set photos(List _photos) {
+    // TODO: implement photos
   }
 }

@@ -12,6 +12,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
     if (event is GetAlbumRedactorNaturalSheet) {
+      print('$event from bloc dialog');
       yield AlbumRedactorShowNaturalSheet(event.sheet);
     } else if (event is GetAlbumRedactorPlaceholderProportion) {
       // print('${event.proportion}');

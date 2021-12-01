@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'UI/screens/home.dart';
 
 void main() {
-  runApp(const OnlineAlbum());
+  runApp(
+
+      const OnlineAlbum());
 }
 
 class OnlineAlbum extends StatelessWidget {

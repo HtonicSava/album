@@ -49,119 +49,68 @@ class AlbumRedactor extends StatelessWidget {
         .add(GetAlbumRedactorNaturalSheet(sheet));
   }
 
-  _invokePopupSheetRedactor(context) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            elevation: 1,
-            child: FractionallySizedBox(
-              widthFactor: 1.0,
-              heightFactor: 0.5,
-              child: Container(
-                child: Stack(
-                  children: [
-                    Center(
-                      child: Container(
-                        color: Colors.green.withOpacity(0.2),
-                        width: 100,
-                        height: 100,
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 80),
-                      child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-                        builder: (context, state){
-
-                          if (state is AlbumRedactorShowPopupSheetRedactor){
-                            return Center(
-                              child: AspectRatio(
-                                aspectRatio: 2, //state.props,
-                                child: Container(
-                                  color: Colors.red.withOpacity(0.4),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return const SizedBox(width: 20, height: 20,);
-                          }
-                        }
-                      ),
-
-
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AlbumRedactorBloc(const AlbumRedactorStateInitial()),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: SizedBox(
-              height: 150,
-              child: ListView.separated(
-                scrollDirection: Axis.horizontal,
-                itemCount: sheets.length,
-                itemBuilder: (context, index) {
-                  return BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
-                    listener: (context, state) {},
-                    child: SheetPreview(
-                      photos: sheets[index],
-                      callback: () =>
-                          {_changeActiveNaturalSheet(context, sheets[index])},
-                    ),
-                  );
+        create: (context) =>
+            AlbumRedactorBloc(const AlbumRedactorStateInitial()),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: SizedBox(
+                height: 150,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: sheets.length,
+                  itemBuilder: (context, index) {
+                    return BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
+                      listener: (context, state) {},
+                      child: SheetPreview(
+                        photos: sheets[index],
+                        callback: () =>
+                            {_changeActiveNaturalSheet(context, sheets[index])},
+                      ),
+                    );
+                  },
+                  separatorBuilder: (context, index) {
+                    return const SizedBox(width: 16);
+                  },
+                ),
+              ),
+            ),
+            Expanded(
+              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                buildWhen: (previousState, state) {
+                  if (state is AlbumRedactorShowNaturalSheet ||
+                      state is AlbumRedactorStateInitial) {
+                    return true;
+                  }
+
+                  return false;
                 },
-                separatorBuilder: (context, index) {
-                  return const SizedBox(width: 16);
+                builder: (context, state) {
+                  if (state is AlbumRedactorShowNaturalSheet ||
+                      state is AlbumRedactorStateInitial) {
+                    return SheetNatural(
+                      photos: state.props,
+                      callback: () => {
+                        // print('${state.props[0]}'),
+                        // _invokePopupSheetRedactor(context)
+                      },
+                    );
+                  } else {
+                    print('$state');
+                    return Container(
+                      width: 5,
+                      height: 5,
+                      color: Colors.black,
+                    );
+                  }
                 },
               ),
             ),
-          ),
-          Expanded(
-            child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-              buildWhen: (previousState, state){
-                if (state is AlbumRedactorShowNaturalSheet || state is AlbumRedactorStateInitial){
-                  return true;
-                }
-
-                return false;
-              },
-              builder: (context, state) {
-                //TODO Так ли важна проверка состояний?
-
-                if (state is AlbumRedactorShowNaturalSheet || state is AlbumRedactorStateInitial) {
-                return SheetNatural(
-                  photos: state.props,
-                  callback: () => {
-                    // print('${state.props[0]}'),
-                    // _invokePopupSheetRedactor(context)
-                  },
-                );
-                } else {
-                  print('$state');
-                  return Container(
-                    width: 5,
-                    height: 5,
-                    color: Colors.black,
-                  );
-                }
-              },
-            ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ));
   }
 }
