@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'UI/screens/home.dart';
+import 'data/providers/db_provider.dart';
 
 void main() {
   runApp(
 
-      const OnlineAlbum());
+      OnlineAlbum());
 }
 
 class OnlineAlbum extends StatelessWidget {
-  const OnlineAlbum({Key? key}) : super(key: key);
+  const OnlineAlbum({Key? key, this.albums} ) : super(key: key);
+  final albums;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)  {
 
-
+    SQLiteDbProvider.db.getAllProducts().then((value) => {print(value[0].sheets)});
 
     return const MaterialApp(
       title: 'Онлайн альбом',

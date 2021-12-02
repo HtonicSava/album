@@ -27,10 +27,24 @@
 // };
 
 class Album {
-  const Album({required this.sheetWidth, required this.sheetHeight, required this.sheets});
+  const Album( { required this.id,required this.sheetWidth, required this.sheetHeight, required this.sheets});
+  final int id;
   final double sheetWidth;
   final double sheetHeight;
-  final List<Map> sheets;
+  final String sheets;
+
+  static final columns = ["id", "sheetWidth", "sheetHeight", "sheets"];
+
+  factory Album.fromMap(Map<dynamic, dynamic> data){
+    return Album(id: data["id"], sheetWidth: data["sheetWidth"], sheetHeight: data["sheetHeight"], sheets: data["sheets"]);
+  }
+
+  Map<String, dynamic> toMap() => {
+    "id":id,
+    "sheetWidth": sheetWidth,
+    "sheetHeight": sheetHeight,
+    "sheets": sheets,
+  };
 }
 
 
