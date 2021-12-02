@@ -1,4 +1,4 @@
-import 'package:album/UI/widgets/dialog_choosing_image_from_phone.dart';
+import 'package:album/UI/screens/dialog_choosing_image_from_phone.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -9,20 +9,9 @@ import 'sheet_template.dart';
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
   @override
-   final List photos;
+  final List photos;
 
-   final VoidCallback callback;
-
-  eventTrigger(BuildContext context, proportion) {
-    BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorPlaceholderProportion(proportion));
-    print('$proportion');
-  }
-
-  eventCloseTrigger(BuildContext context, proportion) {
-    BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorPlaceholderProportion(proportion));
-  }
+  final VoidCallback callback;
 
   const SheetNatural({
     Key? key,
@@ -32,17 +21,17 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
 
   //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
-  createPlaceHolders(photos, [context]) {
+  createPlaceHolders(photos, [context, albumRedactorBloc]) {
     List<Widget> result = [];
     for (var element in photos) {
       result.add(
         GestureDetector(
           onTap: () => {
             callback(),
-            eventTrigger(context, [
+            albumRedactorBloc.add(GetAlbumRedactorPlaceholderProportion([
               element['width'] / element['height'],
               photos.indexOf(element)
-            ]),
+            ])),
             print('${photos.indexOf(element)}'),
           },
           child: PhotoPlaceholder(
@@ -59,6 +48,8 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
 
   @override
   Widget build(BuildContext context) {
+    final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context);
+
     return (photos.isNotEmpty)
         ? AspectRatio(
             aspectRatio: 1 / 2,
@@ -80,35 +71,25 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
                       print(state.props);
-                      showGeneralDialog(context: context,
-                          pageBuilder:(context, animation, secondaryAnimation){
-                            return DialogChoosingImage(state: state);
-                          } ).then((exit){
-
-                          if (exit == null) {
-                            eventCloseTrigger(context, [
-                              {'f'}
-                            ]);
-                            return;
-                          }
+                      showGeneralDialog(
+                          context: context,
+                          pageBuilder:
+                              (context, animation, secondaryAnimation) {
+                            return DialogChoosingImage(stateBloc: state);
+                          }).then((exit) {
+                        if (exit == null) {
+                          albumRedactorBloc
+                              .add(const GetAlbumRedactorPlaceholderProportion([
+                            {'f'}
+                          ]));
+                          return;
+                        }
                       });
-
-
-                      // showDialog(
-                      //     context: context,
-                      //     builder: (context) {
-                      //       return DialogChoosingImage(state: state);
-                      //     }).then((exit) {
-                      //   if (exit == null) {
-                      //     eventCloseTrigger(context, [
-                      //       {'f'}
-                      //     ]);
-                      //     return;
-                      //   }
-                      // });
                     }
                   },
-                  child: Stack(children: createPlaceHolders(photos, context)),
+                  child: Stack(
+                      children: createPlaceHolders(
+                          photos, context, albumRedactorBloc)),
                 ),
               ),
             ),

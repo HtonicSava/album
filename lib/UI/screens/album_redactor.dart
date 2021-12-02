@@ -64,14 +64,11 @@ class AlbumRedactor extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   itemCount: sheets.length,
                   itemBuilder: (context, index) {
-                    return BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
-                      listener: (context, state) {},
-                      child: SheetPreview(
+                     return SheetPreview(
                         photos: sheets[index],
                         callback: () =>
                             {_changeActiveNaturalSheet(context, sheets[index])},
-                      ),
-                    );
+                      );
                   },
                   separatorBuilder: (context, index) {
                     return const SizedBox(width: 16);

@@ -19,4 +19,6 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       yield AlbumRedactorShowPopupSheetRedactor(event.proportion);
     }
   }
+
+
 }
