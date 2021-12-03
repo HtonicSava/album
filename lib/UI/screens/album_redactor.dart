@@ -44,6 +44,8 @@ class AlbumRedactor extends StatelessWidget {
     ]
   ];
 
+
+
   void _changeActiveNaturalSheet(BuildContext context, sheet) {
     BlocProvider.of<AlbumRedactorBloc>(context)
         .add(GetAlbumRedactorNaturalSheet(sheet));
