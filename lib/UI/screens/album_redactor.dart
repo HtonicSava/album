@@ -21,16 +21,16 @@ class AlbumRedactor extends StatelessWidget {
 
   }
 
-  void _changeActiveNaturalSheet(BuildContext context, sheet) {
+  void _changeActiveNaturalSheet(BuildContext context, sheet, index) {
     BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorNaturalSheet(sheet));
+        .add(GetAlbumRedactorNaturalSheet([sheet, index]));
   }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
         create: (context) =>
-            AlbumRedactorBloc(const AlbumRedactorStateInitial()),
+            AlbumRedactorBloc( AlbumRedactorStateInitial()),
         child: Column(
           children: <Widget>[
             Padding(
@@ -55,7 +55,7 @@ class AlbumRedactor extends StatelessWidget {
                               photos: sheets![index],
                               callback: () => {
                                 _changeActiveNaturalSheet(
-                                    context, sheets![index])
+                                    context, sheets![index], index)
                               },
                             );
                           },
@@ -70,28 +70,25 @@ class AlbumRedactor extends StatelessWidget {
             Expanded(
               child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
                 buildWhen: (previousState, state) {
-                  if (state is AlbumRedactorShowNaturalSheet ||
-                      state is AlbumRedactorStateInitial) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
                     return true;
                   }
 
                   return false;
                 },
                 builder: (context, state) {
-                  if (state is AlbumRedactorShowNaturalSheet ||
-                      state is AlbumRedactorStateInitial) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
+                    print(state);
                     return SheetNatural(
-                      //TODO Почему не могу использовать props[0] как в dialog_choosing_image_from_phone?
-                      photos: state.props,
+                      //TODO Почему не могу использовать props[0] как в dialog_choosing_image_from_phone без обновления поля родителя?
+                      photos: state.sheet[0],
                       callback: () => {},
-                      sheetIndex: 2222,
+                      sheetIndex: state.sheet[1]
+
                     );
                   } else {
-                    return Container(
-                      width: 5,
-                      height: 5,
-                      color: Colors.black,
-                    );
+                    //TODO Заменить на проброс пустого стейта в SheetNatural?
+                    return SizedBox( );
                   }
                 },
               ),

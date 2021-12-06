@@ -10,19 +10,19 @@ import 'sheet_template.dart';
 class SheetNatural extends StatelessWidget implements SheetTemplate {
 
   final photos;
-  final int sheetIndex;
+  final sheetIndex;
   final VoidCallback callback;
 
   const SheetNatural(
       {Key? key,
       required this.callback,
-      required this.sheetIndex,
-      this.photos})
+
+      this.photos, this.sheetIndex})
       : super(key: key);
 
   //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
-  createPlaceHolders(photos, [context, albumRedactorBloc]) {
+  createPlaceHolders(photos,  [context, albumRedactorBloc]) {
     List<Widget> result = [];
     for (var element in photos) {
       result.add(
@@ -31,7 +31,8 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
             callback(),
             albumRedactorBloc.add(GetAlbumRedactorPlaceholderProportion([
               element['width'] / element['height'],
-              2222222
+              photos.indexOf(element),
+              sheetIndex
 
             ]
 
@@ -64,6 +65,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                 padding: const EdgeInsets.all(0),
                 child: BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
                   listenWhen: (previousState, state) {
+                    print(state);
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
                       if (state.proportion[0].toString()[1] != 'f') {
                         return true;

@@ -5,12 +5,12 @@ abstract class AlbumRedactorEvent extends Equatable {
 }
 
 class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
-  final List<Object> sheet;
+  final List<Object> sheetAndId;
 
-  const GetAlbumRedactorNaturalSheet(this.sheet);
+  const GetAlbumRedactorNaturalSheet(this.sheetAndId);
 
   @override
-  List<Object> get props => sheet;
+  List<Object> get props =>sheetAndId;
 }
 
 class GetAlbumRedactorPlaceholderProportion extends AlbumRedactorEvent {

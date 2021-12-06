@@ -1,12 +1,17 @@
 import 'package:equatable/equatable.dart';
 
 abstract class AlbumRedactorState extends Equatable{
-  const AlbumRedactorState();
+  final sheet = [];
+  AlbumRedactorState();
+
+
 
 }
 
 class AlbumRedactorStateInitial extends AlbumRedactorState{
-  const AlbumRedactorStateInitial();
+
+
+  AlbumRedactorStateInitial();
 
   @override
   List<Object> get props => [];
@@ -14,13 +19,16 @@ class AlbumRedactorStateInitial extends AlbumRedactorState{
 }
 
 class AlbumRedactorShowNaturalSheet extends AlbumRedactorState {
-  final List<Object> sheet;
+  @override
+  final sheet;
+  final sheetId;
 
 
-  const AlbumRedactorShowNaturalSheet(this.sheet);
+  AlbumRedactorShowNaturalSheet({required this.sheet, this.sheetId});
 
   @override
-  List<Object> get props => sheet;
+  List<Object> get props => [sheet];
+
 
 
 }
@@ -29,7 +37,7 @@ class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
   final List<Object> proportion;
 
 
-  const AlbumRedactorShowPopupSheetRedactor(this.proportion);
+  AlbumRedactorShowPopupSheetRedactor(this.proportion);
   @override
   List<Object> get props => proportion;
 
