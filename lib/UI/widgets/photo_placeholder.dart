@@ -5,13 +5,15 @@ class PhotoPlaceholder extends StatelessWidget {
   final double height;
   final double top;
   final double left;
+  final String image;
 
   const PhotoPlaceholder(
       {Key? key,
       required this.width,
       required this.height,
       required this.top,
-      required this.left})
+      required this.left,
+      required this.image})
       : super(key: key);
 
   @override
@@ -21,9 +23,15 @@ class PhotoPlaceholder extends StatelessWidget {
       child: FractionallySizedBox(
           widthFactor: width,
           heightFactor: height,
-          child: Container(
+          child:
+              image == ''?
+          Container(
             color: Colors.grey,
-          )),
+          ):
+              Container(
+                color: Colors.lightGreen,
+              )
+      ),
     );
   }
 }

@@ -1,7 +1,7 @@
 
 
 class SheetTemplate{
-  late final List photos;
+  // late var photos;
 
 
   createPlaceHolders(photos, [context]) {

@@ -8,16 +8,17 @@ import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
-  @override
-  final List photos;
 
+  final photos;
+  final int sheetIndex;
   final VoidCallback callback;
 
-  const SheetNatural({
-    Key? key,
-    required this.photos,
-    required this.callback,
-  }) : super(key: key);
+  const SheetNatural(
+      {Key? key,
+      required this.callback,
+      required this.sheetIndex,
+      this.photos})
+      : super(key: key);
 
   //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
@@ -30,8 +31,11 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
             callback(),
             albumRedactorBloc.add(GetAlbumRedactorPlaceholderProportion([
               element['width'] / element['height'],
-              photos.indexOf(element)
-            ])),
+              2222222
+
+            ]
+
+            )),
             print('${photos.indexOf(element)}'),
           },
           child: PhotoPlaceholder(
@@ -39,6 +43,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
             height: element['height'],
             top: element['top'],
             left: element['left'],
+            image: element['image'],
           ),
         ),
       );
@@ -70,7 +75,6 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   },
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
-                      print(state.props);
                       showGeneralDialog(
                           context: context,
                           pageBuilder:
@@ -79,9 +83,9 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                           }).then((exit) {
                         if (exit == null) {
                           albumRedactorBloc
-                              .add(const GetAlbumRedactorPlaceholderProportion([
-                            {'f'}
-                          ]));
+                              .add(const GetAlbumRedactorPlaceholderProportion(
+                            [{'f'}],
+                          ));
                           return;
                         }
                       });
@@ -97,8 +101,5 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
         : const SizedBox();
   }
 
-  @override
-  set photos(List _photos) {
-    // TODO: implement photos
-  }
+
 }

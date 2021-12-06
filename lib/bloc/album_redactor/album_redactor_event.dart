@@ -14,10 +14,10 @@ class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
 }
 
 class GetAlbumRedactorPlaceholderProportion extends AlbumRedactorEvent {
-  final List proportion;
+  final List<Object> proportion;
 
   const GetAlbumRedactorPlaceholderProportion(this.proportion);
 
   @override
-  List get props => proportion;
+  List<Object> get props => proportion;
 }

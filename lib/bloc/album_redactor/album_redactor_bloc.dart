@@ -15,7 +15,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       print('$event from bloc dialog');
       yield AlbumRedactorShowNaturalSheet(event.sheet);
     } else if (event is GetAlbumRedactorPlaceholderProportion) {
-      // print('${event.proportion}');
+      print('${event} from sheet natural');
       yield AlbumRedactorShowPopupSheetRedactor(event.proportion);
     }
   }

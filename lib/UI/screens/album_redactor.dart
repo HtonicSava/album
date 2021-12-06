@@ -1,50 +1,25 @@
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
+import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 
 import '../widgets/sheet_preview.dart';
 import '../widgets/sheet_natural.dart';
 
 class AlbumRedactor extends StatelessWidget {
-  const AlbumRedactor({Key? key}) : super(key: key);
+  AlbumRedactor({Key? key}) : super(key: key);
 
-  //TODO Заменить на подгрузку из репозитория
-  static const List sheets = [
-    [
-      {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      // {'width': 0.6, 'height': 0.2, 'top': 0.4, 'left': 0.5},
-      {'width': 0.6, 'height': 0.2, 'top': 0.1, 'left': 0.8},
-    ],
-    [
-      {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5},
-      {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8},
-    ],
-    [
-      {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      {'width': 0.7, 'height': 0.2, 'top': 0.4, 'left': 0.5},
-      {'width': 0.7, 'height': 0.2, 'top': 0.1, 'left': 0.8},
-    ],
-    [
-      {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      // {'width': 0.9, 'height': 0.2, 'top': 0.4, 'left': 0.1},
-      {'width': 0.3, 'height': 0.2, 'top': 0.1, 'left': 0.8},
-    ],
-    [
-      {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2},
-      {'width': 0.7, 'height': 0.2, 'top': 0.4, 'left': 0.5},
-      {'width': 0.9, 'height': 0.2, 'top': 0.0, 'left': 1.0},
-    ],
-    [
-      {'width': 1.0, 'height': 0.3, 'top': 0.0, 'left': 0.0},
-      // {'width': 1.0, 'height': 0.3, 'top': 0.5, 'left': 0.0},
-      // {'width': 1.0, 'height': 0.3, 'top': 1.0, 'left': 0.0},
-    ]
-  ];
+  //Загрузка из Hive
+  List? sheets;
 
+  Future _initHive() async {
+    var albumBox = await Hive.openBox<Album>('box_for_album');
+    return sheets = albumBox.getAt(0)!.sheets;
 
+  }
 
   void _changeActiveNaturalSheet(BuildContext context, sheet) {
     BlocProvider.of<AlbumRedactorBloc>(context)
@@ -61,22 +36,36 @@ class AlbumRedactor extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(10.0),
               child: SizedBox(
-                height: 150,
-                child: ListView.separated(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: sheets.length,
-                  itemBuilder: (context, index) {
-                     return SheetPreview(
-                        photos: sheets[index],
-                        callback: () =>
-                            {_changeActiveNaturalSheet(context, sheets[index])},
-                      );
-                  },
-                  separatorBuilder: (context, index) {
-                    return const SizedBox(width: 16);
-                  },
-                ),
-              ),
+                  height: 150,
+                  child: FutureBuilder(
+                    future: _initHive(),
+                    builder: (BuildContext context,
+                        AsyncSnapshot<dynamic> snapshot) {
+                      //Нет проверки sheets - вылетает исключение
+                      if (!snapshot.hasData || sheets == null) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      } else {
+                        return ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: sheets!.length,
+                          itemBuilder: (context, index) {
+                            return SheetPreview(
+                              photos: sheets![index],
+                              callback: () => {
+                                _changeActiveNaturalSheet(
+                                    context, sheets![index])
+                              },
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return const SizedBox(width: 16);
+                          },
+                        );
+                      }
+                    },
+                  )),
             ),
             Expanded(
               child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
@@ -92,14 +81,12 @@ class AlbumRedactor extends StatelessWidget {
                   if (state is AlbumRedactorShowNaturalSheet ||
                       state is AlbumRedactorStateInitial) {
                     return SheetNatural(
+                      //TODO Почему не могу использовать props[0] как в dialog_choosing_image_from_phone?
                       photos: state.props,
-                      callback: () => {
-                        // print('${state.props[0]}'),
-                        // _invokePopupSheetRedactor(context)
-                      },
+                      callback: () => {},
+                      sheetIndex: 2222,
                     );
                   } else {
-                    print('$state');
                     return Container(
                       width: 5,
                       height: 5,

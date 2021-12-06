@@ -20,6 +20,7 @@ class SheetPreview extends StatelessWidget implements SheetTemplate {
           height: element['height'],
           top: element['top'],
           left: element['left'],
+          image: element['image'],
         ),
       );
     }

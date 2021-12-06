@@ -13,6 +13,6 @@ class Home extends StatelessWidget {
             style: Theme.of(context).textTheme.headline6,
           ),
         ),
-        body: const AlbumRedactor());
+        body: AlbumRedactor());
   }
 }

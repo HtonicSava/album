@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DialogChoosingImage extends StatefulWidget {
+  //Пропорции плейсхолдеров
   final AlbumRedactorShowPopupSheetRedactor stateBloc;
 
   const DialogChoosingImage({Key? key, required this.stateBloc})
@@ -14,7 +15,7 @@ class DialogChoosingImage extends StatefulWidget {
 
   @override
   DialogChoosingImageState createState() =>
-      DialogChoosingImageState(this.stateBloc);
+      DialogChoosingImageState(stateBloc);
 }
 
 class DialogChoosingImageState extends State<DialogChoosingImage> {
@@ -33,6 +34,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
   @override
   Widget build(BuildContext context) {
+    //Передача индекса кликнутого плейсхолдера
+    print(stateBloc.props[1]);
     return FractionallySizedBox(
       widthFactor: 1.0,
       heightFactor: 1.0,
@@ -63,6 +66,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               padding: const EdgeInsets.all(20),
               child: Center(
                 child: AspectRatio(
+                  // TODO динамическая подгрузка коэффициента шаблона
                   aspectRatio: stateBloc.props[0] * 0.5,
                   child: Container(
                     // color: Colors.white.withOpacity(0.1),
