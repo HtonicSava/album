@@ -13,11 +13,21 @@ class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
   List<Object> get props => sheet;
 }
 
-class GetAlbumRedactorPlaceholderProportion extends AlbumRedactorEvent {
+class GetAlbumRedactorPlaceholderParams extends AlbumRedactorEvent {
   final List<Object> proportion;
 
-  const GetAlbumRedactorPlaceholderProportion(this.proportion);
+  const GetAlbumRedactorPlaceholderParams(this.proportion);
 
   @override
   List<Object> get props => proportion;
+}
+
+class GetUpdatedAlbum extends AlbumRedactorEvent {
+  final List<Object> updatedPlaceholderParams;
+
+  const GetUpdatedAlbum(this.updatedPlaceholderParams);
+
+  @override
+  List<Object?> get props => updatedPlaceholderParams;
+
 }

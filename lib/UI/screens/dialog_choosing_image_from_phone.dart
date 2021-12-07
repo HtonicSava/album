@@ -8,22 +8,26 @@ import 'package:image_picker/image_picker.dart';
 
 class DialogChoosingImage extends StatefulWidget {
   //Пропорции плейсхолдеров
-  final AlbumRedactorShowPopupSheetRedactor stateBloc;
+  final proportion;
+  final placeholderIndex;
+  final sheetIndex;
 
-  const DialogChoosingImage({Key? key, required this.stateBloc})
+  const DialogChoosingImage({Key? key, required this.proportion, this.placeholderIndex, this.sheetIndex})
       : super(key: key);
 
   @override
   DialogChoosingImageState createState() =>
-      DialogChoosingImageState(stateBloc);
+      DialogChoosingImageState(proportion, sheetIndex, placeholderIndex);
 }
 
 class DialogChoosingImageState extends State<DialogChoosingImage> {
   var _image;
   var imagePicker;
-  var stateBloc;
+  var proportion;
+  var sheetIndex;
+  var placeholderIndex;
 
-  DialogChoosingImageState(this.stateBloc);
+  DialogChoosingImageState(this.proportion, this.sheetIndex, this.placeholderIndex);
 
   @override
   void initState() {
@@ -35,7 +39,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   @override
   Widget build(BuildContext context) {
     //Передача индекса кликнутого плейсхолдера
-    print(stateBloc.props[1]);
+    // print(proportion.props[1]);
+
     return FractionallySizedBox(
       widthFactor: 1.0,
       heightFactor: 1.0,
@@ -67,7 +72,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               child: Center(
                 child: AspectRatio(
                   // TODO динамическая подгрузка коэффициента шаблона
-                  aspectRatio: stateBloc.props[0] * 0.5,
+                  aspectRatio: proportion * 0.5,
                   child: Container(
                     // color: Colors.white.withOpacity(0.1),
                     decoration: BoxDecoration(
@@ -91,21 +96,40 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                   var _picker = ImagePicker();
                   XFile? image =
                       await _picker.pickImage(source: ImageSource.gallery);
+                  print('$image   @@@@@@@@@@@@@@@@@@@@@@@@@ XFile image');
                   setState(() {
                     _image = File(image!.path);
                   });
                 },
                 child: const Text(
-                  "Загрузить из галереи",
+                  "Загрузить",
                   style: TextStyle(color: Colors.white),
                 ),
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop( {'image': _image} );
                 },
                 child: const Text(
                   "Закрыть",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saveFlag': true});
+                },
+                child: const Text(
+                  "Сохранить",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saveFlag': false});
+                },
+                child: const Text(
+                  "Удалить",
                   style: TextStyle(color: Colors.white),
                 ),
               )

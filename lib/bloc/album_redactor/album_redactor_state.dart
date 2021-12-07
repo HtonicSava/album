@@ -14,13 +14,13 @@ class AlbumRedactorStateInitial extends AlbumRedactorState{
 }
 
 class AlbumRedactorShowNaturalSheet extends AlbumRedactorState {
-  final List<Object> sheet;
+  final List<Object> sheetInfo;
 
 
-  const AlbumRedactorShowNaturalSheet(this.sheet);
+  const AlbumRedactorShowNaturalSheet(this.sheetInfo);
 
   @override
-  List<Object> get props => sheet;
+  List<Object> get props => sheetInfo;
 
 
 }
@@ -33,4 +33,13 @@ class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
   @override
   List<Object> get props => proportion;
 
+}
+
+class AlbumRedactorUpdateAlbum extends AlbumRedactorState{
+  final List<Object> albumInfo;
+
+  const AlbumRedactorUpdateAlbum(this.albumInfo);
+
+  @override
+  List<Object> get props => albumInfo;
 }

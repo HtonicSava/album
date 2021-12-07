@@ -29,8 +29,10 @@ void main() async {
   var albumBox = await Hive.openBox<Album>('box_for_album');
 
   // albumBox.add(album);
+
   // albumBox.deleteFromDisk();
-  print(albumBox.getAt(0)!.sheets);
+
+  // print(albumBox.getAt(0)!.sheets);
 
 
   runApp(

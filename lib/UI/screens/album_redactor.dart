@@ -18,12 +18,11 @@ class AlbumRedactor extends StatelessWidget {
   Future _initHive() async {
     var albumBox = await Hive.openBox<Album>('box_for_album');
     return sheets = albumBox.getAt(0)!.sheets;
-
   }
 
-  void _changeActiveNaturalSheet(BuildContext context, sheet) {
+  void _changeActiveNaturalSheet(BuildContext context, sheet, index) {
     BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorNaturalSheet(sheet));
+        .add(GetAlbumRedactorNaturalSheet([sheet, index]));
   }
 
   @override
@@ -33,65 +32,79 @@ class AlbumRedactor extends StatelessWidget {
             AlbumRedactorBloc(const AlbumRedactorStateInitial()),
         child: Column(
           children: <Widget>[
+
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child: SizedBox(
-                  height: 150,
-                  child: FutureBuilder(
-                    future: _initHive(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<dynamic> snapshot) {
-                      //Нет проверки sheets - вылетает исключение
-                      if (!snapshot.hasData || sheets == null) {
-                        return const Center(
-                          child: CircularProgressIndicator(),
-                        );
-                      } else {
-                        return ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: sheets!.length,
-                          itemBuilder: (context, index) {
-                            return SheetPreview(
-                              photos: sheets![index],
-                              callback: () => {
-                                _changeActiveNaturalSheet(
-                                    context, sheets![index])
-                              },
-                            );
-                          },
-                          separatorBuilder: (context, index) {
-                            return const SizedBox(width: 16);
-                          },
-                        );
-                      }
-                    },
-                  )),
-            ),
-            Expanded(
-              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+              child:
+
+              BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
                 buildWhen: (previousState, state) {
-                  if (state is AlbumRedactorShowNaturalSheet ||
-                      state is AlbumRedactorStateInitial) {
+                  if (state is AlbumRedactorUpdateAlbum) {
                     return true;
                   }
 
                   return false;
                 },
                 builder: (context, state) {
-                  if (state is AlbumRedactorShowNaturalSheet ||
-                      state is AlbumRedactorStateInitial) {
+                  return SizedBox(
+                      height: 150,
+                      child: FutureBuilder(
+                        future: _initHive(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<dynamic> snapshot) {
+                          //Нет проверки sheets - вылетает исключение
+                          if (!snapshot.hasData || sheets == null) {
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          } else {
+                            return ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: sheets!.length,
+                              itemBuilder: (context, index) {
+                                return SheetPreview(
+                                  photos: sheets![index],
+                                  callback: () =>
+                                  {
+                                    _changeActiveNaturalSheet(
+                                        context, sheets![index], index)
+                                  },
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(width: 16);
+                              },
+                            );
+                          }
+                        },
+                      ));
+                },
+              ),
+
+
+            ),
+            Expanded(
+              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                buildWhen: (previousState, state) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
+                    return true;
+                  }
+
+                  return false;
+                },
+                builder: (context, state) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
                     return SheetNatural(
-                      //TODO Почему не могу использовать props[0] как в dialog_choosing_image_from_phone?
-                      photos: state.props,
-                      callback: () => {},
-                      sheetIndex: 2222,
+
+
+                      //значения sheet в props[0]
+                      photos: state.props[0],
+                      //значения индекса sheet в props[1]
+                      sheetIndex: state.props[1],
+
                     );
                   } else {
-                    return Container(
-                      width: 5,
-                      height: 5,
-                      color: Colors.black,
-                    );
+                    return SizedBox();
                   }
                 },
               ),

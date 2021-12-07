@@ -23,15 +23,13 @@ class PhotoPlaceholder extends StatelessWidget {
       child: FractionallySizedBox(
           widthFactor: width,
           heightFactor: height,
-          child:
-              image == ''?
-          Container(
-            color: Colors.grey,
-          ):
-              Container(
-                color: Colors.lightGreen,
-              )
-      ),
+          child: image == ''
+              ? Container(
+                  color: Colors.grey,
+                )
+              : Container(
+                  color: Colors.lightGreen,
+                )),
     );
   }
 }

@@ -8,16 +8,10 @@ import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
-
   final photos;
-  final int sheetIndex;
-  final VoidCallback callback;
+  final sheetIndex;
 
-  const SheetNatural(
-      {Key? key,
-      required this.callback,
-      required this.sheetIndex,
-      this.photos})
+  const SheetNatural({Key? key, this.photos, required this.sheetIndex})
       : super(key: key);
 
   //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
@@ -28,15 +22,12 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
       result.add(
         GestureDetector(
           onTap: () => {
-            callback(),
-            albumRedactorBloc.add(GetAlbumRedactorPlaceholderProportion([
+            albumRedactorBloc.add(GetAlbumRedactorPlaceholderParams([
               element['width'] / element['height'],
-              2222222
-
-            ]
-
-            )),
-            print('${photos.indexOf(element)}'),
+              sheetIndex,
+              photos.indexOf(element)
+            ])),
+            // print('${photos.indexOf(element)}'),
           },
           child: PhotoPlaceholder(
             width: element['width'],
@@ -79,13 +70,32 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                           context: context,
                           pageBuilder:
                               (context, animation, secondaryAnimation) {
-                            return DialogChoosingImage(stateBloc: state);
+                            return DialogChoosingImage(
+                                proportion: state.props[0],
+                                placeholderIndex: state.props[2],
+                                sheetIndex: state.props[1]);
                           }).then((exit) {
+                        //TODO Сделать оптимизацию проверки условий
                         if (exit == null) {
                           albumRedactorBloc
-                              .add(const GetAlbumRedactorPlaceholderProportion(
-                            [{'f'}],
+                              .add(const GetAlbumRedactorPlaceholderParams(
+                            [
+                              {'f'}
+                            ],
                           ));
+                          print(exit);
+                          return;
+                        } else {
+                          print(exit);
+                          albumRedactorBloc
+                              .add(const GetAlbumRedactorPlaceholderParams(
+                            [
+                              {'f'}
+                            ],
+                          ));
+
+                          albumRedactorBloc.add(GetUpdatedAlbum([exit]));
+
                           return;
                         }
                       });
@@ -100,6 +110,4 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
           )
         : const SizedBox();
   }
-
-
 }
