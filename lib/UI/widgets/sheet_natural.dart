@@ -1,9 +1,12 @@
+import 'dart:io';
+
 import 'package:album/UI/screens/dialog_choosing_image_from_phone.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 
@@ -14,7 +17,6 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
   const SheetNatural({Key? key, this.photos, required this.sheetIndex})
       : super(key: key);
 
-  //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
   createPlaceHolders(photos, [context, albumRedactorBloc]) {
     List<Widget> result = [];
@@ -74,28 +76,48 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                                 proportion: state.props[0],
                                 placeholderIndex: state.props[2],
                                 sheetIndex: state.props[1]);
-                          }).then((exit) {
+                          }).then((exit) async {
                         //TODO Сделать оптимизацию проверки условий
                         if (exit == null) {
+                          //Нажата кнопка "закрыть"
                           albumRedactorBloc
                               .add(const GetAlbumRedactorPlaceholderParams(
                             [
                               {'f'}
                             ],
                           ));
-                          print(exit);
                           return;
                         } else {
                           print(exit);
-                          albumRedactorBloc
-                              .add(const GetAlbumRedactorPlaceholderParams(
-                            [
-                              {'f'}
-                            ],
-                          ));
+                          // Обработка приходящего из диалога ответа. При сохранении вылетает эксепшен, который не позволяет передать в блок несуществующий файл
+                          try {
+                            if ((exit as Map)['saveFlag']) {
+                              //TODO перенести логику сохранения изображения в блок
+                              final directory =
+                                  await getExternalStorageDirectory();
+                              final myImagePath =
+                                  '${directory!.path}/SavedAlbumImages';
+                              print(myImagePath);
+                              //TODO оптимизировать с помощью проверки существования директории
 
-                          albumRedactorBloc.add(GetUpdatedAlbum([exit]));
-
+                              await Directory(myImagePath).create();
+                              await (exit)['image'].copy(
+                                  '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png');
+                              // print(savedImage);
+                              (exit)['image'] =
+                                  '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
+                            }
+                            albumRedactorBloc.add(GetUpdatedAlbum([exit]));
+                          } catch (error) {
+                            print(error);
+                          } finally {
+                            albumRedactorBloc
+                                .add(const GetAlbumRedactorPlaceholderParams(
+                              [
+                                {'f'}
+                              ],
+                            ));
+                          }
                           return;
                         }
                       });

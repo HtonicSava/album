@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class PhotoPlaceholder extends StatelessWidget {
@@ -28,7 +30,11 @@ class PhotoPlaceholder extends StatelessWidget {
                   color: Colors.grey,
                 )
               : Container(
-                  color: Colors.lightGreen,
+                  // color: Colors.lightGreen,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image:  FileImage(File(image)), fit: BoxFit.fill),
+                  ),
                 )),
     );
   }

@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'UI/screens/home.dart';
 
 
@@ -15,17 +18,17 @@ void main() async {
       ],
       [
         {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
-        {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5, 'image': 'image'},
+        {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5, 'image': ''},
         {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
       ],
       [
-        {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': 'image'},
+        {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
       ],
     ];
 
   await Hive.initFlutter();
   Hive.registerAdapter(AlbumAdapter());
-
+  //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_album');
 
   // albumBox.add(album);
@@ -33,6 +36,7 @@ void main() async {
   // albumBox.deleteFromDisk();
 
   // print(albumBox.getAt(0)!.sheets);
+
 
 
   runApp(

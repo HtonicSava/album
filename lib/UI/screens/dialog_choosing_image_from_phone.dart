@@ -22,6 +22,7 @@ class DialogChoosingImage extends StatefulWidget {
 
 class DialogChoosingImageState extends State<DialogChoosingImage> {
   var _image;
+  late XFile _xfileImage;
   var imagePicker;
   var proportion;
   var sheetIndex;
@@ -50,6 +51,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
         alignment: AlignmentDirectional.bottomCenter,
         children: [
           ResizableWidget(
+              //TODO Сделать подгрузку существующего изображения (при наличии такового)
               child: _image == null
                   ? Center(
                       child: Container(
@@ -108,7 +110,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop( {'image': _image} );
+                  Navigator.of(context).pop();
                 },
                 child: const Text(
                   "Закрыть",
@@ -117,7 +119,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saveFlag': true});
+                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saved':true, 'saveFlag': true, 'image': _image});
                 },
                 child: const Text(
                   "Сохранить",
@@ -126,7 +128,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saveFlag': false});
+                  Navigator.of(context).pop({'sheetIndex': sheetIndex, 'placeholderIndex': placeholderIndex, 'saved':true, 'saveFlag': false, 'image': ''});
                 },
                 child: const Text(
                   "Удалить",
