@@ -12,17 +12,32 @@ import '../widgets/sheet_natural.dart';
 class AlbumRedactor extends StatelessWidget {
   AlbumRedactor({Key? key}) : super(key: key);
 
+  //TODO Вынести логику взаимодействия с БД в блок
   //Загрузка из Hive
   List? sheets;
+  late double sheetsHeight;
+  late double sheetsWidth;
 
   Future _initHive() async {
     var albumBox = await Hive.openBox<Album>('box_for_album');
-    return sheets = albumBox.getAt(0)!.sheets;
+    // sheets = albumBox.getAt(0)!.sheets;
+    // sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
+    // sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
+
+    return [
+      sheets = albumBox.getAt(0)!.sheets,
+      sheetsWidth = albumBox.getAt(0)!.sheetsWidth,
+      sheetsHeight = albumBox.getAt(0)!.sheetsHeight
+    ];
+
+    // sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
+    // sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
   }
 
-  void _changeActiveNaturalSheet(BuildContext context, sheet, index) {
+  void _changeActiveNaturalSheet(
+      BuildContext context, sheet, index, proportionCoef) {
     BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorNaturalSheet([sheet, index]));
+        .add(GetAlbumRedactorNaturalSheet([sheet, index, proportionCoef]));
   }
 
   @override
@@ -32,12 +47,9 @@ class AlbumRedactor extends StatelessWidget {
             AlbumRedactorBloc(const AlbumRedactorStateInitial()),
         child: Column(
           children: <Widget>[
-
             Padding(
               padding: const EdgeInsets.all(10.0),
-              child:
-
-              BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
                 buildWhen: (previousState, state) {
                   if (state is AlbumRedactorUpdateAlbum) {
                     return true;
@@ -54,6 +66,7 @@ class AlbumRedactor extends StatelessWidget {
                             AsyncSnapshot<dynamic> snapshot) {
                           //Нет проверки sheets - вылетает исключение
                           if (!snapshot.hasData || sheets == null) {
+                            // || sheetsHeight || sheetsWidth
                             return const Center(
                               child: CircularProgressIndicator(),
                             );
@@ -64,11 +77,15 @@ class AlbumRedactor extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 return SheetPreview(
                                   photos: sheets![index],
-                                  callback: () =>
-                                  {
+                                  callback: () => {
                                     _changeActiveNaturalSheet(
-                                        context, sheets![index], index)
+                                        context,
+                                        sheets![index],
+                                        index,
+                                        sheetsWidth / sheetsHeight)
                                   },
+                                  width: sheetsWidth,
+                                  height: sheetsHeight,
                                 );
                               },
                               separatorBuilder: (context, index) {
@@ -80,35 +97,34 @@ class AlbumRedactor extends StatelessWidget {
                       ));
                 },
               ),
-
-
             ),
-            Expanded(
-              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-                buildWhen: (previousState, state) {
-                  if (state is AlbumRedactorShowNaturalSheet) {
-                    return true;
-                  }
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child:  BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                  buildWhen: (previousState, state) {
+                    if (state is AlbumRedactorShowNaturalSheet) {
+                      return true;
+                    }
 
-                  return false;
-                },
-                builder: (context, state) {
-                  if (state is AlbumRedactorShowNaturalSheet) {
-                    return SheetNatural(
-
-
-                      //значения sheet в props[0]
-                      photos: state.props[0],
-                      //значения индекса sheet в props[1]
-                      sheetIndex: state.props[1],
-
-                    );
-                  } else {
-                    return SizedBox();
-                  }
-                },
+                    return false;
+                  },
+                  builder: (context, state) {
+                    if (state is AlbumRedactorShowNaturalSheet) {
+                      return SheetNatural(
+                        //значения sheet в props[0]
+                        photos: state.props[0],
+                        //значения индекса sheet в props[1]
+                        sheetIndex: state.props[1],
+                        //значения коэффициента пропорции sheet в props[2]
+                        sheetPropCoef: state.props[2],
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
               ),
-            ),
+
           ],
         ));
   }

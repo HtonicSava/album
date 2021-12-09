@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-//TODO Переделать в bloc
 class ResizableWidget extends StatefulWidget {
-  const ResizableWidget({required this.child, Key? key}) : super(key: key);
-
+  const ResizableWidget({required this.child, Key? key,this.startHeight = 200.0, this.startWidth = 200.0}) : super(key: key);
   final Widget child;
+
+  final double startHeight;
+  final double startWidth;
+
 
   @override
   _ResizableWidgetState createState() => _ResizableWidgetState();
@@ -12,14 +14,10 @@ class ResizableWidget extends StatefulWidget {
 
 const ballDiameter = 30.0;
 class _ResizableWidgetState extends State<ResizableWidget> {
-  //TODO Передавать ширину и высоту динамически
-  double height = 200;
-  double width = 200;
-
-  double top = (MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.height / 2) - 100;
-  double left = (MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width / 2) - 100;
-  // double top = 0;
-  // double left = 0;
+  late double height;
+  late double width;
+  late double top;
+  late double left;
   void onDrag(double dx, double dy) {
     var newHeight = height + dy;
     var newWidth = width + dx;
@@ -30,6 +28,16 @@ class _ResizableWidgetState extends State<ResizableWidget> {
 
     });
   }
+
+  @override
+  void initState(){
+    super.initState();
+    height = widget.startHeight;
+    width = widget.startWidth;
+    top = (MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.height / 2) - widget.startHeight/2;
+    left = (MediaQueryData.fromWindow(WidgetsBinding.instance!.window).size.width / 2) - widget.startWidth/2;
+  }
+
 
   @override
   Widget build(BuildContext context) {

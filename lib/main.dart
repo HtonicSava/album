@@ -22,7 +22,7 @@ void main() async {
         {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
       ],
       [
-        {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
+        {'width': 0.33, 'height': 0.250, 'top': 0.5, 'left': 0.5, 'image': ''},
       ],
     ];
 
@@ -41,7 +41,7 @@ void main() async {
 
   runApp(
 
-      OnlineAlbum());
+      const OnlineAlbum());
 }
 
 class OnlineAlbum extends StatelessWidget {
@@ -50,7 +50,7 @@ class OnlineAlbum extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SQLiteDbProvider.db.getAllProducts().then((value) => {print(value[0].sheets)});
+
 
     return const MaterialApp(
       title: 'Онлайн альбом',

@@ -4,10 +4,13 @@ import 'sheet_template.dart';
 
 class SheetPreview extends StatelessWidget implements SheetTemplate {
   @override
-  List photos;
+  final List photos;
   final VoidCallback callback;
+  final double width;
+  final double height;
 
-  SheetPreview({Key? key, required this.photos, required this.callback})
+
+  const SheetPreview({Key? key, required this.photos, required this.callback, required this.width, required this.height})
       : super(key: key);
 
   @override
@@ -32,7 +35,7 @@ class SheetPreview extends StatelessWidget implements SheetTemplate {
     return GestureDetector(
       onTap: callback,
       child: AspectRatio(
-        aspectRatio: 1 / 2,
+        aspectRatio: width/height,
         child: Container(
           color: Colors.red,
           child: Padding(

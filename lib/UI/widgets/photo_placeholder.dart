@@ -20,6 +20,7 @@ class PhotoPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       alignment: FractionalOffset(left, top),
       child: FractionallySizedBox(

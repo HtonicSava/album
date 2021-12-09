@@ -18,11 +18,14 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
     if (event is GetAlbumRedactorNaturalSheet) {
-      print('$event from bloc dialog');
+      print('$event from sheet preview');
       yield AlbumRedactorShowNaturalSheet(event.sheet);
+
     } else if (event is GetAlbumRedactorPlaceholderParams) {
       print('${event} from sheet natural');
       yield AlbumRedactorShowPopupSheetRedactor(event.proportion);
+
+
     } else if (event is GetUpdatedAlbum) {
       print('$event from show general dialog');
       var albumBox = await Hive.openBox<Album>('box_for_album');
@@ -35,12 +38,17 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
           '${albumBox.getAt(0)!.sheets} from show general dialog after update DB');
       yield AlbumRedactorUpdateAlbum(event.updatedPlaceholderParams);
 
+
       final eventPropsArgs = event.props[0] as Map;
       yield AlbumRedactorShowNaturalSheet([
         tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
         eventPropsArgs['sheetIndex']
       ]);
     }
+  }
+
+  Future _initHive() async {
+
   }
 
   Future? _deleteImage(placeHolderParams) async {

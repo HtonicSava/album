@@ -13,9 +13,14 @@ import 'sheet_template.dart';
 class SheetNatural extends StatelessWidget implements SheetTemplate {
   final photos;
   final sheetIndex;
+  final sheetPropCoef;
 
-  const SheetNatural({Key? key, this.photos, required this.sheetIndex})
-      : super(key: key);
+  const SheetNatural({
+    Key? key,
+    this.photos,
+    required this.sheetIndex,
+    this.sheetPropCoef,
+  }) : super(key: key);
 
   @override
   createPlaceHolders(photos, [context, albumRedactorBloc]) {
@@ -49,8 +54,10 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
     final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context);
 
     return (photos.isNotEmpty)
-        ? AspectRatio(
-            aspectRatio: 1 / 2,
+        ?
+
+    AspectRatio(
+            aspectRatio: sheetPropCoef,
             child: Container(
               color: Colors.red,
               child: Padding(
@@ -73,6 +80,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                           pageBuilder:
                               (context, animation, secondaryAnimation) {
                             return DialogChoosingImage(
+                                sheetPropCoef: sheetPropCoef,
                                 proportion: state.props[0],
                                 placeholderIndex: state.props[2],
                                 sheetIndex: state.props[1]);
