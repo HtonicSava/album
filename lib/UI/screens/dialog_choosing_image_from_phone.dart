@@ -9,37 +9,44 @@ import 'package:image_picker/image_picker.dart';
 
 class DialogChoosingImage extends StatefulWidget {
   //Пропорции плейсхолдеров
-  final proportion;
+  final placeholderWidth;
+  final placeholderHeight;
   final placeholderIndex;
   final sheetIndex;
   final sheetPropCoef;
+  final sheetWidth;
+  final sheetHeight;
 
   const DialogChoosingImage(
       {Key? key,
-      required this.proportion,
       this.placeholderIndex,
       this.sheetIndex,
-      this.sheetPropCoef})
+      this.sheetPropCoef, this.sheetWidth, this.sheetHeight, this.placeholderWidth, this.placeholderHeight})
       : super(key: key);
 
   @override
   DialogChoosingImageState createState() =>
-      DialogChoosingImageState(proportion, sheetIndex, placeholderIndex);
+      DialogChoosingImageState(placeholderWidth, placeholderHeight, sheetIndex, placeholderIndex);
 }
 
 class DialogChoosingImageState extends State<DialogChoosingImage> {
+  var _widthIncreaseCoef;
+  var _heightIncreaseCoef;
   var _image;
   var _image_width;
   var _image_height;
   late XFile _xfileImage;
   var imagePicker;
-  var proportion;
   var sheetIndex;
   var placeholderIndex;
   var _borderSize =Size.zero;
 
+  var placeholderWidth;
+
+  var placeholderHeight;
+
   DialogChoosingImageState(
-      this.proportion, this.sheetIndex, this.placeholderIndex);
+      this.placeholderHeight, this.placeholderWidth, this.sheetIndex, this.placeholderIndex);
 
   @override
   void initState() {
@@ -52,6 +59,11 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   Widget build(BuildContext context) {
     //Передача индекса кликнутого плейсхолдера
     // print(proportion.props[1]);
+
+    print('${placeholderWidth * widget.sheetWidth} - placeholder absolute width' );
+    print(placeholderWidth);
+    print('${placeholderHeight * widget.sheetHeight} - placeholder absolute height');
+    print(placeholderHeight);
 
     return FractionallySizedBox(
       widthFactor: 1.0,
@@ -85,12 +97,21 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               padding: const EdgeInsets.all(20),
               child: Center(
                 child: AspectRatio(
-                  aspectRatio: proportion * widget.sheetPropCoef,
+                  aspectRatio: ((placeholderWidth * widget.sheetWidth)/(placeholderHeight * widget.sheetHeight)),
                   child: MeasureSize(
                     onChange: (size) {
                       setState(() {
                         _borderSize = size;
-                        print(_borderSize);
+                        _widthIncreaseCoef = _borderSize.width / (widget.placeholderWidth * widget.sheetWidth);
+                        _heightIncreaseCoef =  _borderSize.height / (widget.placeholderHeight * widget.sheetHeight);
+
+
+                            print(_borderSize);
+                        print('${widget.sheetWidth} ----- sheet width');
+                        print('${widget.sheetHeight} ----- sheet height');
+
+                        print('${_widthIncreaseCoef} ----- increase coef');
+                        print('${_heightIncreaseCoef} ----- increase coef');
                       });
                     },
                     child: Container(
@@ -123,10 +144,15 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
                   setState(() {
                     _image = image;
-                    _image_height = decodedImage.height.toDouble();
-                    _image_width = decodedImage.width.toDouble();
-                    print(_image_height);
-                    print(_image_width);
+                    _image_height = decodedImage.height.toDouble() * _widthIncreaseCoef;
+                    _image_width = decodedImage.width.toDouble() * _widthIncreaseCoef;
+
+                    print('${decodedImage.height.toDouble()} - высота загруженного изображения');
+                    print('${decodedImage.width.toDouble()} - ширина загруженного изображения');
+
+
+                    print('${_image_height} - высота загруженного изображения после корректировки');
+                    print('${_image_width} - ширина загруженного изображения после корректировки');
                   });
                 },
                 child: const Text(
@@ -182,79 +208,6 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   }
 }
 
-//   @override
-//   Widget build(BuildContext context) {
-//     return FractionallySizedBox(
-//       widthFactor: 1.0,
-//       heightFactor: 1.0,
-//
-//       child: Stack(
-//         clipBehavior: Clip.none,
-//         alignment: AlignmentDirectional.bottomCenter,
-//         children: [
-//           ResizableWidget(
-//             child: Center(
-//               child: Container(
-//                 decoration: const BoxDecoration(
-//                   image: DecorationImage(
-//                     image: AssetImage('assets/img/gneg.jpeg'),
-//                     fit: BoxFit.fill,
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//           IgnorePointer(
-//             ignoring: true,
-//             child: Container(
-//               padding: const EdgeInsets.all(20),
-//               child: Center(
-//                 child: AspectRatio(
-//                   aspectRatio: stateBloc.props[0] * 0.5,
-//                   child: Container(
-//                     // color: Colors.white.withOpacity(0.1),
-//                     decoration: BoxDecoration(
-//                         color: Colors.white.withOpacity(0.15),
-//                         backgroundBlendMode: BlendMode.lighten,
-//                         border: Border.all(
-//                             width: 3,
-//                             color: Colors.black.withOpacity(0.5),
-//                             style: BorderStyle.solid)),
-//                   ),
-//                 ),
-//               ),
-//             ),
-//           ),
-//           Row(
-//             mainAxisAlignment: MainAxisAlignment.spaceAround,
-//             children: [
-//               ElevatedButton(
-//                 onPressed: () async {
-//                   var source = ImageSource.gallery;
-//                   XFile image = await i
-//                 },
-//                 child: const Text(
-//                   "Загрузить из галереи",
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//               ),
-//               ElevatedButton(
-//                 onPressed: () {
-//                   Navigator.of(context).pop();
-//                 },
-//                 child: const Text(
-//                   "Закрыть",
-//                   style: TextStyle(color: Colors.white),
-//                 ),
-//               )
-//             ],
-//           ),
-//         ],
-//       ),
-//       // ),
-//     );
-//   }
-// }
 
 typedef void OnWidgetSizeChange(Size size);
 

@@ -30,7 +30,8 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
         GestureDetector(
           onTap: () => {
             albumRedactorBloc.add(GetAlbumRedactorPlaceholderParams([
-              element['width'] / element['height'],
+              element['height'],
+              element['width'],
               sheetIndex,
               photos.indexOf(element)
             ])),
@@ -65,7 +66,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                 child: BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
                   listenWhen: (previousState, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
-                      if (state.proportion[0].toString()[1] != 'f') {
+                      if (state.proportion[0] != 0) {
                         return true;
                       } else {
                         return false;
@@ -75,24 +76,34 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   },
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
+                      print('\/n');
+                      print(state.props);
+                      print(state.props.runtimeType);
+                      print('\/n');
+
                       showGeneralDialog(
                           context: context,
                           pageBuilder:
                               (context, animation, secondaryAnimation) {
                             return DialogChoosingImage(
                                 sheetPropCoef: sheetPropCoef,
-                                proportion: state.props[0],
-                                placeholderIndex: state.props[2],
-                                sheetIndex: state.props[1]);
+                                placeholderHeight: state.props[1],
+                                placeholderWidth: state.props[0],
+                                placeholderIndex: state.props[3],
+                                sheetIndex: state.props[2],
+                                sheetWidth: state.props[4],
+                                sheetHeight: state.props[5],
+
+                            );
+
                           }).then((exit) async {
                         //TODO Сделать оптимизацию проверки условий
                         if (exit == null) {
                           //Нажата кнопка "закрыть"
                           albumRedactorBloc
                               .add(const GetAlbumRedactorPlaceholderParams(
-                            [
-                              {'f'}
-                            ],
+                              [0]
+                            ,
                           ));
                           return;
                         } else {
@@ -121,9 +132,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                           } finally {
                             albumRedactorBloc
                                 .add(const GetAlbumRedactorPlaceholderParams(
-                              [
-                                {'f'}
-                              ],
+                                [0]
                             ));
                           }
                           return;

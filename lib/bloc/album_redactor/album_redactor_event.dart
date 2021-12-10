@@ -4,6 +4,13 @@ abstract class AlbumRedactorEvent extends Equatable {
   const AlbumRedactorEvent();
 }
 
+class InitEvent extends AlbumRedactorEvent{
+  const InitEvent();
+
+  @override
+  List<Object> get props => [];
+}
+
 class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
   final List<Object> sheet;
 
@@ -31,3 +38,4 @@ class GetUpdatedAlbum extends AlbumRedactorEvent {
   List<Object?> get props => updatedPlaceholderParams;
 
 }
+

@@ -15,40 +15,65 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
   AlbumRedactorState get initialState => const AlbumRedactorStateInitial();
 
+  late List<List<Map<String, dynamic>>> sheets;
+  late double sheetsWidth;
+  late double sheetsHeight;
+
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
-    if (event is GetAlbumRedactorNaturalSheet) {
+
+    if (event is InitEvent){
+      print('$event from init');
+      await _updateFieldsFromHiveDb();
+      yield AlbumRedactorUpdateAlbum([sheets, sheetsWidth, sheetsHeight]);
+
+    }
+
+    else if (event is GetAlbumRedactorNaturalSheet) {
       print('$event from sheet preview');
       yield AlbumRedactorShowNaturalSheet(event.sheet);
 
     } else if (event is GetAlbumRedactorPlaceholderParams) {
       print('${event} from sheet natural');
-      yield AlbumRedactorShowPopupSheetRedactor(event.proportion);
+      print('${event.props}');
+
+
+      if (event.props[0] != 0) {
+        event.props.add(sheetsWidth);
+        event.props.add(sheetsHeight);
+        print(event.props);
+      }
+      //TODO пофиксить подгрузку старого изображения при сохранении нового
+      imageCache!.clear();
+
+      yield AlbumRedactorShowPopupSheetRedactor(event.props);
+
+      // yield AlbumRedactorShowPopupSheetRedactor([event.proportion]);
 
 
     } else if (event is GetUpdatedAlbum) {
       print('$event from show general dialog');
       var albumBox = await Hive.openBox<Album>('box_for_album');
-      print(
-          '${albumBox.getAt(0)!.sheets} from show general dialog before update DB');
       final tempAlbumBox = albumBox.getAt(0);
       await _updatePlaceholderState(albumBox, event.props[0]);
-      imageCache!.clear();
-      print(
-          '${albumBox.getAt(0)!.sheets} from show general dialog after update DB');
-      yield AlbumRedactorUpdateAlbum(event.updatedPlaceholderParams);
+      await _updateFieldsFromHiveDb();
+      yield AlbumRedactorUpdateAlbum([sheets, sheetsWidth, sheetsHeight]);
 
 
       final eventPropsArgs = event.props[0] as Map;
       yield AlbumRedactorShowNaturalSheet([
         tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
-        eventPropsArgs['sheetIndex']
+        eventPropsArgs['sheetIndex'],
+        sheetsWidth/sheetsHeight,
       ]);
     }
   }
 
-  Future _initHive() async {
-
+  Future _updateFieldsFromHiveDb() async {
+    var albumBox = await Hive.openBox<Album>('box_for_album');
+      sheets = albumBox.getAt(0)!.sheets;
+      sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
+      sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
   }
 
   Future? _deleteImage(placeHolderParams) async {

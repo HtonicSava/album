@@ -9,8 +9,8 @@ import 'UI/screens/home.dart';
 
 void main() async {
   Album album = Album()
-    ..sheetsHeight = 800.0
-    ..sheetsWidth = 600.0
+    ..sheetsHeight = 9600.0
+    ..sheetsWidth = 7200.0
     ..sheets = [
       [
         {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
@@ -22,7 +22,7 @@ void main() async {
         {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
       ],
       [
-        {'width': 0.33, 'height': 0.250, 'top': 0.5, 'left': 0.5, 'image': ''},
+        {'width': 0.165, 'height': 0.125, 'top': 0.5, 'left': 0.5, 'image': ''},
       ],
     ];
 
