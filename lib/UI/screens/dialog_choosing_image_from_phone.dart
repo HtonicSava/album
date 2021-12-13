@@ -18,10 +18,17 @@ class DialogChoosingImage extends StatefulWidget {
   final sheetWidth;
   final sheetHeight;
 
+  final GlobalKey _keyBorder = GlobalKey();
+  final GlobalKey _keyPhoto = GlobalKey();
 
+  void _getSizesAndPosition(){
+    // final RenderBox renderBox = _widgetKey.currentContext?.findRenderObject() as RenderBox;
+    // final RenderObject renderBoxBorder = _keyBorder.currentContext?.findRenderObject() as RenderBox;
+    final Size? sizeBorder = _keyBorder.currentContext!.size;
+    print('SIZE of border box: ${sizeBorder}');
+  }
 
-
-  const DialogChoosingImage(
+  DialogChoosingImage(
       {Key? key,
       this.placeholderIndex,
       this.sheetIndex,
@@ -46,14 +53,12 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   var _borderSize =Size.zero;
   var placeholderWidth;
   var placeholderHeight;
-  final GlobalKey _keyBorder = GlobalKey();
-  final GlobalKey _keyPhoto = GlobalKey();
 
-  _getSizesAndPosition(){
-    final RenderObject? renderBoxBorder = _keyBorder.currentContext!.findRenderObject();
-    // final sizeBorder = renderBoxBorder!.localToGlobal();
-    // print('SIZE of border box: ${sizeBorder}');
-  }
+
+
+
+
+
 
   DialogChoosingImageState(
       this.placeholderHeight, this.placeholderWidth, this.sheetIndex, this.placeholderIndex);
@@ -128,6 +133,11 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                         print('${_widthIncreaseCoef} ----- Коэффициент уменьшения ширины');
                         print('${_heightIncreaseCoef} ----- Коэффициент уменьшения высоты');
                       });
+
+
+                    },
+                    onChangeOffset: (offset) {
+                      print("$offset !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     },
                     child: Container(
                       // color: Colors.white.withOpacity(0.1),
@@ -177,6 +187,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  // widget._getSizesAndPosition();
                   Navigator.of(context).pop();
                 },
                 child: const Text(
@@ -226,37 +237,53 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
 typedef void OnWidgetSizeChange(Size size);
 
+typedef void OnWidgetOffsetChange(Offset offset);
+
+
 class MeasureSizeRenderObject extends RenderProxyBox {
   Size? oldSize;
+  Offset? oldOffset;
   final OnWidgetSizeChange onChange;
+  final OnWidgetOffsetChange onChangeOffset;
 
-  MeasureSizeRenderObject(this.onChange);
+
+  MeasureSizeRenderObject(this.onChange, this.onChangeOffset);
 
   @override
   void performLayout() {
     super.performLayout();
 
     Size newSize = child!.size;
+    Offset newOffset = child!.localToGlobal(Offset.infinite);
+
+
     if (oldSize == newSize) return;
+    if (oldOffset == newOffset) return;
 
     oldSize = newSize;
+    oldOffset = newOffset;
     WidgetsBinding.instance!.addPostFrameCallback((_) {
       onChange(newSize);
+      onChangeOffset(newOffset);
     });
+
   }
 }
 
 class MeasureSize extends SingleChildRenderObjectWidget {
   final OnWidgetSizeChange onChange;
+  final OnWidgetOffsetChange onChangeOffset;
+
 
   const MeasureSize({
     Key? key,
     required this.onChange,
+    required this.onChangeOffset,
     required Widget child,
   }) : super(key: key, child: child);
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return MeasureSizeRenderObject(onChange);
+    return MeasureSizeRenderObject(onChange, onChangeOffset);
   }
 }

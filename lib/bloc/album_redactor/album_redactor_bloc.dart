@@ -31,7 +31,8 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
     else if (event is GetAlbumRedactorNaturalSheet) {
       print('$event from sheet preview');
-      yield AlbumRedactorShowNaturalSheet(event.sheet);
+      //TODO Различие между передачей данных с помощью props и полей класса события
+      yield AlbumRedactorShowNaturalSheet(event.sheetAndId);
 
     } else if (event is GetAlbumRedactorPlaceholderParams) {
       print('${event} from sheet natural');
@@ -71,9 +72,9 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
   Future _updateFieldsFromHiveDb() async {
     var albumBox = await Hive.openBox<Album>('box_for_album');
-      sheets = albumBox.getAt(0)!.sheets;
-      sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
-      sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
+    sheets = albumBox.getAt(0)!.sheets;
+    sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
+    sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
   }
 
   Future? _deleteImage(placeHolderParams) async {
