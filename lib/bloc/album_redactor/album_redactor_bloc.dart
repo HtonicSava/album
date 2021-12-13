@@ -90,7 +90,6 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
     var tempAlbumBox = box.getAt(0);
     List<List<Map<String, dynamic>>> tempSheets = [];
 
-    // tempAlbumBox!.sheets
     //TODO Оптимизация условия загрузки изображения в бд
     for (int i = 0; i < tempAlbumBox!.sheets.length; i++) {
       if (i != placeHolderParams['sheetIndex']) {

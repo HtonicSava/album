@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:image/image.dart' as imgLib;
 
 import 'package:album/UI/widgets/resizable_widget.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -16,6 +17,9 @@ class DialogChoosingImage extends StatefulWidget {
   final sheetPropCoef;
   final sheetWidth;
   final sheetHeight;
+
+
+
 
   const DialogChoosingImage(
       {Key? key,
@@ -40,10 +44,16 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   var sheetIndex;
   var placeholderIndex;
   var _borderSize =Size.zero;
-
   var placeholderWidth;
-
   var placeholderHeight;
+  final GlobalKey _keyBorder = GlobalKey();
+  final GlobalKey _keyPhoto = GlobalKey();
+
+  _getSizesAndPosition(){
+    final RenderObject? renderBoxBorder = _keyBorder.currentContext!.findRenderObject();
+    // final sizeBorder = renderBoxBorder!.localToGlobal();
+    // print('SIZE of border box: ${sizeBorder}');
+  }
 
   DialogChoosingImageState(
       this.placeholderHeight, this.placeholderWidth, this.sheetIndex, this.placeholderIndex);
@@ -102,16 +112,21 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                     onChange: (size) {
                       setState(() {
                         _borderSize = size;
-                        _widthIncreaseCoef = _borderSize.width / (widget.placeholderWidth * widget.sheetWidth);
-                        _heightIncreaseCoef =  _borderSize.height / (widget.placeholderHeight * widget.sheetHeight);
+                        _widthIncreaseCoef = _borderSize.width / (placeholderWidth * widget.sheetWidth);
+                        _heightIncreaseCoef =  _borderSize.height / (placeholderHeight * widget.sheetHeight);
 
 
-                            print(_borderSize);
-                        print('${widget.sheetWidth} ----- sheet width');
-                        print('${widget.sheetHeight} ----- sheet height');
+                        print('${widget.sheetWidth} ----- Ширина шаблона');
+                        print('${widget.sheetHeight} ----- Высота шаблона');
 
-                        print('${_widthIncreaseCoef} ----- increase coef');
-                        print('${_heightIncreaseCoef} ----- increase coef');
+                        print('${_borderSize.width} ----- Скорректированная ширина ограничивающей рамки');
+                        print('${_borderSize.height} ----- Скорректированная высота ограничивающей рамки');
+
+                        print('${placeholderWidth * widget.sheetWidth} ----- Абсолютная ширина ограничивающей рамки');
+                        print('${placeholderHeight * widget.sheetHeight} ----- Абсолютная высота ограничивающей рамки');
+
+                        print('${_widthIncreaseCoef} ----- Коэффициент уменьшения ширины');
+                        print('${_heightIncreaseCoef} ----- Коэффициент уменьшения высоты');
                       });
                     },
                     child: Container(
@@ -144,8 +159,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
                   setState(() {
                     _image = image;
-                    _image_height = decodedImage.height.toDouble() * _widthIncreaseCoef;
-                    _image_width = decodedImage.width.toDouble() * _widthIncreaseCoef;
+                    _image_height = decodedImage.height.toDouble() * (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
+                    _image_width = decodedImage.width.toDouble() * (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
 
                     print('${decodedImage.height.toDouble()} - высота загруженного изображения');
                     print('${decodedImage.width.toDouble()} - ширина загруженного изображения');

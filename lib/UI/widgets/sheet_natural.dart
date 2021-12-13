@@ -9,6 +9,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'photo_placeholder.dart';
 import 'sheet_template.dart';
+import 'package:image/image.dart' as imageLib;
+
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
   final photos;
@@ -118,13 +120,32 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                                   '${directory!.path}/SavedAlbumImages';
                               print(myImagePath);
                               //TODO оптимизировать с помощью проверки существования директории
-
+                              //TODO передать информацию об изменениях изображения и сохранить, учитывая их
                               await Directory(myImagePath).create();
-                              await (exit)['image'].copy(
-                                  '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png');
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
+
+                              // await (exit)['image'].copy(
+                              //     '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png');
                               // print(savedImage);
+
+
+                              imageLib.Image? image = imageLib.decodePng((exit)['image'].readAsBytesSync());
+                              imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
+                              File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
+                              // imageLib.Image? image = imageLib.decodePng(File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').readAsBytesSync());
+                              //
+                              // imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
+                              //
+                              // File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+
                               (exit)['image'] =
                                   '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
                             }
                             albumRedactorBloc.add(GetUpdatedAlbum([exit]));
                           } catch (error) {
