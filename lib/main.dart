@@ -1,13 +1,16 @@
+import 'dart:io';
+
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:path_provider/path_provider.dart';
 import 'UI/screens/home.dart';
 
 
 void main() async {
   Album album = Album()
-    ..sheetsHeight = 800.0
-    ..sheetsWidth = 600.0
+    ..sheetsHeight = 4400.0
+    ..sheetsWidth = 3200.0
     ..sheets = [
       [
         {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
@@ -15,27 +18,49 @@ void main() async {
       ],
       [
         {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
-        {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5, 'image': 'image'},
+        {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5, 'image': ''},
         {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
       ],
       [
-        {'width': 0.7, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': 'image'},
+        {'width': 0.4888, 'height': 0.3668, 'top': 0.5, 'left': 0.5, 'image': ''},
       ],
+      [
+        {'width': 0.7776, 'height': 0.2916, 'top': 0.5, 'left': 0.5, 'image': ''},
+      ],
+      [
+        {'width': 0.375, 'height': 0.2727, 'top': 0.1, 'left': 0.15, 'image': ''},
+        {'width': 0.375, 'height': 0.2727, 'top': 0.1, 'left': 0.85, 'image': ''},
+        {'width': 0.8313, 'height': 0.2727, 'top': 0.55, 'left': 0.5, 'image': ''},
+
+
+      ],
+      [
+        {'width': 0.375, 'height': 0.2727, 'top': 0.1, 'left': 0.15, 'image': ''},
+        {'width': 0.375, 'height': 0.2727, 'top': 0.1, 'left': 0.85, 'image': ''},
+        {'width': 0.375, 'height': 0.2727, 'top': 0.55, 'left': 0.15, 'image': ''},
+        {'width': 0.375, 'height': 0.2727, 'top': 0.55, 'left': 0.85, 'image': ''},
+
+
+      ],
+
     ];
 
   await Hive.initFlutter();
   Hive.registerAdapter(AlbumAdapter());
-
+  //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_album');
 
-  // albumBox.add(album);
+  albumBox.add(album);
+
   // albumBox.deleteFromDisk();
-  print(albumBox.getAt(0)!.sheets);
+
+  // print(albumBox.getAt(0)!.sheets);
+
 
 
   runApp(
 
-      OnlineAlbum());
+      const OnlineAlbum());
 }
 
 class OnlineAlbum extends StatelessWidget {
@@ -44,7 +69,7 @@ class OnlineAlbum extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // SQLiteDbProvider.db.getAllProducts().then((value) => {print(value[0].sheets)});
+
 
     return const MaterialApp(
       title: 'Онлайн альбом',

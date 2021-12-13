@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class PhotoPlaceholder extends StatelessWidget {
@@ -18,20 +20,23 @@ class PhotoPlaceholder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       alignment: FractionalOffset(left, top),
       child: FractionallySizedBox(
           widthFactor: width,
           heightFactor: height,
-          child:
-              image == ''?
-          Container(
-            color: Colors.grey,
-          ):
-              Container(
-                color: Colors.lightGreen,
-              )
-      ),
+          child: image == ''
+              ? Container(
+                  color: Colors.grey,
+                )
+              : Container(
+                  // color: Colors.lightGreen,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image:  FileImage(File(image)), fit: BoxFit.fill),
+                  ),
+                )),
     );
   }
 }

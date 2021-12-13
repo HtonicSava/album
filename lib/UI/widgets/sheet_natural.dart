@@ -1,43 +1,43 @@
+import 'dart:io';
+
 import 'package:album/UI/screens/dialog_choosing_image_from_phone.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'photo_placeholder.dart';
 import 'sheet_template.dart';
+import 'package:image/image.dart' as imageLib;
+
 
 class SheetNatural extends StatelessWidget implements SheetTemplate {
-
   final photos;
   final sheetIndex;
-  final VoidCallback callback;
+  final sheetPropCoef;
 
-  const SheetNatural(
-      {Key? key,
-      required this.callback,
+  const SheetNatural({
+    Key? key,
+    this.photos,
+    required this.sheetIndex,
+    this.sheetPropCoef,
+  }) : super(key: key);
 
-      this.photos, this.sheetIndex})
-      : super(key: key);
-
-  //TODO Реализовать вызов всплывающего окна с возможностью добавления изображения вместо PhotoPlaceholder
   @override
-  createPlaceHolders(photos,  [context, albumRedactorBloc]) {
+  createPlaceHolders(photos, [context, albumRedactorBloc]) {
     List<Widget> result = [];
     for (var element in photos) {
       result.add(
         GestureDetector(
           onTap: () => {
-            callback(),
-            albumRedactorBloc.add(GetAlbumRedactorPlaceholderProportion([
-              element['width'] / element['height'],
-              photos.indexOf(element),
-              sheetIndex
-
-            ]
-
-            )),
-            print('${photos.indexOf(element)}'),
+            albumRedactorBloc.add(GetAlbumRedactorPlaceholderParams([
+              element['height'],
+              element['width'],
+              sheetIndex,
+              photos.indexOf(element)
+            ])),
+            // print('${photos.indexOf(element)}'),
           },
           child: PhotoPlaceholder(
             width: element['width'],
@@ -57,17 +57,18 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
     final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context);
 
     return (photos.isNotEmpty)
-        ? AspectRatio(
-            aspectRatio: 1 / 2,
+        ?
+
+    AspectRatio(
+            aspectRatio: sheetPropCoef,
             child: Container(
               color: Colors.red,
               child: Padding(
                 padding: const EdgeInsets.all(0),
                 child: BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
                   listenWhen: (previousState, state) {
-                    print(state);
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
-                      if (state.proportion[0].toString()[1] != 'f') {
+                      if (state.proportion[0] != 0) {
                         return true;
                       } else {
                         return false;
@@ -77,17 +78,84 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   },
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
+                      print('\/n');
+                      print(state.props);
+                      print(state.props.runtimeType);
+                      print('\/n');
+
                       showGeneralDialog(
                           context: context,
                           pageBuilder:
                               (context, animation, secondaryAnimation) {
-                            return DialogChoosingImage(stateBloc: state);
-                          }).then((exit) {
+                            return DialogChoosingImage(
+                                sheetPropCoef: sheetPropCoef,
+                                placeholderHeight: state.props[1],
+                                placeholderWidth: state.props[0],
+                                placeholderIndex: state.props[3],
+                                sheetIndex: state.props[2],
+                                sheetWidth: state.props[4],
+                                sheetHeight: state.props[5],
+
+                            );
+
+                          }).then((exit) async {
+                        //TODO Сделать оптимизацию проверки условий
                         if (exit == null) {
+                          //Нажата кнопка "закрыть"
                           albumRedactorBloc
-                              .add(const GetAlbumRedactorPlaceholderProportion(
-                            [{'f'}],
+                              .add(const GetAlbumRedactorPlaceholderParams(
+                              [0]
+                            ,
                           ));
+                          return;
+                        } else {
+                          print(exit);
+                          // Обработка приходящего из диалога ответа. При сохранении вылетает эксепшен, который не позволяет передать в блок несуществующий файл
+                          try {
+                            if ((exit as Map)['saveFlag']) {
+                              //TODO перенести логику сохранения изображения в блок
+                              final directory =
+                                  await getExternalStorageDirectory();
+                              final myImagePath =
+                                  '${directory!.path}/SavedAlbumImages';
+                              print(myImagePath);
+                              //TODO оптимизировать с помощью проверки существования директории
+                              //TODO передать информацию об изменениях изображения и сохранить, учитывая их
+                              await Directory(myImagePath).create();
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
+
+                              // await (exit)['image'].copy(
+                              //     '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png');
+                              // print(savedImage);
+
+
+                              imageLib.Image? image = imageLib.decodePng((exit)['image'].readAsBytesSync());
+                              imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
+                              File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
+                              // imageLib.Image? image = imageLib.decodePng(File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').readAsBytesSync());
+                              //
+                              // imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
+                              //
+                              // File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+
+                              (exit)['image'] =
+                                  '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
+                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+
+                            }
+                            albumRedactorBloc.add(GetUpdatedAlbum([exit]));
+                          } catch (error) {
+                            print(error);
+                          } finally {
+                            albumRedactorBloc
+                                .add(const GetAlbumRedactorPlaceholderParams(
+                                [0]
+                            ));
+                          }
                           return;
                         }
                       });
@@ -102,6 +170,4 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
           )
         : const SizedBox();
   }
-
-
 }
