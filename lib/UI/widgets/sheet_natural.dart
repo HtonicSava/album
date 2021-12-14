@@ -11,7 +11,6 @@ import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 import 'package:image/image.dart' as imageLib;
 
-
 class SheetNatural extends StatelessWidget implements SheetTemplate {
   final photos;
   final sheetIndex;
@@ -57,9 +56,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
     final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context);
 
     return (photos.isNotEmpty)
-        ?
-
-    AspectRatio(
+        ? AspectRatio(
             aspectRatio: sheetPropCoef,
             child: Container(
               color: Colors.red,
@@ -78,34 +75,31 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                   },
                   listener: (context, state) {
                     if (state is AlbumRedactorShowPopupSheetRedactor) {
-                      print('\/n');
-                      print(state.props);
-                      print(state.props.runtimeType);
-                      print('\/n');
+                      // print('\/n');
+                      // print(state.props);
+                      // print(state.props.runtimeType);
+                      // print('\/n');
 
                       showGeneralDialog(
                           context: context,
                           pageBuilder:
                               (context, animation, secondaryAnimation) {
                             return DialogChoosingImage(
-                                sheetPropCoef: sheetPropCoef,
-                                placeholderHeight: state.props[1],
-                                placeholderWidth: state.props[0],
-                                placeholderIndex: state.props[3],
-                                sheetIndex: state.props[2],
-                                sheetWidth: state.props[4],
-                                sheetHeight: state.props[5],
-
+                              sheetPropCoef: sheetPropCoef,
+                              placeholderHeight: state.props[1],
+                              placeholderWidth: state.props[0],
+                              placeholderIndex: state.props[3],
+                              sheetIndex: state.props[2],
+                              sheetWidth: state.props[4],
+                              sheetHeight: state.props[5],
                             );
-
                           }).then((exit) async {
                         //TODO Сделать оптимизацию проверки условий
                         if (exit == null) {
                           //Нажата кнопка "закрыть"
                           albumRedactorBloc
                               .add(const GetAlbumRedactorPlaceholderParams(
-                              [0]
-                            ,
+                            [0],
                           ));
                           return;
                         } else {
@@ -122,39 +116,46 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                               //TODO оптимизировать с помощью проверки существования директории
                               //TODO передать информацию об изменениях изображения и сохранить, учитывая их
                               await Directory(myImagePath).create();
-                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
-
 
                               // await (exit)['image'].copy(
                               //     '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png');
                               // print(savedImage);
 
+                              print(
+                                  '${(exit)['imageStartCordsForCropping']} @@@@@@@@@@');
+                              print(
+                                  '${(exit)['croppingSizes']} @@@@@@@@@@@@@@');
 
-                              imageLib.Image? image = imageLib.decodePng((exit)['image'].readAsBytesSync());
-                              imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
-                              File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+                              imageLib.Image? image = imageLib
+                                  .decodePng((exit)['image'].readAsBytesSync());
 
-                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
+                              imageLib.Image? resizedImage = imageLib.copyResize(image!, width: (exit)['imageResizeParams']['width'].round(), height: (exit)['imageResizeParams']['height'].round()) ;
+
+                              imageLib.Image croppedImage = imageLib.copyCrop(
+                                  resizedImage,
+                                  (exit)['imageStartCordsForCropping']['x'].round(),
+                                  (exit)['imageStartCordsForCropping']['y'].round(),
+                                  (exit)['croppingSizes']['width'].round(),
+                                  (exit)['croppingSizes']['height'].round());
+                              File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png')
+                                  .writeAsBytesSync(
+                                      imageLib.encodePng(croppedImage));
 
                               // imageLib.Image? image = imageLib.decodePng(File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').readAsBytesSync());
                               //
-                              // imageLib.Image imageTest = imageLib.copyCrop(image!, 0, 0, 300, 300);
+                              // imageLib.Image croppedImage = imageLib.copyCrop(image!, 0, 0, 300, 300);
                               //
-                              // File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(imageTest));
+                              // File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(croppedImage));
 
                               (exit)['image'] =
                                   '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
-                              print('${(exit)['image'].runtimeType} @@@@@@@@@@@@@@@@@');
-
                             }
                             albumRedactorBloc.add(GetUpdatedAlbum([exit]));
                           } catch (error) {
                             print(error);
                           } finally {
-                            albumRedactorBloc
-                                .add(const GetAlbumRedactorPlaceholderParams(
-                                [0]
-                            ));
+                            albumRedactorBloc.add(
+                                const GetAlbumRedactorPlaceholderParams([0]));
                           }
                           return;
                         }

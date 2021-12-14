@@ -18,17 +18,8 @@ class DialogChoosingImage extends StatefulWidget {
   final sheetWidth;
   final sheetHeight;
 
-  final GlobalKey _keyBorder = GlobalKey();
-  final GlobalKey _keyPhoto = GlobalKey();
 
-  void _getSizesAndPosition(){
-    // final RenderBox renderBox = _widgetKey.currentContext?.findRenderObject() as RenderBox;
-    // final RenderObject renderBoxBorder = _keyBorder.currentContext?.findRenderObject() as RenderBox;
-    final Size? sizeBorder = _keyBorder.currentContext!.size;
-    print('SIZE of border box: ${sizeBorder}');
-  }
-
-  DialogChoosingImage(
+  const DialogChoosingImage(
       {Key? key,
       this.placeholderIndex,
       this.sheetIndex,
@@ -50,10 +41,43 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   var imagePicker;
   var sheetIndex;
   var placeholderIndex;
-  var _borderSize =Size.zero;
+  var _borderSizeCorrected = Size.zero;
   var placeholderWidth;
   var placeholderHeight;
+  late double _generalIncreaseCoef;
 
+  late double _imageStartXCord;
+  late double _imageStartYCord;
+
+  late double _resizableImageWidth;
+  late double _resizableImageHeight;
+
+
+  final GlobalKey _keyBorder = GlobalKey();
+  final GlobalKey _keyPhoto = GlobalKey();
+
+  _getSizesAndPosition(GlobalKey key){
+
+    try {
+      final RenderBox renderBox = key.currentContext
+          ?.findRenderObject() as RenderBox;
+      // final RenderObject renderBoxBorder = _keyBorder.currentContext?.findRenderObject() as RenderBox;
+      final Size? sizeBorder = key.currentContext!.size;
+
+      final boxPosition = renderBox.localToGlobal(Offset.zero);
+
+      print('SIZE of ${key}: ${sizeBorder}');
+      print('POSITION of ${key}: ${boxPosition}');
+      return {
+        'SIZE': sizeBorder,
+        'POSITION': boxPosition,
+      };
+    } catch(error){
+      print(error);
+    }
+
+
+  }
 
 
 
@@ -93,6 +117,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                   //TODO Сделать подгрузку существующего изображения (при наличии такового)
                   startHeight: _image_height,
                   startWidth: _image_width,
+                  globalKeyLink: _keyPhoto,
                   child: Image.file(
                     _image,
                     fit: BoxFit.fill,
@@ -112,20 +137,21 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               padding: const EdgeInsets.all(20),
               child: Center(
                 child: AspectRatio(
+                  key: _keyBorder,
                   aspectRatio: ((placeholderWidth * widget.sheetWidth)/(placeholderHeight * widget.sheetHeight)),
                   child: MeasureSize(
                     onChange: (size) {
                       setState(() {
-                        _borderSize = size;
-                        _widthIncreaseCoef = _borderSize.width / (placeholderWidth * widget.sheetWidth);
-                        _heightIncreaseCoef =  _borderSize.height / (placeholderHeight * widget.sheetHeight);
-
+                        _borderSizeCorrected = size;
+                        _widthIncreaseCoef = _borderSizeCorrected.width / (placeholderWidth * widget.sheetWidth);
+                        _heightIncreaseCoef =  _borderSizeCorrected.height / (placeholderHeight * widget.sheetHeight);
+                        _generalIncreaseCoef = (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
 
                         print('${widget.sheetWidth} ----- Ширина шаблона');
                         print('${widget.sheetHeight} ----- Высота шаблона');
 
-                        print('${_borderSize.width} ----- Скорректированная ширина ограничивающей рамки');
-                        print('${_borderSize.height} ----- Скорректированная высота ограничивающей рамки');
+                        print('${_borderSizeCorrected.width} ----- Скорректированная ширина ограничивающей рамки');
+                        print('${_borderSizeCorrected.height} ----- Скорректированная высота ограничивающей рамки');
 
                         print('${placeholderWidth * widget.sheetWidth} ----- Абсолютная ширина ограничивающей рамки');
                         print('${placeholderHeight * widget.sheetHeight} ----- Абсолютная высота ограничивающей рамки');
@@ -137,7 +163,6 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
                     },
                     onChangeOffset: (offset) {
-                      print("$offset !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     },
                     child: Container(
                       // color: Colors.white.withOpacity(0.1),
@@ -169,8 +194,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
                   setState(() {
                     _image = image;
-                    _image_height = decodedImage.height.toDouble() * (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
-                    _image_width = decodedImage.width.toDouble() * (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
+                    _image_height = decodedImage.height.toDouble() * _generalIncreaseCoef;
+                    _image_width = decodedImage.width.toDouble() * _generalIncreaseCoef;
 
                     print('${decodedImage.height.toDouble()} - высота загруженного изображения');
                     print('${decodedImage.width.toDouble()} - ширина загруженного изображения');
@@ -187,7 +212,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
-                  // widget._getSizesAndPosition();
+
+
                   Navigator.of(context).pop();
                 },
                 child: const Text(
@@ -197,12 +223,28 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
+                  _imageStartXCord = _getSizesAndPosition(_keyBorder)['POSITION'].dx - _getSizesAndPosition(_keyPhoto)['POSITION'].dx;
+                  _imageStartYCord = _getSizesAndPosition(_keyBorder)['POSITION'].dy - _getSizesAndPosition(_keyPhoto)['POSITION'].dy;
+                  _resizableImageWidth = _getSizesAndPosition(_keyPhoto)['SIZE'].width;
+                  _resizableImageHeight = _getSizesAndPosition(_keyPhoto)['SIZE'].height;
                   Navigator.of(context).pop({
                     'sheetIndex': sheetIndex,
                     'placeholderIndex': placeholderIndex,
                     'saved': true,
                     'saveFlag': true,
-                    'image': _image
+                    'image': _image,
+                    'imageResizeParams': {
+                      'width':  _resizableImageWidth / _generalIncreaseCoef,
+                      'height': _resizableImageHeight / _generalIncreaseCoef,
+                    },
+                    'imageStartCordsForCropping': {
+                      'x': _imageStartXCord / _generalIncreaseCoef,
+                      'y': _imageStartYCord / _generalIncreaseCoef,
+                    },
+                    'croppingSizes': {
+                      'width': placeholderWidth * widget.sheetWidth,
+                      'height': placeholderHeight * widget.sheetHeight,
+                    }
                   });
                 },
                 child: const Text(

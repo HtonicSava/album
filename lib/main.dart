@@ -17,12 +17,13 @@ void main() async {
         {'width': 0.6, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
       ],
       [
-        {'width': 0.5, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
-        {'width': 0.5, 'height': 0.2, 'top': 0.4, 'left': 0.5, 'image': ''},
-        {'width': 0.5, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
+        {'width': 0.75, 'height': 0.5454, 'top': 0.5, 'left': 0.5, 'image': ''},
       ],
       [
-        {'width': 0.4888, 'height': 0.3668, 'top': 0.5, 'left': 0.5, 'image': ''},
+        {'width': 0.375, 'height': 0.2727, 'top': 0.5, 'left': 0.5, 'image': ''},
+      ],
+      [
+        {'width': 0.1875, 'height': 0.13635, 'top': 0.5, 'left': 0.5, 'image': ''},
       ],
       [
         {'width': 0.7776, 'height': 0.2916, 'top': 0.5, 'left': 0.5, 'image': ''},
@@ -50,7 +51,7 @@ void main() async {
   //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_album');
 
-  albumBox.add(album);
+  // albumBox.add(album);
 
   // albumBox.deleteFromDisk();
 

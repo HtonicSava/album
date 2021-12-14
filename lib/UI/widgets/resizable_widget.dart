@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ResizableWidget extends StatefulWidget {
-  const ResizableWidget({required this.child, Key? key,this.startHeight = 200.0, this.startWidth = 200.0}) : super(key: key);
+  const ResizableWidget({required this.child, Key? key,this.startHeight = 200.0, this.startWidth = 200.0, required this.globalKeyLink}) : super(key: key);
   final Widget child;
-
+  final GlobalKey globalKeyLink;
   final double startHeight;
   final double startWidth;
 
@@ -51,6 +51,7 @@ class _ResizableWidgetState extends State<ResizableWidget> {
             top: top,
             left: left,
             child: ManipulatingImage(
+              key: widget.globalKeyLink,
               onDrag: (dx, dy) {
                 setState(() {
                   top = top + dy;
