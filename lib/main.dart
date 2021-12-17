@@ -73,6 +73,7 @@ class OnlineAlbum extends StatelessWidget {
 
 
     return const MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
       home: Home(),
     );
