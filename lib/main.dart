@@ -123,22 +123,82 @@ class OnlineAlbum extends StatefulWidget {
 
   @override
   State<OnlineAlbum> createState() => _OnlineAlbumState();
+
 }
 
 class _OnlineAlbumState extends State<OnlineAlbum> {
+
+  bool _authorisated = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+
+    void _handleAuthorisationTapped(){
+      setState(() {
+        _authorisated = true;
+      });
+    }
+
+    return  MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Онлайн альбом',
         home: Navigator(
-          pages: [
-            MaterialPage(
-              child: PersonalAccount(),
-            )
+          pages:  [
+            const MaterialPage(
+              key: ValueKey('PersonalAccount'),
+              child: PersonalAccount(
+                // onTapped: _handleAuthorisationTapped,
+              ),
+
+            ),
+            if (_authorisated == false) AuthorisationPage()
           ],
+          onPopPage: (route, result) {
+            if (!route.didPop(result)) {
+              return false;
+            }
+
+            // Update the list of pages by setting _selectedBook to null
+            setState(() {
+              _authorisated = false;
+            });
+
+            return true;
+          },
         ));
 
     // return const  PersonalAccount();
   }
+}
+
+class AuthorisationPage extends Page{
+  @override
+  Route createRoute(BuildContext context) {
+    return MaterialPageRoute(
+      settings: this,
+      builder: (BuildContext context) {
+        return Authorisation();
+      },
+    );
+  }
+
+}
+
+class PersonalAccountPage extends Page {
+
+  @override
+  Route createRoute(BuildContext context) {
+      return MaterialPageRoute(
+      settings: this,
+      builder: (BuildContext context) {
+        return PersonalAccount();
+      },
+    );
+  }
+
 }
