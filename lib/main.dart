@@ -1,6 +1,7 @@
 import 'dart:io';
 
-import 'package:album/UI/screens/authorisation.dart';
+import 'package:album/UI/screens/album_redactor.dart';
+import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
@@ -102,16 +103,33 @@ void main() async {
       ],
     ];
 
+  Album albumSecond = Album()
+    ..sheetsHeight = 4400.0
+    ..sheetsWidth = 3200.0
+    ..sheets = [
+      [
+        {'width': 0.9, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
+        {'width': 0.9, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
+      ],
+      [
+        {'width': 0.9, 'height': 0.9, 'top': 0.5, 'left': 0.5, 'image': ''},
+      ],
+    ];
+
   await Hive.initFlutter();
   Hive.registerAdapter(AlbumAdapter());
   //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_album');
 
   // albumBox.add(album);
+  // albumBox.add(albumSecond);
+
 
   // albumBox.deleteFromDisk();
 
-  // print(albumBox.getAt(0)!.sheets);
+  print(albumBox.getAt(0)!.sheets);
+  print(albumBox.getAt(1)!.sheets);
+
 
   runApp(const OnlineAlbum());
 }
@@ -123,12 +141,11 @@ class OnlineAlbum extends StatefulWidget {
 
   @override
   State<OnlineAlbum> createState() => _OnlineAlbumState();
-
 }
 
 class _OnlineAlbumState extends State<OnlineAlbum> {
-
-  bool _authorisated = false;
+  bool _authorizated = false;
+  int _chosenAlbum = -1;
 
   @override
   void initState() {
@@ -137,35 +154,52 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
 
   @override
   Widget build(BuildContext context) {
-
-    void _handleAuthorisationTapped(){
+    void _handleAuthorisationTapped() {
+      // print(_authorizated);
       setState(() {
-        _authorisated = true;
+        _authorizated = true;
       });
     }
 
-    return  MaterialApp(
+    void _handleAlbumTapped(albumNumber) {
+      setState(() {
+        _chosenAlbum = albumNumber;
+      });
+      // print(_chosenAlbum);
+    }
+
+    // print(_chosenAlbum);
+    // print(_chosenAlbum.runtimeType);
+
+    return MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Онлайн альбом',
         home: Navigator(
-          pages:  [
-            const MaterialPage(
-              key: ValueKey('PersonalAccount'),
+          pages: [
+            MaterialPage(
+              key: ValueKey('PersonalAccountPage'),
               child: PersonalAccount(
-                // onTapped: _handleAuthorisationTapped,
-              ),
+                onAlbumTapped: _handleAlbumTapped,
 
+              ),
             ),
-            if (_authorisated == false) AuthorisationPage()
+            if (_authorizated == false)
+              AuthorisationPage(onTapped: _handleAuthorisationTapped),
+            // MaterialPage(
+            //   child: AlbumRedactor(),
+            // ),
+            if (_chosenAlbum != -1)
+              AlbumRedactorPage(chosenAlbum: _chosenAlbum),
           ],
           onPopPage: (route, result) {
+            print("from onPopMethod ${route} ${result}");
             if (!route.didPop(result)) {
               return false;
             }
 
-            // Update the list of pages by setting _selectedBook to null
             setState(() {
-              _authorisated = false;
+              // _authorizated = false;
+              _chosenAlbum = -1;
             });
 
             return true;
@@ -176,29 +210,50 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
   }
 }
 
-class AuthorisationPage extends Page{
+class AlbumRedactorPage extends Page {
+  final int chosenAlbum;
+
+  const AlbumRedactorPage({LocalKey? key, required this.chosenAlbum})
+      : super(key: key);
+
   @override
   Route createRoute(BuildContext context) {
     return MaterialPageRoute(
       settings: this,
       builder: (BuildContext context) {
-        return Authorisation();
+        return AlbumRedactor(albumIndex: chosenAlbum);
       },
     );
   }
-
 }
 
-class PersonalAccountPage extends Page {
+class AuthorisationPage extends Page {
+  final VoidCallback onTapped;
+
+  const AuthorisationPage({required this.onTapped, LocalKey? key})
+      : super(key: key);
 
   @override
   Route createRoute(BuildContext context) {
-      return MaterialPageRoute(
+    return MaterialPageRoute(
       settings: this,
       builder: (BuildContext context) {
-        return PersonalAccount();
+        return Authorization(
+          onTapped: onTapped,
+        );
       },
     );
   }
-
 }
+
+// class PersonalAccountPage extends Page {
+//   @override
+//   Route createRoute(BuildContext context) {
+//     return MaterialPageRoute(
+//       settings: this,
+//       builder: (BuildContext context) {
+//         return PersonalAccount();
+//       },
+//     );
+//   }
+// }

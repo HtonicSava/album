@@ -2,7 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class PersonalAccount extends StatelessWidget {
-  const PersonalAccount({Key? key}) : super(key: key);
+
+  final ValueSetter onAlbumTapped;
+
+  const PersonalAccount({Key? key, required this.onAlbumTapped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +20,7 @@ class PersonalAccount extends StatelessWidget {
             ),
           ),
         ],
-        title: const Text('Page title'),
+        title: const Text('Личный кабинет'),
         foregroundColor: const Color(0xFFA5A5A5),
         backgroundColor: const Color(0xFFDDDDDD),
       ),
@@ -179,45 +182,50 @@ class PersonalAccount extends StatelessWidget {
                           child: ListView.separated(
                               scrollDirection: Axis.vertical,
                               itemBuilder: (context, index) {
-                                return SizedBox(
-                                  // width: 231,
-                                  height: 380,
-                                  child: Column(
-                                    children: [
-                                      const Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          'Название альбома',
-                                          style: TextStyle(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                      ),
-                                      const Padding(
-                                        padding: EdgeInsets.only(bottom: 8.0),
-                                        child: Align(
+                                return GestureDetector(
+                                  onTap: () => {
+                                    onAlbumTapped(index)
+                                  },
+                                  child: SizedBox(
+                                    // width: 231,
+                                    height: 380,
+                                    child: Column(
+                                      children: [
+                                        const Align(
                                           alignment: Alignment.centerLeft,
                                           child: Text(
-                                            '15 стр.',
+                                            'Название альбома',
                                             style: TextStyle(
-                                                fontSize: 16,
-                                                color: Color(0xFFA5A5A5)),
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold),
                                           ),
                                         ),
-                                      ),
-                                      Expanded(
-                                        child: AspectRatio(
-                                          aspectRatio: 1,
-                                          child: Container(
-                                            decoration: const BoxDecoration(
-                                              color: Color(0xFFE4E4E4),
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(16)),
+                                        const Padding(
+                                          padding: EdgeInsets.only(bottom: 8.0),
+                                          child: Align(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              '15 стр.',
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  color: Color(0xFFA5A5A5)),
                                             ),
                                           ),
                                         ),
-                                      )
-                                    ],
+                                        Expanded(
+                                          child: AspectRatio(
+                                            aspectRatio: 1,
+                                            child: Container(
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFE4E4E4),
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(16)),
+                                              ),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 );
                               },

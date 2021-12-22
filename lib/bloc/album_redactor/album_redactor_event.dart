@@ -5,10 +5,11 @@ abstract class AlbumRedactorEvent extends Equatable {
 }
 
 class InitEvent extends AlbumRedactorEvent{
-  const InitEvent();
+  final int albumIndex;
+  const InitEvent( this.albumIndex);
 
   @override
-  List<Object> get props => [];
+  List<Object> get props => [albumIndex];
 }
 
 class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {

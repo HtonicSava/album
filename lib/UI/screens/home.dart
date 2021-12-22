@@ -1,5 +1,5 @@
 // import 'album_redactor.dart';
-import 'package:album/UI/screens/authorisation.dart';
+import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +10,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
 
-        body: const PersonalAccount(),
+        // body: PersonalAccount(),
         bottomNavigationBar: BottomNavigationBar(
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(

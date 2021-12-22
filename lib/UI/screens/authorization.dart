@@ -2,14 +2,16 @@ import 'package:album/UI/icons/app_icons.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
-class Authorisation extends StatefulWidget {
-  const Authorisation({Key? key}) : super(key: key);
+class Authorization extends StatefulWidget {
+  final VoidCallback onTapped;
+  const Authorization({Key? key, required this.onTapped}) : super(key: key);
 
   @override
-  _AuthorisationState createState() => _AuthorisationState();
+  _AuthorizationState createState() => _AuthorizationState();
 }
 
-class _AuthorisationState extends State<Authorisation>
+class _AuthorizationState extends State<Authorization>
+    //TODO динамическая передача введённых данных в бд
     with SingleTickerProviderStateMixin {
   TabController? _tabController;
   late bool _passwordVisible;
@@ -219,7 +221,7 @@ class _AuthorisationState extends State<Authorisation>
                                                   BorderRadius.circular(30.0),
                                             ),
                                           ),
-                                          onPressed: () {},
+                                          onPressed: widget.onTapped,
                                           child: Ink(
                                             decoration: BoxDecoration(
                                               gradient:

@@ -16,16 +16,18 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   AlbumRedactorState get initialState => const AlbumRedactorStateInitial();
 
   late List<List<Map<String, dynamic>>> sheets;
-  late double sheetsWidth;
-  late double sheetsHeight;
+  late double _sheetsWidth;
+  late double _sheetsHeight;
+  late int _chosenAlbumIndex;
 
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
 
     if (event is InitEvent){
       print('$event from init');
-      await _updateFieldsFromHiveDb();
-      yield AlbumRedactorUpdateAlbum([sheets, sheetsWidth, sheetsHeight]);
+      await _updateFieldsFromHiveDb(event.albumIndex);
+      _chosenAlbumIndex = event.albumIndex;
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight]);
 
     }
 
@@ -40,8 +42,8 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
 
       if (event.props[0] != 0) {
-        event.props.add(sheetsWidth);
-        event.props.add(sheetsHeight);
+        event.props.add(_sheetsWidth);
+        event.props.add(_sheetsHeight);
         print(event.props);
       }
       //TODO пофиксить подгрузку старого изображения при сохранении нового
@@ -56,25 +58,25 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       print('$event from show general dialog');
       var albumBox = await Hive.openBox<Album>('box_for_album');
       final tempAlbumBox = albumBox.getAt(0);
-      await _updatePlaceholderState(albumBox, event.props[0]);
-      await _updateFieldsFromHiveDb();
-      yield AlbumRedactorUpdateAlbum([sheets, sheetsWidth, sheetsHeight]);
+      await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
+      await _updateFieldsFromHiveDb(_chosenAlbumIndex);
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight]);
 
 
       final eventPropsArgs = event.props[0] as Map;
       yield AlbumRedactorShowNaturalSheet([
         tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
         eventPropsArgs['sheetIndex'],
-        sheetsWidth/sheetsHeight,
+        _sheetsWidth/_sheetsHeight,
       ]);
     }
   }
 
-  Future _updateFieldsFromHiveDb() async {
+  Future _updateFieldsFromHiveDb(albumIndex) async {
     var albumBox = await Hive.openBox<Album>('box_for_album');
-    sheets = albumBox.getAt(0)!.sheets;
-    sheetsWidth = albumBox.getAt(0)!.sheetsWidth;
-    sheetsHeight = albumBox.getAt(0)!.sheetsHeight;
+    sheets = albumBox.getAt(albumIndex)!.sheets;
+    _sheetsWidth = albumBox.getAt(albumIndex)!.sheetsWidth;
+    _sheetsHeight = albumBox.getAt(albumIndex)!.sheetsHeight;
   }
 
   Future? _deleteImage(placeHolderParams) async {
@@ -85,10 +87,9 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
     await fileForDeleting.delete(recursive: true);
   }
 
-  Future? _updatePlaceholderState(box, placeHolderParams) async {
-    //TODO Динамическая подгрузка индекса альбома
+  Future? _updatePlaceholderState(box, placeHolderParams, albumIndex) async {
     // print('${placeHolderParams.props[0]} from _updatePlaceholderState');
-    var tempAlbumBox = box.getAt(0);
+    var tempAlbumBox = box.getAt(albumIndex);
     List<List<Map<String, dynamic>>> tempSheets = [];
 
     //TODO Оптимизация условия загрузки изображения в бд
@@ -118,7 +119,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
 
     box.putAt(
-        0,
+        albumIndex,
         Album()
           ..sheetsWidth = tempAlbumBox!.sheetsWidth
           ..sheetsHeight = tempAlbumBox.sheetsHeight
