@@ -1,17 +1,29 @@
+import 'package:album/UI/widgets/album_preview.dart';
+import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
+import 'package:album/bloc/album_redactor/album_redactor_event.dart';
+import 'package:album/bloc/album_redactor/album_redactor_state.dart';
+import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PersonalAccount extends StatelessWidget {
-
   final ValueSetter onAlbumTapped;
+  List<Album>? _albums;
 
-  const PersonalAccount({Key? key, required this.onAlbumTapped}) : super(key: key);
+  PersonalAccount({Key? key, required this.onAlbumTapped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final AlbumRedactorBloc _albumRedactorBloc =
+        BlocProvider.of<AlbumRedactorBloc>(context);
+    _albumRedactorBloc.add(const GetAlbums());
+
     return Scaffold(
       drawer: const Drawer(),
       appBar: AppBar(
+        foregroundColor: Theme.of(context).appBarTheme.foregroundColor,
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
         actions: const [
           Padding(
             padding: EdgeInsets.only(right: 20.0),
@@ -21,8 +33,6 @@ class PersonalAccount extends StatelessWidget {
           ),
         ],
         title: const Text('Личный кабинет'),
-        foregroundColor: const Color(0xFFA5A5A5),
-        backgroundColor: const Color(0xFFDDDDDD),
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -139,7 +149,8 @@ class PersonalAccount extends StatelessWidget {
                         const Align(
                           alignment: Alignment.centerLeft,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 23, top: 12, bottom: 28),
+                            padding:
+                                EdgeInsets.only(left: 23, top: 12, bottom: 28),
                             child: Text(
                               "Мои альбомы",
                               style: TextStyle(
@@ -148,131 +159,87 @@ class PersonalAccount extends StatelessWidget {
                           ),
                         ),
                         Positioned(
-                            right: 20,
-                            top: -20,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: const Icon(Icons.add),
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(const CircleBorder()),
-                                padding:
-                                    MaterialStateProperty.all(const EdgeInsets.all(20)),
-                                foregroundColor: MaterialStateProperty.all(Colors.black.withOpacity(0.8)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xFFA5A5A5)), // <-- Button color
-                                overlayColor:
-                                    MaterialStateProperty.resolveWith<Color?>(
-                                        (states) {
-                                  if (states.contains(MaterialState.pressed)) {
-                                    return Colors.white10;
-                                  } // <-- Splash color
-                                }),
+                          right: 20,
+                          top: -20,
+                          child: ElevatedButton(
+                            onPressed: () {},
+                            child: const Icon(Icons.add),
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all(
+                                  const CircleBorder()),
+                              padding: MaterialStateProperty.all(
+                                  const EdgeInsets.all(20)),
+                              foregroundColor: MaterialStateProperty.all(
+                                  Colors.black.withOpacity(0.8)),
+                              backgroundColor: MaterialStateProperty.all(
+                                  const Color(0xFFA5A5A5)),
+                              // <-- Button color
+                              overlayColor:
+                                  MaterialStateProperty.resolveWith<Color?>(
+                                      (states) {
+                                if (states.contains(MaterialState.pressed)) {
+                                  return Colors.white10;
+                                } // <-- Splash color
+                              }),
                             ),
                           ),
                         ),
                       ],
                     ),
-
                     SizedBox(
                       height: MediaQuery.of(context).size.height - 290,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 32.0),
                         child: Padding(
                           padding: const EdgeInsets.only(bottom: 32.0),
-                          child: ListView.separated(
-                              scrollDirection: Axis.vertical,
-                              itemBuilder: (context, index) {
-                                return GestureDetector(
-                                  onTap: () => {
-                                    onAlbumTapped(index)
-                                  },
-                                  child: SizedBox(
-                                    // width: 231,
-                                    height: 380,
-                                    child: Column(
-                                      children: [
-                                        const Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            'Название альбома',
-                                            style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                        ),
-                                        const Padding(
-                                          padding: EdgeInsets.only(bottom: 8.0),
-                                          child: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              '15 стр.',
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  color: Color(0xFFA5A5A5)),
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: AspectRatio(
-                                            aspectRatio: 1,
-                                            child: Container(
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFFE4E4E4),
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(16)),
-                                              ),
-                                            ),
-                                          ),
+                          child: BlocBuilder<AlbumRedactorBloc,
+                                  AlbumRedactorState>(
+                              bloc: _albumRedactorBloc,
+                              buildWhen: (previousState, state) {
+                                if (state is AlbumRedactorShowAlbums) {
+                                  // _albums = state.albums;
+                                  print("${state} from buildWhen");
+
+                                  return true;
+                                }
+
+                                return false;
+                              },
+                              builder: (context, state) {
+                                print("${state} from builder");
+                                if (state is AlbumRedactorShowAlbums) {
+                                  _albums = state.albums;
+                                  return _albums == null
+                                      ? const Center(
+                                          child: CircularProgressIndicator(),
                                         )
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                              separatorBuilder: (context, index) {
-                                return const SizedBox(height: 12);
-                              },
-                              itemCount: 5),
+                                      : ListView.separated(
+                                          scrollDirection: Axis.vertical,
+                                          itemCount: _albums!.length,
+                                          itemBuilder: (context, index) {
+                                            return GestureDetector(
+                                              onTap: () =>
+                                                  {onAlbumTapped(index)},
+                                              child: AlbumPreview(
+                                                albumPagesNumber:
+                                                    _albums![index]
+                                                        .sheetsNumber,
+                                                albumName: _albums![index].name,
+                                              ),
+                                            );
+                                          },
+                                          separatorBuilder: (context, index) {
+                                            return const SizedBox(height: 12);
+                                          },
+                                        );
+                                } else
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                              }),
                         ),
                       ),
                     ),
-                    // Padding(
-                    //   padding: const EdgeInsets.only(
-                    //     top: 24,
-                    //   ),
-                    //   child: SizedBox(
-                    //     width: 292,
-                    //     height: 65,
-                    //     child: ElevatedButton(
-                    //       style: ElevatedButton.styleFrom(
-                    //         padding: EdgeInsets.zero,
-                    //         shape: RoundedRectangleBorder(
-                    //           borderRadius: BorderRadius.circular(30.0),
-                    //         ),
-                    //       ),
-                    //       onPressed: () {},
-                    //       child: Ink(
-                    //         decoration: BoxDecoration(
-                    //           gradient: const LinearGradient(colors: [
-                    //             Color(0xFFBDBBBE),
-                    //             Color(0xFF9D9EA3),
-                    //           ]),
-                    //           // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
-                    //           borderRadius: BorderRadius.circular(30.0),
-                    //         ),
-                    //         child: Container(
-                    //           alignment: Alignment.center,
-                    //           child: const Text(
-                    //             'Создать альбом',
-                    //             style: TextStyle(
-                    //               fontSize: 18,
-                    //             ),
-                    //           ),
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // )
                   ],
                 ),
               ),

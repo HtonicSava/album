@@ -19,6 +19,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   late double _sheetsWidth;
   late double _sheetsHeight;
   late int _chosenAlbumIndex;
+  late List<Album> _albums;
 
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
@@ -27,8 +28,16 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       print('$event from init');
       await _updateFieldsFromHiveDb(event.albumIndex);
       _chosenAlbumIndex = event.albumIndex;
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight]);
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight], albumName: _albums[_chosenAlbumIndex].name);
 
+    }
+
+    else if ( event is GetAlbums) {
+      print('$event from GetAlbums');
+      _albums = await _updateAlbumsFromHiveDb();
+
+
+      yield AlbumRedactorShowAlbums(albums: _albums);
     }
 
     else if (event is GetAlbumRedactorNaturalSheet) {
@@ -56,11 +65,11 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
     } else if (event is GetUpdatedAlbum) {
       print('$event from show general dialog');
-      var albumBox = await Hive.openBox<Album>('box_for_album');
+      var albumBox = await Hive.openBox<Album>('box_for_albums');
       final tempAlbumBox = albumBox.getAt(0);
       await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
       await _updateFieldsFromHiveDb(_chosenAlbumIndex);
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight]);
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],  albumName: _albums[_chosenAlbumIndex].name);
 
 
       final eventPropsArgs = event.props[0] as Map;
@@ -72,8 +81,18 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
     }
   }
 
+  Future _updateAlbumsFromHiveDb() async {
+    var albumBox = await Hive.openBox<Album>('box_for_albums');
+    List<Album> _tempAlbums = [];
+    for (Album album in albumBox.values){
+      _tempAlbums.add(album);
+    }
+    return _tempAlbums;
+  }
+
   Future _updateFieldsFromHiveDb(albumIndex) async {
-    var albumBox = await Hive.openBox<Album>('box_for_album');
+    //TODO Оптимизировать обращения к бд посредством выноса albumBox в атрибут класса?
+    var albumBox = await Hive.openBox<Album>('box_for_albums');
     sheets = albumBox.getAt(albumIndex)!.sheets;
     _sheetsWidth = albumBox.getAt(albumIndex)!.sheetsWidth;
     _sheetsHeight = albumBox.getAt(albumIndex)!.sheetsHeight;

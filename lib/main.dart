@@ -5,12 +5,15 @@ import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:path_provider/path_provider.dart';
-import 'UI/screens/home.dart';
+import 'bloc/album_redactor/album_redactor_bloc.dart';
+import 'bloc/album_redactor/album_redactor_state.dart';
 
 void main() async {
   Album album = Album()
+    ..sheetsNumber = 7
+    ..name = 'Альбом от команды №1'
     ..sheetsHeight = 4400.0
     ..sheetsWidth = 3200.0
     ..sheets = [
@@ -104,6 +107,8 @@ void main() async {
     ];
 
   Album albumSecond = Album()
+    ..sheetsNumber = 2
+    ..name = 'Альбом от команды №2'
     ..sheetsHeight = 4400.0
     ..sheetsWidth = 3200.0
     ..sheets = [
@@ -119,17 +124,18 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(AlbumAdapter());
   //TODO Заполнение пустой БД
-  var albumBox = await Hive.openBox<Album>('box_for_album');
+  var albumBox = await Hive.openBox<Album>('box_for_albums');
 
   // albumBox.add(album);
   // albumBox.add(albumSecond);
 
+  // print(albumBox.values);
+
+  // for (Album album in albumBox.values){
+  //   print(album.name);
+  // }
 
   // albumBox.deleteFromDisk();
-
-  print(albumBox.getAt(0)!.sheets);
-  print(albumBox.getAt(1)!.sheets);
-
 
   runApp(const OnlineAlbum());
 }
@@ -145,7 +151,7 @@ class OnlineAlbum extends StatefulWidget {
 
 class _OnlineAlbumState extends State<OnlineAlbum> {
   bool _authorizated = false;
-  int _chosenAlbum = -1;
+  int _chosenAlbumIndex = -1;
 
   @override
   void initState() {
@@ -163,7 +169,7 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
 
     void _handleAlbumTapped(albumNumber) {
       setState(() {
-        _chosenAlbum = albumNumber;
+        _chosenAlbumIndex = albumNumber;
       });
       // print(_chosenAlbum);
     }
@@ -172,15 +178,21 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
     // print(_chosenAlbum.runtimeType);
 
     return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: 'Онлайн альбом',
-        home: Navigator(
+      theme: ThemeData(
+          appBarTheme: const AppBarTheme(
+        foregroundColor: Color(0xFFA5A5A5),
+        backgroundColor: Color(0xFFDDDDDD),
+      )),
+      debugShowCheckedModeBanner: false,
+      title: 'Онлайн альбом',
+      home: BlocProvider(
+        create: (context) => AlbumRedactorBloc(AlbumRedactorStateInitial()),
+        child: Navigator(
           pages: [
             MaterialPage(
               key: ValueKey('PersonalAccountPage'),
               child: PersonalAccount(
                 onAlbumTapped: _handleAlbumTapped,
-
               ),
             ),
             if (_authorizated == false)
@@ -188,8 +200,8 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
             // MaterialPage(
             //   child: AlbumRedactor(),
             // ),
-            if (_chosenAlbum != -1)
-              AlbumRedactorPage(chosenAlbum: _chosenAlbum),
+            if (_chosenAlbumIndex != -1)
+              AlbumRedactorPage(chosenAlbum: _chosenAlbumIndex),
           ],
           onPopPage: (route, result) {
             print("from onPopMethod ${route} ${result}");
@@ -199,12 +211,14 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
 
             setState(() {
               // _authorizated = false;
-              _chosenAlbum = -1;
+              _chosenAlbumIndex = -1;
             });
 
             return true;
           },
-        ));
+        ),
+      ),
+    );
 
     // return const  PersonalAccount();
   }

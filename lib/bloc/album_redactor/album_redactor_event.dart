@@ -4,6 +4,16 @@ abstract class AlbumRedactorEvent extends Equatable {
   const AlbumRedactorEvent();
 }
 
+class GetAlbums extends AlbumRedactorEvent{
+
+  const GetAlbums();
+
+  @override
+
+  List<Object?> get props => [];
+
+}
+
 class InitEvent extends AlbumRedactorEvent{
   final int albumIndex;
   const InitEvent( this.albumIndex);

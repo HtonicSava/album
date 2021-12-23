@@ -36,4 +36,8 @@ class Album extends HiveObject{
   late double sheetsHeight;
   @HiveField(2)
   late List<List<Map<String, dynamic>>> sheets;
+  @HiveField(3)
+  late String name;
+  @HiveField(4)
+  late int sheetsNumber;
 }
