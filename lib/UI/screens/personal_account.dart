@@ -9,12 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PersonalAccount extends StatelessWidget {
   final ValueSetter onAlbumTapped;
-  List<Album>? _albums;
 
-  PersonalAccount({Key? key, required this.onAlbumTapped}) : super(key: key);
+
+  const PersonalAccount({Key? key, required this.onAlbumTapped}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Album>? _albums;
     final AlbumRedactorBloc _albumRedactorBloc =
         BlocProvider.of<AlbumRedactorBloc>(context);
     _albumRedactorBloc.add(const GetAlbums());
@@ -198,7 +199,7 @@ class PersonalAccount extends StatelessWidget {
                               buildWhen: (previousState, state) {
                                 if (state is AlbumRedactorShowAlbums) {
                                   // _albums = state.albums;
-                                  print("${state} from buildWhen");
+                                  print("$state from buildWhen");
 
                                   return true;
                                 }
@@ -206,7 +207,7 @@ class PersonalAccount extends StatelessWidget {
                                 return false;
                               },
                               builder: (context, state) {
-                                print("${state} from builder");
+                                print("$state from builder");
                                 if (state is AlbumRedactorShowAlbums) {
                                   _albums = state.albums;
                                   return _albums == null
@@ -232,10 +233,11 @@ class PersonalAccount extends StatelessWidget {
                                             return const SizedBox(height: 12);
                                           },
                                         );
-                                } else
+                                } else {
                                   return const Center(
                                     child: CircularProgressIndicator(),
                                   );
+                                }
                               }),
                         ),
                       ),
