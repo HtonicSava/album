@@ -50,7 +50,7 @@ class AlbumRedactor extends StatelessWidget {
                   pageName = state.albumName;
                   return Text(pageName);
                 } else {
-                  return  Text('Альбом');
+                  return Text('Альбом');
                 }
 
                 ;
@@ -129,7 +129,7 @@ class AlbumRedactor extends StatelessWidget {
                     //значения индекса sheet в props[1]
                     sheetIndex: state.props[1],
                     //значения коэффициента пропорции sheet в props[2]
-                    sheetPropCoef: state.props[2],
+                    sheetPropCoef: state.props[2], albumIndex: albumIndex,
                   );
                 } else {
                   return const SizedBox();

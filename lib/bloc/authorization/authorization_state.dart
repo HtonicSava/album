@@ -4,6 +4,21 @@ abstract class AuthorizationState extends Equatable{
   const AuthorizationState();
 }
 
+class AuthorizationStateUserRemoved extends AuthorizationState{
+  const AuthorizationStateUserRemoved();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class AuthorizationStateAuthorizated extends AuthorizationState{
+
+  const AuthorizationStateAuthorizated();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class AuthorizationStateInit extends AuthorizationState{
 
   const AuthorizationStateInit();
@@ -12,6 +27,7 @@ class AuthorizationStateInit extends AuthorizationState{
   List<Object?> get props => [];
 }
 
+// TODO implement
 class AuthorizationStateError extends AuthorizationState{
 
   const AuthorizationStateError();
@@ -21,6 +37,8 @@ class AuthorizationStateError extends AuthorizationState{
 
 }
 
+// TODO implement
+
 class AuthorizationStateProcess extends AuthorizationState{
 
   const AuthorizationStateProcess();
@@ -28,4 +46,14 @@ class AuthorizationStateProcess extends AuthorizationState{
   @override
   List<Object?> get props => [];
 
+}
+
+class AuthorizationStateShowUserData extends AuthorizationState{
+
+  final String login;
+
+  const AuthorizationStateShowUserData( {required this.login,});
+
+  @override
+  List<Object?> get props => [login];
 }

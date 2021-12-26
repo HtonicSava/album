@@ -22,3 +22,19 @@ class AuthorizationEventLogin extends AuthorizationEvent{
   @override
   List<Object?> get props => [login, password];
 }
+
+class AuthorizationEventGetLogin extends AuthorizationEvent{
+
+  const AuthorizationEventGetLogin();
+
+  @override
+  List<Object?> get props => [];
+}
+
+class AuthorizationEventExit extends AuthorizationEvent{
+
+  const AuthorizationEventExit();
+
+  @override
+  List<Object?> get props => [];
+}

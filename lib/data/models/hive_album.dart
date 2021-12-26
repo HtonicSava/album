@@ -1,6 +1,20 @@
 import 'package:hive/hive.dart';
 part 'hive_album.g.dart';
 
+@HiveType(typeId: 0)
+class Album extends HiveObject{
+  @HiveField(0)
+  late double sheetsWidth;
+  @HiveField(1)
+  late double sheetsHeight;
+  @HiveField(2)
+  late List<List<Map<String, dynamic>>> sheets;
+  @HiveField(3)
+  late String name;
+  @HiveField(4)
+  late int sheetsNumber;
+}
+
 // var Album ={
 //   'sheetsWidth': 600,
 //   'sheetsHeight': 800,
@@ -28,16 +42,3 @@ part 'hive_album.g.dart';
 //     ],
 //   ]
 // };
-@HiveType(typeId: 0)
-class Album extends HiveObject{
-  @HiveField(0)
-  late double sheetsWidth;
-  @HiveField(1)
-  late double sheetsHeight;
-  @HiveField(2)
-  late List<List<Map<String, dynamic>>> sheets;
-  @HiveField(3)
-  late String name;
-  @HiveField(4)
-  late int sheetsNumber;
-}

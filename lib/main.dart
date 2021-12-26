@@ -3,12 +3,15 @@ import 'dart:io';
 import 'package:album/UI/screens/album_redactor.dart';
 import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
+import 'package:album/bloc/authorization/authorization_bloc.dart';
+import 'package:album/bloc/authorization/authorization_state.dart';
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'bloc/album_redactor/album_redactor_bloc.dart';
 import 'bloc/album_redactor/album_redactor_state.dart';
+import 'data/models/hive_user.dart';
 
 void main() async {
   Album album = Album()
@@ -121,13 +124,24 @@ void main() async {
       ],
     ];
 
+  User user = User()
+    ..login = 'EGOR'
+    ..password = '1234';
+
+
   await Hive.initFlutter();
   Hive.registerAdapter(AlbumAdapter());
+  Hive.registerAdapter(UserAdapter());
+
   //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_albums');
+  var userBox = await Hive.openBox<User>('box_for_user');
 
+  // userBox.add(user);
+  //
   // albumBox.add(album);
   // albumBox.add(albumSecond);
+
 
   // print(albumBox.values);
 
@@ -136,6 +150,7 @@ void main() async {
   // }
 
   // albumBox.deleteFromDisk();
+  // userBox.deleteFromDisk();
 
   runApp(const OnlineAlbum());
 }
@@ -160,10 +175,16 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
 
   @override
   Widget build(BuildContext context) {
-    void _handleAuthorisationTapped() {
+    void _completeAuthorization() {
       // print(_authorizated);
       setState(() {
         _authorizated = true;
+      });
+    }
+
+    void _exitAuthorization() {
+      setState(() {
+        _authorizated = false;
       });
     }
 
@@ -185,18 +206,25 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
       )),
       debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
-      home: BlocProvider(
-        create: (context) => AlbumRedactorBloc(AlbumRedactorStateInitial()),
+      home: MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => AlbumRedactorBloc(const AlbumRedactorStateInitial()),
+          ),
+          BlocProvider(
+              create: (context) => AuthorizationBloc(const AuthorizationStateInit())),
+        ],
         child: Navigator(
           pages: [
             MaterialPage(
               key: ValueKey('PersonalAccountPage'),
               child: PersonalAccount(
                 onAlbumTapped: _handleAlbumTapped,
+                onAccountExit: _exitAuthorization,
               ),
             ),
             if (_authorizated == false)
-              AuthorisationPage(onTapped: _handleAuthorisationTapped),
+              AuthorisationPage(onTapped: _completeAuthorization),
             // MaterialPage(
             //   child: AlbumRedactor(),
             // ),

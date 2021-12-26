@@ -15,12 +15,14 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
   final photos;
   final sheetIndex;
   final sheetPropCoef;
+  final int albumIndex;
 
   const SheetNatural({
     Key? key,
     this.photos,
     required this.sheetIndex,
     this.sheetPropCoef,
+    required this.albumIndex,
   }) : super(key: key);
 
   @override
@@ -129,15 +131,25 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                               imageLib.Image? image = imageLib
                                   .decodePng((exit)['image'].readAsBytesSync());
 
-                              imageLib.Image? resizedImage = imageLib.copyResize(image!, width: (exit)['imageResizeParams']['width'].round(), height: (exit)['imageResizeParams']['height'].round()) ;
+                              imageLib.Image? resizedImage =
+                                  imageLib.copyResize(image!,
+                                      width: (exit)['imageResizeParams']
+                                              ['width']
+                                          .round(),
+                                      height: (exit)['imageResizeParams']
+                                              ['height']
+                                          .round());
 
                               imageLib.Image croppedImage = imageLib.copyCrop(
                                   resizedImage,
-                                  (exit)['imageStartCordsForCropping']['x'].round(),
-                                  (exit)['imageStartCordsForCropping']['y'].round(),
+                                  (exit)['imageStartCordsForCropping']['x']
+                                      .round(),
+                                  (exit)['imageStartCordsForCropping']['y']
+                                      .round(),
                                   (exit)['croppingSizes']['width'].round(),
                                   (exit)['croppingSizes']['height'].round());
-                              File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png')
+
+                              File('$myImagePath/albumImage$albumIndex${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png')
                                   .writeAsBytesSync(
                                       imageLib.encodePng(croppedImage));
 
@@ -148,7 +160,7 @@ class SheetNatural extends StatelessWidget implements SheetTemplate {
                               // File('$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png').writeAsBytesSync(imageLib.encodePng(croppedImage));
 
                               (exit)['image'] =
-                                  '$myImagePath/albumImage${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
+                                  '$myImagePath/albumImage$albumIndex${(exit)['sheetIndex']}${(exit)['placeholderIndex']}.png';
                             }
                             albumRedactorBloc.add(GetUpdatedAlbum([exit]));
                           } catch (error) {
