@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:album/UI/screens/album_preview.dart';
 import 'package:album/UI/screens/album_redactor.dart';
 import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
@@ -12,7 +13,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'bloc/album_redactor/album_redactor_bloc.dart';
 import 'bloc/album_redactor/album_redactor_state.dart';
 import 'data/models/hive_user.dart';
-
+// TODO Объединить SheetNaturalPreview и SheetNaturalRedactor в один файл
 void main() async {
   Album album = Album()
     ..sheetsNumber = 7
@@ -167,6 +168,7 @@ class OnlineAlbum extends StatefulWidget {
 class _OnlineAlbumState extends State<OnlineAlbum> {
   bool _authorizated = false;
   int _chosenAlbumIndex = -1;
+  int _choosenSheetIndex = -1;
 
   @override
   void initState() {
@@ -194,6 +196,13 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
       });
       // print(_chosenAlbum);
     }
+
+    void _handleSheetTapped(sheetIndex) {
+      setState(() {
+        _choosenSheetIndex = sheetIndex;
+      });
+    }
+
 
     // print(_chosenAlbum);
     // print(_chosenAlbum.runtimeType);
@@ -229,18 +238,30 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
             //   child: AlbumRedactor(),
             // ),
             if (_chosenAlbumIndex != -1)
-              AlbumRedactorPage(chosenAlbum: _chosenAlbumIndex),
+              AlbumPreviewPage(chosenAlbum: _chosenAlbumIndex, onSheetTapped: _handleSheetTapped),
+
+            if(_choosenSheetIndex != -1)
+              AlbumRedactorPage(chosenAlbum: _chosenAlbumIndex, sheetIndex: _choosenSheetIndex),
           ],
           onPopPage: (route, result) {
-            print("from onPopMethod ${route} ${result}");
+            print("from onPopMethod ${route.settings.runtimeType} ${result}");
             if (!route.didPop(result)) {
               return false;
             }
-
-            setState(() {
-              // _authorizated = false;
-              _chosenAlbumIndex = -1;
-            });
+            if (route.settings.runtimeType == AlbumPreviewPage){
+              setState(() {
+                _chosenAlbumIndex = -1;
+              });
+            }
+            if (route.settings.runtimeType == AlbumRedactorPage){
+              setState(() {
+                _choosenSheetIndex = -1;
+              });
+            }
+            // setState(() {
+            //   _chosenAlbumIndex = -1;
+            //   _choosenSheetIndex = -1;
+            // });
 
             return true;
           },
@@ -252,10 +273,11 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
   }
 }
 
-class AlbumRedactorPage extends Page {
+class AlbumPreviewPage extends Page {
   final int chosenAlbum;
+  final ValueSetter onSheetTapped;
 
-  const AlbumRedactorPage({LocalKey? key, required this.chosenAlbum})
+  const AlbumPreviewPage( {LocalKey? key, required this.chosenAlbum, required this.onSheetTapped})
       : super(key: key);
 
   @override
@@ -263,7 +285,25 @@ class AlbumRedactorPage extends Page {
     return MaterialPageRoute(
       settings: this,
       builder: (BuildContext context) {
-        return AlbumRedactor(albumIndex: chosenAlbum);
+        return AlbumPreview(albumIndex: chosenAlbum, onSheetTapped: onSheetTapped,);
+      },
+    );
+  }
+}
+
+class AlbumRedactorPage extends Page {
+  final int chosenAlbum;
+  final int sheetIndex;
+
+  const AlbumRedactorPage( {LocalKey? key, required this.chosenAlbum, required this.sheetIndex})
+      : super(key: key);
+
+  @override
+  Route createRoute(BuildContext context) {
+    return MaterialPageRoute(
+      settings: this,
+      builder: (BuildContext context) {
+        return AlbumRedactor(albumIndex: chosenAlbum, sheetIndex: sheetIndex,);
       },
     );
   }

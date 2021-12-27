@@ -1,3 +1,4 @@
+import 'package:album/UI/widgets/sheet_natural_preview.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -5,14 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../widgets/sheet_preview.dart';
-import '../widgets/sheet_natural.dart';
+import '../widgets/sheet_natural_redactor.dart';
 
 class AlbumRedactor extends StatelessWidget {
   final int albumIndex;
+  final int sheetIndex;
 
   AlbumRedactor({
     Key? key,
-    required this.albumIndex,
+    required this.albumIndex, required this.sheetIndex,
   }) : super(key: key);
 
   //TODO инициализировать типы, применить касты к присвоениям
@@ -55,89 +57,100 @@ class AlbumRedactor extends StatelessWidget {
 
                 ;
               })),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-              bloc: _albumRedactorBloc,
-              //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
-              buildWhen: (previousState, state) {
-                if (state is AlbumRedactorUpdateAlbum) {
-                  sheets = state.props[0];
-                  sheetsWidth = state.props[1];
-                  sheetsHeight = state.props[2];
-                  pageName = state.albumName;
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
+                bloc: _albumRedactorBloc,
+                //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
 
-                  return true;
-                }
 
-                return false;
-              },
-              builder: (context, state) {
-                if (state is AlbumRedactorUpdateAlbum) {
-                  sheets = state.props[0];
-                  sheetsWidth = state.props[1];
-                  sheetsHeight = state.props[2];
-                  pageName = state.albumName;
-                }
-                return SizedBox(
-                    height: 150,
-                    child: sheets == null
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: sheets!.length,
-                            itemBuilder: (context, index) {
-                              return SheetPreview(
-                                photos: sheets![index],
-                                callback: () => {
-                                  _changeActiveNaturalSheet(
-                                      context,
-                                      sheets![index],
-                                      index,
-                                      sheetsWidth / sheetsHeight)
-                                },
-                                width: sheetsWidth,
-                                height: sheetsHeight,
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return const SizedBox(width: 16);
-                            },
-                          ));
-              },
+                listener: (context, state) {
+                  if (state is AlbumRedactorUpdateAlbum) {
+                    sheets = state.props[0];
+                    sheetsWidth = state.props[1];
+                    sheetsHeight = state.props[2];
+                    pageName = state.albumName;
+                    _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
+
+                  }
+
+                },
+                child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                  buildWhen: (previousState, state) {
+                    if (state is AlbumRedactorShowNaturalSheet) {
+                      return true;
+                    }
+
+                    return false;
+                  },
+                  builder: (context, state) {
+                    if (state is AlbumRedactorShowNaturalSheet) {
+                      return SheetNaturalRedactor(
+                        //значения sheet в props[0]
+                        photos: state.props[0],
+                        //значения индекса sheet в props[1]
+                        sheetIndex: state.props[1],
+                        //значения коэффициента пропорции sheet в props[2]
+                        sheetPropCoef: state.props[2], albumIndex: albumIndex,
+                      );
+                    } else {
+                      return const SizedBox();
+                    }
+                  },
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-              buildWhen: (previousState, state) {
-                if (state is AlbumRedactorShowNaturalSheet) {
-                  return true;
-                }
+            Row(
+              children: [
+                Padding(
+                  padding:
+                  const EdgeInsets.symmetric(vertical: 20.0),
+                  child: SizedBox(
+                    // width: 292,
+                    height: 65,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                      ),
+                      onPressed: () {
 
-                return false;
-              },
-              builder: (context, state) {
-                if (state is AlbumRedactorShowNaturalSheet) {
-                  return SheetNatural(
-                    //значения sheet в props[0]
-                    photos: state.props[0],
-                    //значения индекса sheet в props[1]
-                    sheetIndex: state.props[1],
-                    //значения коэффициента пропорции sheet в props[2]
-                    sheetPropCoef: state.props[2], albumIndex: albumIndex,
-                  );
-                } else {
-                  return const SizedBox();
-                }
-              },
-            ),
-          ),
-        ],
+                      },
+                      child: Ink(
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(colors: [
+                            Color(0xFFBDBBBE),
+                            Color(0xFF9D9EA3),
+                          ]),
+                          // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
+                          child: Container(
+                            alignment: Alignment.center,
+                            child: const Text(
+                              'Сохранить',
+                              style: TextStyle(
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+
+              ],
+            )
+          ],
+        ),
       ),
     )
         // )

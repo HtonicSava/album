@@ -11,13 +11,13 @@ import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 import 'package:image/image.dart' as imageLib;
 
-class SheetNatural extends StatelessWidget implements SheetTemplate {
+class SheetNaturalRedactor extends StatelessWidget implements SheetTemplate {
   final photos;
   final sheetIndex;
   final sheetPropCoef;
   final int albumIndex;
 
-  const SheetNatural({
+  const SheetNaturalRedactor({
     Key? key,
     this.photos,
     required this.sheetIndex,
