@@ -196,8 +196,8 @@ void main() async {
 
   // userBox.add(user);
   //
-  // albumBox.add(album);
-  // albumBox.add(albumSecond);
+  albumBox.add(album);
+  albumBox.add(albumSecond);
 
   // print(albumBox.values);
 

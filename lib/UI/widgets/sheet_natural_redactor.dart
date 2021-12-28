@@ -109,6 +109,7 @@ class SheetNaturalRedactor extends StatelessWidget implements SheetTemplate {
                               // print('\/n');
 
                               showGeneralDialog(
+                                barrierColor: const Color(0x00000000),
                                   context: context,
                                   pageBuilder:
                                       (context, animation, secondaryAnimation) {
