@@ -72,7 +72,7 @@ class AlbumPreview extends StatelessWidget {
                   sheetsWidth = state.props[1];
                   sheetsHeight = state.props[2];
                   pageName = state.albumName;
-                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[0], 0, sheetsWidth / sheetsHeight]));
+                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[0], 0, sheetsWidth / sheetsHeight], ));
 
                   return true;
                 }
@@ -82,6 +82,11 @@ class AlbumPreview extends StatelessWidget {
               builder: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
                   sheets = state.props[0];
+                  print(sheets);
+
+                  print(state);
+                  print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
+
                   sheetsWidth = state.props[1];
                   sheetsHeight = state.props[2];
                   pageName = state.albumName;
@@ -97,7 +102,7 @@ class AlbumPreview extends StatelessWidget {
                             itemCount: sheets!.length,
                             itemBuilder: (context, index) {
                               return SheetPreview(
-                                photos: sheets![index],
+                                photos: sheets![index]['pages'],
                                 callback: () => {
                                   _changeActiveNaturalSheet(
                                       context,
@@ -106,7 +111,7 @@ class AlbumPreview extends StatelessWidget {
                                       sheetsWidth / sheetsHeight)
                                 },
                                 width: sheetsWidth,
-                                height: sheetsHeight,
+                                height: sheetsHeight, sheetCoverLink: sheets![index]['sheetCoverLink'],
                               );
                             },
                             separatorBuilder: (context, index) {
@@ -128,13 +133,16 @@ class AlbumPreview extends StatelessWidget {
               builder: (context, state) {
                 if (state is AlbumRedactorShowNaturalSheet) {
                   _sheetIndex = state.props[1];
+                  // print((state.props[0] as Map)['pages']);
+                  // print('@@@@@@@@@@@@@@@@@@@@');
+
                   return SheetNaturalPreview(
                     //значения sheet в props[0]
-                    photos: state.props[0],
+                    photos: (state.props[0] as Map)['pages'],
                     //значения индекса sheet в props[1]
                     sheetIndex: state.props[1],
                     //значения коэффициента пропорции sheet в props[2]
-                    sheetPropCoef: state.props[2], albumIndex: albumIndex,
+                    sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
                   );
                 } else {
                   return const SizedBox();

@@ -8,11 +8,13 @@ class Album extends HiveObject{
   @HiveField(1)
   late double sheetsHeight;
   @HiveField(2)
-  late List<List<Map<String, dynamic>>> sheets;
+  late List sheets;
   @HiveField(3)
   late String name;
   @HiveField(4)
   late int sheetsNumber;
+  @HiveField(5)
+  late String coverAlbumLink;
 }
 
 // var Album ={

@@ -28,7 +28,11 @@ class PhotoPlaceholder extends StatelessWidget {
           heightFactor: height,
           child: image == ''
               ? Container(
-                  color: Colors.grey,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.8),
+                    image: DecorationImage(
+                        image:  AssetImage('assets/img/camera.png'),),
+                  ),
                 )
               : Container(
                   // color: Colors.lightGreen,

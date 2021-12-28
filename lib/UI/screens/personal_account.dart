@@ -270,7 +270,7 @@ class PersonalAccount extends StatelessWidget {
                                                       _albums![index]
                                                           .sheetsNumber,
                                                   albumName:
-                                                      _albums![index].name,
+                                                      _albums![index].name, albumCoverLink: _albums![index].coverAlbumLink,
                                                 ),
                                               );
                                             },

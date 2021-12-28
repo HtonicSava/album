@@ -19,19 +19,16 @@ class AlbumAdapter extends TypeAdapter<Album> {
     return Album()
       ..sheetsWidth = fields[0] as double
       ..sheetsHeight = fields[1] as double
-      ..sheets = (fields[2] as List)
-          .map((dynamic e) => (e as List)
-              .map((dynamic e) => (e as Map).cast<String, dynamic>())
-              .toList())
-          .toList()
+      ..sheets = (fields[2] as List).cast<dynamic>()
       ..name = fields[3] as String
-      ..sheetsNumber = fields[4] as int;
+      ..sheetsNumber = fields[4] as int
+      ..coverAlbumLink = fields[5] as String;
   }
 
   @override
   void write(BinaryWriter writer, Album obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(6)
       ..writeByte(0)
       ..write(obj.sheetsWidth)
       ..writeByte(1)
@@ -41,7 +38,9 @@ class AlbumAdapter extends TypeAdapter<Album> {
       ..writeByte(3)
       ..write(obj.name)
       ..writeByte(4)
-      ..write(obj.sheetsNumber);
+      ..write(obj.sheetsNumber)
+      ..writeByte(5)
+      ..write(obj.coverAlbumLink);
   }
 
   @override

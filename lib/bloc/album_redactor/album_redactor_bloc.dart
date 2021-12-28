@@ -15,7 +15,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
   AlbumRedactorState get initialState => const AlbumRedactorStateInitial();
 
-  late List<List<Map<String, dynamic>>> sheets;
+  late List sheets;
   late double _sheetsWidth;
   late double _sheetsHeight;
   late int _chosenAlbumIndex;
@@ -112,19 +112,23 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   Future? _updatePlaceholderState(box, placeHolderParams, albumIndex) async {
     // print('${placeHolderParams.props[0]} from _updatePlaceholderState');
     var tempAlbumBox = box.getAt(albumIndex);
-    List<List<Map<String, dynamic>>> tempSheets = [];
+    List tempSheets = [];
 
     //TODO Оптимизация условия загрузки изображения в бд
     for (int i = 0; i < tempAlbumBox!.sheets.length; i++) {
       if (i != placeHolderParams['sheetIndex']) {
+
         tempSheets.add(tempAlbumBox!.sheets[i]);
       } else {
-        List<Map<String, dynamic>> tempSheet = [];
-        for (int j = 0; j < tempAlbumBox!.sheets[i].length; j++) {
+        Map tempSheet = {
+          'name': tempAlbumBox.sheets[i]['name'],
+          'pages': [],
+        };
+        for (int j = 0; j < tempAlbumBox!.sheets[i]['pages'].length; j++) {
           if (j != placeHolderParams['placeholderIndex']) {
-            tempSheet.add(tempAlbumBox!.sheets[i][j]);
+            tempSheet['pages'].add(tempAlbumBox!.sheets[i]['pages'][j]);
           } else {
-            var tempPlaceHolder = tempAlbumBox!.sheets[i][j];
+            var tempPlaceHolder = tempAlbumBox!.sheets[i]['pages'][j];
             if (placeHolderParams['saveFlag'] == true) {
               tempPlaceHolder['image'] = placeHolderParams['image'];
             } else {
@@ -132,7 +136,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
               await _deleteImage(placeHolderParams);
             }
 
-            tempSheet.add(tempPlaceHolder);
+            tempSheet['pages'].add(tempPlaceHolder);
           }
         }
         tempSheets.add(tempSheet);

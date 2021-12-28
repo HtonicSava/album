@@ -3,14 +3,19 @@ import 'photo_placeholder.dart';
 import 'sheet_template.dart';
 
 class SheetPreview extends StatelessWidget implements SheetTemplate {
+  final String sheetCoverLink;
   @override
   final List photos;
   final VoidCallback callback;
   final double width;
   final double height;
 
-
-  const SheetPreview({Key? key, required this.photos, required this.callback, required this.width, required this.height})
+  const SheetPreview(
+      {Key? key,
+      required this.photos,
+      required this.callback,
+      required this.width,
+      required this.height, required this.sheetCoverLink})
       : super(key: key);
 
   @override
@@ -35,9 +40,14 @@ class SheetPreview extends StatelessWidget implements SheetTemplate {
     return GestureDetector(
       onTap: callback,
       child: AspectRatio(
-        aspectRatio: width/height,
+        aspectRatio: width / height,
         child: Container(
-          color: Colors.red,
+          decoration:  BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(sheetCoverLink),
+              fit: BoxFit.fill,
+            ),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(0),
             child: Stack(children: createPlaceHolders(photos)),

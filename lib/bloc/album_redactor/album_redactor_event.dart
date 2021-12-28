@@ -25,6 +25,7 @@ class InitEvent extends AlbumRedactorEvent{
 class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
   final List<Object> sheetAndId;
 
+
   const GetAlbumRedactorNaturalSheet(this.sheetAndId);
 
   @override

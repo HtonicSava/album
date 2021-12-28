@@ -1,3 +1,4 @@
+import 'package:album/UI/icons/my_flutter_app_icons.dart';
 import 'package:album/UI/widgets/sheet_natural_preview.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
@@ -37,73 +38,55 @@ class AlbumRedactor extends StatelessWidget {
     _albumRedactorBloc.add(InitEvent(albumIndex));
     return Scaffold(
       appBar: AppBar(
-          title: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-              bloc: _albumRedactorBloc,
-              buildWhen: (previousState, state) {
-                if (state is AlbumRedactorUpdateAlbum) {
-                  pageName = state.albumName;
-                  return true;
-                }
+          title: const Text('Редактирование страницы')
 
-                return false;
-              },
-              builder: (context, state) {
-                if (state is AlbumRedactorUpdateAlbum) {
-                  pageName = state.albumName;
-                  return Text(pageName);
-                } else {
-                  return Text('Альбом');
-                }
-
-                ;
-              })),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: Column(
+        child: Column( mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Expanded(
-              child: BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
-                bloc: _albumRedactorBloc,
-                //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
+            BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
+              bloc: _albumRedactorBloc,
+              //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
 
 
-                listener: (context, state) {
-                  if (state is AlbumRedactorUpdateAlbum) {
-                    sheets = state.props[0];
-                    sheetsWidth = state.props[1];
-                    sheetsHeight = state.props[2];
-                    pageName = state.albumName;
-                    _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
+              listener: (context, state) {
+                if (state is AlbumRedactorUpdateAlbum) {
+                  sheets = state.props[0];
+                  sheetsWidth = state.props[1];
+                  sheetsHeight = state.props[2];
+                  pageName = state.albumName;
+                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
 
+                }
+
+              },
+              child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
+                buildWhen: (previousState, state) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
+                    return true;
                   }
 
+                  return false;
                 },
-                child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
-                  buildWhen: (previousState, state) {
-                    if (state is AlbumRedactorShowNaturalSheet) {
-                      return true;
-                    }
-
-                    return false;
-                  },
-                  builder: (context, state) {
-                    if (state is AlbumRedactorShowNaturalSheet) {
-                      return SheetNaturalRedactor(
-                        //значения sheet в props[0]
-                        photos: state.props[0],
-                        //значения индекса sheet в props[1]
-                        sheetIndex: state.props[1],
-                        //значения коэффициента пропорции sheet в props[2]
-                        sheetPropCoef: state.props[2], albumIndex: albumIndex,
-                      );
-                    } else {
-                      return const SizedBox();
-                    }
-                  },
-                ),
+                builder: (context, state) {
+                  if (state is AlbumRedactorShowNaturalSheet) {
+                    return SheetNaturalRedactor(
+                      //значения sheet в props[0]
+                      photos: (state.props[0] as Map)['pages'],
+                      //значения индекса sheet в props[1]
+                      sheetIndex: state.props[1],
+                      //значения коэффициента пропорции sheet в props[2]
+                      sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
               ),
             ),
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
                   padding:
@@ -145,8 +128,45 @@ class AlbumRedactor extends StatelessWidget {
                       ),
                     ),
                   ),
+                ),
+                Row(
+                  children: [
+                    Container(
+                      height: 40.0,
+                      width: 40.0,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFDEDEDE),
+                        borderRadius:
+                        BorderRadius.all(
+                            Radius.circular(11)),
+                      ),
+                      child: const Icon(
+                        AlbumRedactorIcons.sticker,
+                        color: Color(0xFF5F5F5F),
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                      const EdgeInsets.only(
+                          left: 11),
+                      child: Container(
+                        height: 40.0,
+                        width: 40.0,
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFDEDEDE),
+                          borderRadius:
+                          BorderRadius.all(
+                              Radius.circular(11)),
+                        ),
+                        child: const Icon(
+                          AlbumRedactorIcons.text,
+                          size: 18,
+                          color: Color(0xFF5F5F5F),
+                        ),
+                      ),
+                    ),
+                  ],
                 )
-
               ],
             )
           ],
