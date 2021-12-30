@@ -20,167 +20,7 @@ void main() async {
   //   'name': 'Страница 1',
   // 'pages': [],
   // },
-  Album album = Album()
-    ..sheetsNumber = 7
-    ..name = 'Альбом от команды №1'
-    ..sheetsHeight = 4400.0
-    ..sheetsWidth = 3200.0
-    ..coverAlbumLink = 'assets/img/album1.png'
-    ..sheets = [
-      {
-        'name': 'Страница 1',
-        'sheetCoverLink': 'assets/img/sheetback1.png',
-        'pages': [
-          {'width': 0.6, 'height': 0.2, 'top': 0.7, 'left': 0.2, 'image': ''},
-          {'width': 0.6, 'height': 0.2, 'top': 0.1, 'left': 0.8, 'image': ''},
-        ],
-      },
-      {
-        'name': 'Страница 2',
-        'sheetCoverLink': 'assets/img/sheetback1.png',
-        'pages': [
-          {
-            'width': 0.75,
-            'height': 0.5454,
-            'top': 0.5,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-      {
-        'name': 'Страница 3',
-        'sheetCoverLink': 'assets/img/sheetback1.png',
-        'pages': [
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.5,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-      {
-        'name': 'Страница 4',
-        'sheetCoverLink': 'assets/img/sheetback1.png',
-        'pages': [
-          {
-            'width': 0.1875,
-            'height': 0.13635,
-            'top': 0.5,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-      {
-        'name': 'Страница 5',
-        'sheetCoverLink': 'assets/img/sheetback3.png',
-        'pages': [
-          {
-            'width': 0.7776,
-            'height': 0.2916,
-            'top': 0.5,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-      {
-        'name': 'Страница 6',
-        'sheetCoverLink': 'assets/img/sheetback3.png',
 
-        'pages': [
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.1,
-            'left': 0.15,
-            'image': ''
-          },
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.1,
-            'left': 0.85,
-            'image': ''
-          },
-          {
-            'width': 0.8313,
-            'height': 0.2727,
-            'top': 0.55,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-      {
-        'name': 'Страница 7',
-        'sheetCoverLink': 'assets/img/sheetback3.png',
-
-        'pages': [
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.1,
-            'left': 0.15,
-            'image': ''
-          },
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.1,
-            'left': 0.85,
-            'image': ''
-          },
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.55,
-            'left': 0.15,
-            'image': ''
-          },
-          {
-            'width': 0.375,
-            'height': 0.2727,
-            'top': 0.55,
-            'left': 0.85,
-            'image': ''
-          },
-        ],
-      },
-    ];
-
-  Album albumSecond = Album()
-    ..sheetsNumber = 2
-    ..name = 'Альбом от команды №2'
-    ..sheetsHeight = 4400.0
-    ..sheetsWidth = 3200.0
-    ..coverAlbumLink = 'assets/img/album2.png'
-    ..sheets = [
-      {
-        'name': 'Страница 1',
-        'sheetCoverLink': 'assets/img/sheetback2.png',
-        'pages': [
-          {'width': 0.9, 'height': 0.2, 'top': 0.7, 'left': 0.5, 'image': ''},
-          {'width': 0.9, 'height': 0.2, 'top': 0.1, 'left': 0.5, 'image': ''},
-        ],
-      },
-      {
-        'name': 'Страница 2',
-        'sheetCoverLink': 'assets/img/sheetback2.png',
-        'pages': [
-          {
-            'width': 0.9,
-            'height': 0.9,
-            'top': 0.5,
-            'left': 0.5,
-            'image': ''
-          },
-        ],
-      },
-    ];
 
   // User user = User()
   //   ..login = 'EGOR'
@@ -192,12 +32,158 @@ void main() async {
 
   //TODO Заполнение пустой БД
   var albumBox = await Hive.openBox<Album>('box_for_albums');
+
+  // albumBox.deleteFromDisk();
+
+  if (albumBox.isEmpty){
+    Album album = Album()
+      ..sheetsNumber = 7
+      ..name = 'Альбом от команды №1'
+      ..sheetsHeight = 2730.0
+      ..sheetsWidth = 3280.0
+      ..coverAlbumLink = 'assets/img/album1.png'
+      ..sheets = [
+        {
+          'name': 'Страница 1',
+          'sheetCoverLink': 'assets/img/sheetback1.png',
+          'pages': [
+            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.262, 'image': ''},
+            {'width': 0.35, 'height': 0.32, 'top': 0.275, 'left': 0.738, 'image': ''},
+            {'width': 0.35, 'height': 0.32, 'top': 0.729, 'left': 0.738, 'image': ''},
+
+          ],
+        },
+        {
+          'name': 'Страница 2',
+          'sheetCoverLink': 'assets/img/sheetback1.png',
+          'pages': [
+            {
+              'width': 0.287,
+              'height': 0.458,
+              'top': 0.34,
+              'left': 0.27,
+              'image': ''
+            },
+            {
+              'width': 0.287,
+              'height': 0.458,
+              'top': 0.66,
+              'left': 0.73,
+              'image': ''
+            },
+          ],
+        },
+        {
+          'name': 'Страница 3',
+          'sheetCoverLink': 'assets/img/sheetback1.png',
+          'pages': [
+            {
+              'width': 0.466,
+              'height': 0.42,
+              'top': 0.825,
+              'left': 0.214,
+              'image': ''
+            },
+            {
+              'width': 0.466,
+              'height': 0.42,
+              'top': 0.175,
+              'left': 0.786,
+              'image': ''
+            },
+          ],
+        },
+        {
+          'name': 'Страница 4',
+          'sheetCoverLink': 'assets/img/sheetback1.png',
+          'pages': [
+            {
+              'width': 0.3,
+              'height': 0.3,
+              'top': 0.5,
+              'left': 0.5,
+              'image': ''
+            },
+          ],
+        },
+        {
+          'name': 'Страница 5',
+          'sheetCoverLink': 'assets/img/sheetback3.png',
+          'pages': [
+            {
+              'width': 0.5776,
+              'height': 0.2916,
+              'top': 0.5,
+              'left': 0.5,
+              'image': ''
+            },
+          ],
+        },
+        {
+          'name': 'Страница 6',
+          'sheetCoverLink': 'assets/img/sheetback3.png',
+
+          'pages': [
+            {
+              'width': 0.375,
+              'height': 0.2727,
+              'top': 0.3,
+              'left': 0.35,
+              'image': ''
+            },
+            {
+              'width': 0.375,
+              'height': 0.2727,
+              'top': 0.3,
+              'left': 0.65,
+              'image': ''
+            },
+            {
+              'width': 0.6313,
+              'height': 0.2727,
+              'top': 0.55,
+              'left': 0.5,
+              'image': ''
+            },
+          ],
+        },
+
+      ];
+
+    Album albumSecond = Album()
+      ..sheetsNumber = 2
+      ..name = 'Альбом от команды №2'
+      ..sheetsHeight = 2730.0
+      ..sheetsWidth = 3280.0
+      ..coverAlbumLink = 'assets/img/album2.png'
+      ..sheets = [
+        {
+          'name': 'Страница 1',
+          'sheetCoverLink': 'assets/img/sheetback2.png',
+          'pages': [
+            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.262, 'image': ''},
+
+          ],
+        },
+        {
+          'name': 'Страница 2',
+          'sheetCoverLink': 'assets/img/sheetback2.png',
+          'pages': [
+            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.073, 'image': ''},
+          ],
+        },
+      ];
+
+    albumBox.add(album);
+    albumBox.add(albumSecond);
+  }
+
   var userBox = await Hive.openBox<User>('box_for_user');
 
   // userBox.add(user);
   //
-  albumBox.add(album);
-  albumBox.add(albumSecond);
+  // albumBox.add(album);
+  // albumBox.add(albumSecond);
 
   // print(albumBox.values);
 
@@ -205,7 +191,6 @@ void main() async {
   //   print(album.name);
   // }
 
-  // albumBox.deleteFromDisk();
   // userBox.deleteFromDisk();
 
   runApp(const OnlineAlbum());

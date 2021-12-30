@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:album/UI/widgets/resizable_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 
 class DialogChoosingImage extends StatefulWidget {
@@ -56,22 +57,34 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   final GlobalKey _keyPhoto = GlobalKey();
 
   late double _borderStartXCord;
-  late  double _borderStartYCord;
-
+  late double _borderStartYCord;
 
   void _getWidgetInfo(_) {
-    final RenderBox renderBox = _keyBorder.currentContext?.findRenderObject() as RenderBox;
+    final RenderBox renderBox =
+        _keyBorder.currentContext?.findRenderObject() as RenderBox;
     _keyBorder.currentContext?.size;
 
     final Size size = renderBox.size;
-    print('Size: ${size.width}, ${size.height} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
+    print(
+        'Size: ${size.width}, ${size.height} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
 
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     _borderStartXCord = offset.dx;
     _borderStartYCord = offset.dy;
-    print('Offset: ${offset.dx}, ${offset.dy} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
+    print(
+        'Offset: ${offset.dx}, ${offset.dy} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
   }
 
+  bool _checkCover({solidX, solidY, solidW, solidH, x, y, w, h}) {
+    if ((x <= solidX) &&
+        (x + w >= solidX + solidW) &&
+        (y <= solidY) &&
+        (y + h >= solidY + solidH)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   _getSizesAndPosition(GlobalKey key) {
     try {
@@ -82,8 +95,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
 
       final boxPosition = renderBox.localToGlobal(Offset.zero);
 
-      print('SIZE of ${key}: ${sizeBorder}');
-      print('POSITION of ${key}: ${boxPosition}');
+      // print('SIZE of ${key}: ${sizeBorder}');
+      // print('POSITION of ${key}: ${boxPosition}');
       return {
         'SIZE': sizeBorder,
         'POSITION': boxPosition,
@@ -143,64 +156,54 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                         color: Colors.black, decoration: TextDecoration.none),
                   ),
                 ),
-
           IgnorePointer(
-            child: Stack(
-                children: [IgnorePointer(
-                  ignoring: true,
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Center(
-                      child: AspectRatio(
-                        key: _keyBorderBorder,
-                        aspectRatio: ((placeholderWidth * widget.sheetWidth) /
-                            (placeholderHeight * widget.sheetHeight)),
-                        child: MeasureSize(
-                          onChange: (size) {
-                            setState(() {
-                              _borderSizeCorrected = size;
-                              _widthIncreaseCoef = _borderSizeCorrected.width /
-                                  (placeholderWidth * widget.sheetWidth);
-                              _heightIncreaseCoef = _borderSizeCorrected.height /
-                                  (placeholderHeight * widget.sheetHeight);
-                              _generalIncreaseCoef =
-                                  (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
-
-                            });
-                          },
-                          onChangeOffset: (offset) {
-
-                          },
-                          child: Container(
-                            // color: Colors.white.withOpacity(0.1),
-                            decoration: BoxDecoration(
-                                color: Colors.transparent,
-                                // color: Colors.white.withOpacity(0.15),
-                                // backgroundBlendMode: BlendMode.lighten,
-                                border: Border.all(
-                                    width: 3,
-                                    color: Colors.black,
-                                    style: BorderStyle.solid)),
-                          ),
+            child: Stack(children: [
+              IgnorePointer(
+                ignoring: true,
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  child: Center(
+                    child: AspectRatio(
+                      key: _keyBorderBorder,
+                      aspectRatio: ((placeholderWidth * widget.sheetWidth) /
+                          (placeholderHeight * widget.sheetHeight)),
+                      child: MeasureSize(
+                        onChange: (size) {
+                          setState(() {
+                            _borderSizeCorrected = size;
+                            _widthIncreaseCoef = _borderSizeCorrected.width /
+                                (placeholderWidth * widget.sheetWidth);
+                            _heightIncreaseCoef = _borderSizeCorrected.height /
+                                (placeholderHeight * widget.sheetHeight);
+                            _generalIncreaseCoef =
+                                (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
+                          });
+                        },
+                        onChangeOffset: (offset) {},
+                        child: Container(
+                          // color: Colors.white.withOpacity(0.1),
+                          decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              // color: Colors.white.withOpacity(0.15),
+                              // backgroundBlendMode: BlendMode.lighten,
+                              border: Border.all(
+                                  width: 3,
+                                  color: Colors.black,
+                                  style: BorderStyle.solid)),
                         ),
                       ),
                     ),
                   ),
                 ),
-
-                ]
-            ),
+              ),
+            ]),
           ),
-
-
           IgnorePointer(
             child: ColorFiltered(
-              colorFilter: const ColorFilter.mode(
-                  Colors.black,
-                  BlendMode.srcOut
-              ),
-              child: Stack(
-                children: [IgnorePointer(
+              colorFilter:
+                  const ColorFilter.mode(Colors.black, BlendMode.srcOut),
+              child: Stack(children: [
+                IgnorePointer(
                   ignoring: true,
                   child: Container(
                     padding: const EdgeInsets.all(20),
@@ -215,10 +218,12 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                               _borderSizeCorrected = size;
                               _widthIncreaseCoef = _borderSizeCorrected.width /
                                   (placeholderWidth * widget.sheetWidth);
-                              _heightIncreaseCoef = _borderSizeCorrected.height /
-                                  (placeholderHeight * widget.sheetHeight);
+                              _heightIncreaseCoef =
+                                  _borderSizeCorrected.height /
+                                      (placeholderHeight * widget.sheetHeight);
                               _generalIncreaseCoef =
-                                  (_heightIncreaseCoef + _widthIncreaseCoef) / 2;
+                                  (_heightIncreaseCoef + _widthIncreaseCoef) /
+                                      2;
 
                               // print('${widget.sheetWidth} ----- Ширина шаблона');
                               // print('${widget.sheetHeight} ----- Высота шаблона');
@@ -239,16 +244,11 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                               //     '${_heightIncreaseCoef} ----- Коэффициент уменьшения высоты');
                             });
                           },
-                          onChangeOffset: (offset) {
-
-
-
-
-                          },
+                          onChangeOffset: (offset) {},
                           child: Container(
                             // color: Colors.white.withOpacity(0.1),
                             decoration: BoxDecoration(
-                              color: Colors.black,
+                                color: Colors.black,
                                 // color: Colors.white.withOpacity(0.15),
                                 // backgroundBlendMode: BlendMode.lighten,
                                 border: Border.all(
@@ -261,16 +261,13 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                     ),
                   ),
                 ),
-                  Container(
-                      decoration:  BoxDecoration(
-                        color: Colors.black.withOpacity(0.35),
-                      )
-                  ),
-                ]
-              ),
+                Container(
+                    decoration: BoxDecoration(
+                  color: Colors.black.withOpacity(0.35),
+                )),
+              ]),
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -318,6 +315,28 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
               ),
               ElevatedButton(
                 onPressed: () {
+
+                  print(
+                      "${_getSizesAndPosition(_keyBorder)['POSITION'].dy} - Y координата рамки");
+                  print(
+                      "${_getSizesAndPosition(_keyBorder)['POSITION'].dx} - X координата рамки");
+                  print(
+                      "${_getSizesAndPosition(_keyBorder)['SIZE'].width} - ширина рамки");
+                  print(
+                      "${_getSizesAndPosition(_keyBorder)['SIZE'].height} - высота рамки");
+
+                  print(
+                      "${_getSizesAndPosition(_keyPhoto)['POSITION'].dy} - Y координата фото");
+                  print(
+                      "${_getSizesAndPosition(_keyPhoto)['POSITION'].dx} - X координата фото");
+                  print(
+                      "${_getSizesAndPosition(_keyPhoto)['SIZE'].width} - ширина фото");
+                  print(
+                      "${_getSizesAndPosition(_keyPhoto)['SIZE'].height} - высота фото");
+
+                  print("${_checkCover(solidX: _getSizesAndPosition(_keyBorder)['POSITION'].dx, solidY: _getSizesAndPosition(_keyBorder)['POSITION'].dy, x: _getSizesAndPosition(_keyPhoto)['POSITION'].dx, y: _getSizesAndPosition(_keyPhoto)['POSITION'].dy, solidW: _getSizesAndPosition(_keyBorder)['SIZE'].width, solidH: _getSizesAndPosition(_keyBorder)['SIZE'].height, w: _getSizesAndPosition(_keyPhoto)['SIZE'].width,h: _getSizesAndPosition(_keyPhoto)['SIZE'].height)} - состояние перекрытия");
+
+                if (_checkCover(solidX: _getSizesAndPosition(_keyBorder)['POSITION'].dx, solidY: _getSizesAndPosition(_keyBorder)['POSITION'].dy, x: _getSizesAndPosition(_keyPhoto)['POSITION'].dx, y: _getSizesAndPosition(_keyPhoto)['POSITION'].dy, solidW: _getSizesAndPosition(_keyBorder)['SIZE'].width, solidH: _getSizesAndPosition(_keyBorder)['SIZE'].height, w: _getSizesAndPosition(_keyPhoto)['SIZE'].width,h: _getSizesAndPosition(_keyPhoto)['SIZE'].height)){
                   _imageStartXCord =
                       _getSizesAndPosition(_keyBorder)['POSITION'].dx -
                           _getSizesAndPosition(_keyPhoto)['POSITION'].dx;
@@ -347,6 +366,20 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                       'height': placeholderHeight * widget.sheetHeight,
                     }
                   });
+                } else {
+                  Fluttertoast.showToast(
+                      msg: "Фото должно помещаться в рамку",
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+
+                      fontSize: 16.0
+                  );
+                }
+
+
+
                 },
                 child: const Text(
                   "Сохранить",

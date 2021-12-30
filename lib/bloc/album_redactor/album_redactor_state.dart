@@ -51,8 +51,9 @@ class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
 class AlbumRedactorUpdateAlbum extends AlbumRedactorState{
   final List<Object> albumInfo;
   final String albumName;
+  final String coverAlbumLink;
 
-  const AlbumRedactorUpdateAlbum(this.albumInfo, {required this.albumName});
+  const AlbumRedactorUpdateAlbum(this.albumInfo,  {required this.albumName, required this.coverAlbumLink});
 
   @override
   List<Object> get props => albumInfo;

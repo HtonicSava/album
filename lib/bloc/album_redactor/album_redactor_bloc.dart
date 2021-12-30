@@ -29,7 +29,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       print('$event from init');
       await _updateFieldsFromHiveDb(event.albumIndex);
       _chosenAlbumIndex = event.albumIndex;
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight], albumName: _albums[_chosenAlbumIndex].name);
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight], albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink);
     }
 
     else if ( event is GetAlbums) {
@@ -70,7 +70,8 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
       await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
       await _updateFieldsFromHiveDb(_chosenAlbumIndex);
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],  albumName: _albums[_chosenAlbumIndex].name);
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],  albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink
+      );
 
 
 
@@ -123,6 +124,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
         Map tempSheet = {
           'name': tempAlbumBox.sheets[i]['name'],
           'pages': [],
+          'sheetCoverLink': tempAlbumBox.sheets[i]['sheetCoverLink']
         };
         for (int j = 0; j < tempAlbumBox!.sheets[i]['pages'].length; j++) {
           if (j != placeHolderParams['placeholderIndex']) {
@@ -152,6 +154,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
           ..sheets = tempSheets
           ..sheetsNumber = tempAlbumBox.sheetsNumber
           ..name = tempAlbumBox.name
+          ..coverAlbumLink = tempAlbumBox.coverAlbumLink
     );
 
 

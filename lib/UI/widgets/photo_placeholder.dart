@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class PhotoPlaceholder extends StatelessWidget {
+  // final double? sheetWidth;
+  // final double? sheetHeight;
   final double width;
   final double height;
   final double top;
@@ -15,14 +17,35 @@ class PhotoPlaceholder extends StatelessWidget {
       required this.height,
       required this.top,
       required this.left,
-      required this.image})
+      required this.image,})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
 
+
+
+    double _left;
+    double _top;
+
+    if(left < 0.5){
+      _left = left - width / 2;
+    } else if(left > 0.5){
+      _left = left + width / 2;
+    } else {
+      _left = left;
+    }
+
+    if(top < 0.5){
+      _top = top - height / 2;
+    } else if(top > 0.5){
+      _top = top + height / 2;
+    } else {
+      _top = top;
+    }
+    // (((left*sheetWidth/sheetWidth)  - (width*sheetWidth/2)/sheetWidth)/sheetWidth)
     return Container(
-      alignment: FractionalOffset(left, top),
+      alignment: FractionalOffset(_left, _top),
       child: FractionallySizedBox(
           widthFactor: width,
           heightFactor: height,

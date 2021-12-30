@@ -507,7 +507,17 @@ class _AuthorizationState extends State<
                                                     BorderRadius.circular(30.0),
                                               ),
                                             ),
-                                            onPressed: () {},
+                                            onPressed: () {
+                                              Fluttertoast.showToast(
+                                                  msg: "Регистрация временно недоступна",
+                                                  toastLength: Toast.LENGTH_SHORT,
+                                                  gravity: ToastGravity.BOTTOM,
+                                                  timeInSecForIosWeb: 1,
+                                                  backgroundColor: Colors.grey,
+
+                                                  fontSize: 16.0
+                                              );
+                                            },
                                             child: Ink(
                                               decoration: BoxDecoration(
                                                 gradient: const LinearGradient(

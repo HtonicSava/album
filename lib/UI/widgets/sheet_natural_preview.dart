@@ -12,6 +12,8 @@ class SheetNaturalPreview extends StatelessWidget implements SheetTemplate {
   final sheetIndex;
   final sheetPropCoef;
   final int albumIndex;
+  // final double sheetWidth;
+  // final double sheetHeight;
 
   const SheetNaturalPreview({
     Key? key,
@@ -43,46 +45,61 @@ class SheetNaturalPreview extends StatelessWidget implements SheetTemplate {
     final albumRedactorBloc = BlocProvider.of<AlbumRedactorBloc>(context);
     // Align(child: Text('alo'), alignment: Alignment.centerLeft,),
 
+
     return (photos.isNotEmpty)
-        ? Column(
-            children: [
-              Expanded(
-                child: Align(
-                  child: AspectRatio(
-                    aspectRatio: sheetPropCoef,
-                    child: Column(
-                      children: [
-                         Align(
-                          child: Padding(
-                            padding:
-                                const EdgeInsets.only(left: 8.0, bottom: 4.0),
-                            child: Text(
-                              sheetName,
-                              style: const TextStyle(fontSize: 14, color: Color(0xFF686868)),
-                            ),
-                          ),
-                          alignment: Alignment.centerLeft,
-                        ),
-                        Expanded(
-                          child: Container(
-                            decoration:  BoxDecoration(
-                              image: DecorationImage(
-                                image: AssetImage(sheetCoverLink),
-                                fit: BoxFit.fill,
+        ? Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Column(
+              children: [
+                 Align(
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                    child: Text(
+                      sheetName,
+                      style: const TextStyle(fontSize: 14, color: Color(0xFF686868)),
+                    ),
+                  ),
+                  alignment: Alignment.bottomLeft,
+                ),
+                Expanded(
+                  child: Align(
+                    child: AspectRatio(
+                      aspectRatio: sheetPropCoef,
+                      child: Column(
+                        children: [
+                          //  Align(
+                          //   child: Padding(
+                          //     padding:
+                          //         const EdgeInsets.only(left: 8.0, bottom: 4.0),
+                          //     child: Text(
+                          //       sheetName,
+                          //       style: const TextStyle(fontSize: 14, color: Color(0xFF686868)),
+                          //     ),
+                          //   ),
+                          //   alignment: Alignment.centerLeft,
+                          // ),
+                          Expanded(
+                            child: Container(
+                              decoration:  BoxDecoration(
+                                image: DecorationImage(
+                                  image: AssetImage(sheetCoverLink),
+                                  fit: BoxFit.fill,
+                                ),
                               ),
+                              child: Stack(
+                                  children: createPlaceHolders(
+                                      photos, context, albumRedactorBloc)),
                             ),
-                            child: Stack(
-                                children: createPlaceHolders(
-                                    photos, context, albumRedactorBloc)),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          )
+              ],
+            ),
+        )
         : const CircularProgressIndicator();
   }
 }

@@ -19,6 +19,8 @@ class SheetNaturalRedactor extends StatelessWidget implements SheetTemplate {
   final sheetIndex;
   final sheetPropCoef;
   final int albumIndex;
+  // final double sheetWidth;
+  // final double sheetHeight;
 
   const SheetNaturalRedactor({
     Key? key,
