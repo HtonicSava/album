@@ -20,6 +20,8 @@ class PersonalAccount extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print('Билд личного кабинета');
+    //TODO Почему при первом запуске билд 5 раз?
     List<Album>? _albums;
     final AlbumRedactorBloc _albumRedactorBloc =
         BlocProvider.of<AlbumRedactorBloc>(context);
@@ -35,10 +37,10 @@ class PersonalAccount extends StatelessWidget {
           child: Column(
             children: [
               TextButton(
-                  onPressed: () =>
-
-                      {_authorizationBloc.add(const AuthorizationEventExit()),
-                        Navigator.pop(context),},
+                  onPressed: () => {
+                        _authorizationBloc.add(const AuthorizationEventExit()),
+                        Navigator.pop(context),
+                      },
                   child: const Text('Выход'))
             ],
           ),
@@ -241,18 +243,20 @@ class PersonalAccount extends StatelessWidget {
                                     AlbumRedactorState>(
                                 bloc: _albumRedactorBloc,
                                 buildWhen: (previousState, state) {
-                                  if (state is AlbumRedactorShowAlbums) {
+                                  if ((state is AlbumRedactorShowAlbums) &&
+                                      (state != previousState)) {
                                     // _albums = state.albums;
-                                    print("$state from buildWhen");
+                                    print("$state from buildWhen of Albums");
 
                                     return true;
+                                  } else {
+                                    return false;
                                   }
-
-                                  return false;
                                 },
                                 builder: (context, state) {
-                                  print("$state from builder");
                                   if (state is AlbumRedactorShowAlbums) {
+                                    print("$state from builder of Albums");
+
                                     _albums = state.albums;
                                     return _albums == null
                                         ? const Center(
@@ -270,7 +274,10 @@ class PersonalAccount extends StatelessWidget {
                                                       _albums![index]
                                                           .sheetsNumber,
                                                   albumName:
-                                                      _albums![index].name, albumCoverLink: _albums![index].coverAlbumLink,
+                                                      _albums![index].name,
+                                                  albumCoverLink:
+                                                      _albums![index]
+                                                          .coverAlbumLink,
                                                 ),
                                               );
                                             },

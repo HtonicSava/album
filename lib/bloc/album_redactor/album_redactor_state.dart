@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:album/data/models/hive_album.dart';
 import 'package:equatable/equatable.dart';
 
@@ -49,12 +51,15 @@ class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
 
 // TODO обновить props
 class AlbumRedactorUpdateAlbum extends AlbumRedactorState{
-  final List<Object> albumInfo;
+  // final List<Object> albumInfo;
+  final List sheets;
   final String albumName;
   final String coverAlbumLink;
+  final double sheetsHeight;
+  final double sheetsWidth;
 
-  const AlbumRedactorUpdateAlbum(this.albumInfo,  {required this.albumName, required this.coverAlbumLink});
+  const AlbumRedactorUpdateAlbum(   {required this.sheetsWidth, required this.sheetsHeight, required this.sheets, required this.albumName, required this.coverAlbumLink});
 
   @override
-  List<Object> get props => albumInfo;
+  List<Object> get props => [sheets, albumName, coverAlbumLink, sheetsHeight, sheetsWidth];
 }

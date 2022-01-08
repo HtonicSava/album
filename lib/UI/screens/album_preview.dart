@@ -12,18 +12,11 @@ class AlbumPreview extends StatelessWidget {
   final int albumIndex;
   final ValueSetter onSheetTapped;
 
-  AlbumPreview({
+  const AlbumPreview({
     Key? key,
     required this.albumIndex, required this.onSheetTapped,
   }) : super(key: key);
 
-  //TODO инициализировать типы, применить касты к присвоениям
-
-  var pageName;
-  var sheets;
-  var sheetsHeight;
-  var sheetsWidth;
-  late var _sheetIndex;
 
   void _changeActiveNaturalSheet(
       BuildContext context, sheet, index, proportionCoef) {
@@ -33,9 +26,16 @@ class AlbumPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    String _pageName;
+    List? _sheets;
+    late double _sheetsHeight;
+    late double _sheetsWidth;
+    late var _sheetIndex;
+
     final AlbumRedactorBloc _albumRedactorBloc =
         BlocProvider.of<AlbumRedactorBloc>(context);
-    _albumRedactorBloc.add(InitEvent(albumIndex));
+    _albumRedactorBloc.add(GetTheAlbum(albumIndex));
 
     return Scaffold(
       appBar: AppBar(
@@ -43,7 +43,7 @@ class AlbumPreview extends StatelessWidget {
               bloc: _albumRedactorBloc,
               buildWhen: (previousState, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-                  pageName = state.albumName;
+                  _pageName = state.albumName;
                   return true;
                 }
 
@@ -51,10 +51,10 @@ class AlbumPreview extends StatelessWidget {
               },
               builder: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-                  pageName = state.albumName;
-                  return Text(pageName);
+                  _pageName = state.albumName;
+                  return Text(_pageName);
                 } else {
-                  return Text('Альбом');
+                  return const Text('Альбом');
                 }
 
                 ;
@@ -68,56 +68,52 @@ class AlbumPreview extends StatelessWidget {
               //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
               buildWhen: (previousState, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-                  sheets = state.props[0];
-                  sheetsWidth = state.props[1];
-                  sheetsHeight = state.props[2];
-                  pageName = state.albumName;
-                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[0], 0, sheetsWidth / sheetsHeight], ));
-
+                  _sheets = state.sheets;
+                  _sheetsWidth = state.sheetsWidth;
+                  _sheetsHeight = state.sheetsHeight;
+                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([_sheets![0], 0, _sheetsWidth / _sheetsHeight], ));
                   return true;
+                } else {
+                  return false;
                 }
-
-                return false;
               },
               builder: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-                  sheets = state.props[0];
-                  print(sheets);
 
-                  print(state);
-                  print('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA');
-
-                  sheetsWidth = state.props[1];
-                  sheetsHeight = state.props[2];
-                  pageName = state.albumName;
+                  // print(sheets);
+                  // print(state);
+                  _pageName = state.albumName;
+                  return SizedBox(
+                      height: 150,
+                      child: _sheets == null
+                          ? const Center(
+                        child: CircularProgressIndicator(),
+                      )
+                          : ListView.separated(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: _sheets!.length,
+                        itemBuilder: (context, index) {
+                          return SheetPreview(
+                            photos: _sheets![index]['pages'],
+                            callback: () => {
+                              _changeActiveNaturalSheet(
+                                  context,
+                                  _sheets![index],
+                                  index,
+                                  _sheetsWidth / _sheetsHeight)
+                            },
+                            width: _sheetsWidth,
+                            height: _sheetsHeight, sheetCoverLink: _sheets![index]['sheetCoverLink'],
+                          );
+                        },
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(width: 16);
+                        },
+                      ));
+                } else {
+                  return const CircularProgressIndicator();
                 }
-                return SizedBox(
-                    height: 150,
-                    child: sheets == null
-                        ? const Center(
-                            child: CircularProgressIndicator(),
-                          )
-                        : ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: sheets!.length,
-                            itemBuilder: (context, index) {
-                              return SheetPreview(
-                                photos: sheets![index]['pages'],
-                                callback: () => {
-                                  _changeActiveNaturalSheet(
-                                      context,
-                                      sheets![index],
-                                      index,
-                                      sheetsWidth / sheetsHeight)
-                                },
-                                width: sheetsWidth,
-                                height: sheetsHeight, sheetCoverLink: sheets![index]['sheetCoverLink'],
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return const SizedBox(width: 16);
-                            },
-                          ));
+
               },
             ),
           ),
@@ -134,7 +130,6 @@ class AlbumPreview extends StatelessWidget {
                 if (state is AlbumRedactorShowNaturalSheet) {
                   _sheetIndex = state.props[1];
                   // print((state.props[0] as Map)['pages']);
-                  // print('@@@@@@@@@@@@@@@@@@@@');
 
                   return SheetNaturalPreview(
                     //значения sheet в props[0]

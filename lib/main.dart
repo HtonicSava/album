@@ -267,7 +267,7 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
         child: Navigator(
           pages: [
             MaterialPage(
-              key: ValueKey('PersonalAccountPage'),
+              key: const ValueKey('PersonalAccountPage'),
               child: PersonalAccount(
                 onAlbumTapped: _handleAlbumTapped,
                 onAccountExit: _exitAuthorization,
@@ -289,7 +289,7 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
                   sheetIndex: _choosenSheetIndex),
           ],
           onPopPage: (route, result) {
-            print("from onPopMethod ${route.settings.runtimeType} ${result}");
+            // print("from onPopMethod ${route.settings.runtimeType} ${result}");
             if (!route.didPop(result)) {
               return false;
             }

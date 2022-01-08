@@ -13,29 +13,22 @@ class AlbumRedactor extends StatelessWidget {
   final int albumIndex;
   final int sheetIndex;
 
-  AlbumRedactor({
+  const AlbumRedactor({
     Key? key,
     required this.albumIndex, required this.sheetIndex,
   }) : super(key: key);
 
-  //TODO инициализировать типы, применить касты к присвоениям
-
-  var pageName;
-  var sheets;
-  var sheetsHeight;
-  var sheetsWidth;
-
-  void _changeActiveNaturalSheet(
-      BuildContext context, sheet, index, proportionCoef) {
-    BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorNaturalSheet([sheet, index, proportionCoef]));
-  }
-
   @override
   Widget build(BuildContext context) {
+
+
+    List? sheets;
+    late double sheetsHeight;
+    late double sheetsWidth;
+
     final AlbumRedactorBloc _albumRedactorBloc =
         BlocProvider.of<AlbumRedactorBloc>(context);
-    _albumRedactorBloc.add(InitEvent(albumIndex));
+    _albumRedactorBloc.add(GetTheAlbum(albumIndex));
     return Scaffold(
       appBar: AppBar(
           title: const Text('Редактирование страницы')
@@ -52,11 +45,10 @@ class AlbumRedactor extends StatelessWidget {
 
               listener: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-                  sheets = state.props[0];
-                  sheetsWidth = state.props[1];
-                  sheetsHeight = state.props[2];
-                  pageName = state.albumName;
-                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets[sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
+                  sheets = state.sheets;
+                  sheetsWidth = state.sheetsWidth;
+                  sheetsHeight = state.sheetsHeight;
+                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets![sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
 
                 }
 

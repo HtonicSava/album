@@ -14,9 +14,10 @@ class GetAlbums extends AlbumRedactorEvent{
 
 }
 
-class InitEvent extends AlbumRedactorEvent{
+class GetTheAlbum extends AlbumRedactorEvent{
   final int albumIndex;
-  const InitEvent( this.albumIndex);
+
+  const GetTheAlbum( this.albumIndex);
 
   @override
   List<Object> get props => [albumIndex];
@@ -45,7 +46,7 @@ class GetUpdatedAlbum extends AlbumRedactorEvent {
   final List<Object> updatedPlaceholderParams;
 
   const GetUpdatedAlbum(this.updatedPlaceholderParams);
-
+  //TODO поффиксить получение updatedPlaceholderParams из props
   @override
   List<Object?> get props => updatedPlaceholderParams;
 
