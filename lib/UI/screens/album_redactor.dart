@@ -1,12 +1,9 @@
 import 'package:album/UI/icons/my_flutter_app_icons.dart';
-import 'package:album/UI/widgets/sheet_natural_preview.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../widgets/sheet_preview.dart';
 import '../widgets/sheet_natural_redactor.dart';
 
 class AlbumRedactor extends StatelessWidget {
@@ -15,13 +12,12 @@ class AlbumRedactor extends StatelessWidget {
 
   const AlbumRedactor({
     Key? key,
-    required this.albumIndex, required this.sheetIndex,
+    required this.albumIndex,
+    required this.sheetIndex,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
-
     List? sheets;
     late double sheetsHeight;
     late double sheetsWidth;
@@ -30,28 +26,30 @@ class AlbumRedactor extends StatelessWidget {
         BlocProvider.of<AlbumRedactorBloc>(context);
     _albumRedactorBloc.add(GetTheAlbum(albumIndex));
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('Редактирование страницы')
-
-      ),
+      appBar: AppBar(title: const Text('Редактирование страницы')),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20.0),
-        child: Column( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             BlocListener<AlbumRedactorBloc, AlbumRedactorState>(
               bloc: _albumRedactorBloc,
               //TODO Нужны ли одинаковые фрагменты кода внутри build и buildWhen?
-
 
               listener: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
                   sheets = state.sheets;
                   sheetsWidth = state.sheetsWidth;
                   sheetsHeight = state.sheetsHeight;
-                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([sheets![sheetIndex], sheetIndex, sheetsWidth / sheetsHeight]));
-
+                  _albumRedactorBloc.add(
+                    GetAlbumRedactorNaturalSheet(
+                      sheet: sheets![sheetIndex],
+                      sheetIndex: sheetIndex,
+                      sheetHeight: sheetsHeight,
+                      sheetWidth: sheetsWidth,
+                    ),
+                  );
                 }
-
               },
               child: BlocBuilder<AlbumRedactorBloc, AlbumRedactorState>(
                 buildWhen: (previousState, state) {
@@ -64,12 +62,12 @@ class AlbumRedactor extends StatelessWidget {
                 builder: (context, state) {
                   if (state is AlbumRedactorShowNaturalSheet) {
                     return SheetNaturalRedactor(
-                      //значения sheet в props[0]
-                      photos: (state.props[0] as Map)['pages'],
-                      //значения индекса sheet в props[1]
-                      sheetIndex: state.props[1],
-                      //значения коэффициента пропорции sheet в props[2]
-                      sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
+                      photos: state.sheet['pages'],
+                      sheetIndex: state.sheetIndex,
+                      sheetPropCoef: state.sheetWidth / state.sheetHeight,
+                      albumIndex: albumIndex,
+                      sheetName: state.sheet['name'],
+                      sheetCoverLink: state.sheet['sheetCoverLink'],
                     );
                   } else {
                     return const SizedBox();
@@ -81,8 +79,7 @@ class AlbumRedactor extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Padding(
-                  padding:
-                  const EdgeInsets.symmetric(vertical: 20.0),
+                  padding: const EdgeInsets.symmetric(vertical: 20.0),
                   child: SizedBox(
                     // width: 292,
                     height: 65,
@@ -93,9 +90,7 @@ class AlbumRedactor extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30.0),
                         ),
                       ),
-                      onPressed: () {
-
-                      },
+                      onPressed: () {},
                       child: Ink(
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(colors: [
@@ -128,9 +123,7 @@ class AlbumRedactor extends StatelessWidget {
                       width: 40.0,
                       decoration: const BoxDecoration(
                         color: Color(0xFFDEDEDE),
-                        borderRadius:
-                        BorderRadius.all(
-                            Radius.circular(11)),
+                        borderRadius: BorderRadius.all(Radius.circular(11)),
                       ),
                       child: const Icon(
                         AlbumRedactorIcons.sticker,
@@ -138,17 +131,13 @@ class AlbumRedactor extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding:
-                      const EdgeInsets.only(
-                          left: 11),
+                      padding: const EdgeInsets.only(left: 11),
                       child: Container(
                         height: 40.0,
                         width: 40.0,
                         decoration: const BoxDecoration(
                           color: Color(0xFFDEDEDE),
-                          borderRadius:
-                          BorderRadius.all(
-                              Radius.circular(11)),
+                          borderRadius: BorderRadius.all(Radius.circular(11)),
                         ),
                         child: const Icon(
                           AlbumRedactorIcons.text,

@@ -24,13 +24,17 @@ class GetTheAlbum extends AlbumRedactorEvent{
 }
 
 class GetAlbumRedactorNaturalSheet extends AlbumRedactorEvent {
-  final List<Object> sheetAndId;
+
+  final Map sheet;
+  final int sheetIndex;
+  final double sheetWidth;
+  final double sheetHeight;
 
 
-  const GetAlbumRedactorNaturalSheet(this.sheetAndId);
+  const GetAlbumRedactorNaturalSheet( {required this.sheet, required this.sheetIndex, required this.sheetWidth, required this.sheetHeight});
 
   @override
-  List<Object> get props =>sheetAndId;
+  List<Object> get props =>[sheetHeight,sheet,sheetWidth,sheetIndex];
 }
 
 class GetAlbumRedactorPlaceholderParams extends AlbumRedactorEvent {

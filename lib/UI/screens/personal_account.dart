@@ -6,7 +6,6 @@ import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_event.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
 import 'package:album/data/models/hive_album.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -244,7 +243,7 @@ class PersonalAccount extends StatelessWidget {
                                 bloc: _albumRedactorBloc,
                                 buildWhen: (previousState, state) {
                                   if ((state is AlbumRedactorShowAlbums) &&
-                                      (state != previousState)) {
+                                      (state.props != previousState.props)) {
                                     // _albums = state.albums;
                                     print("$state from buildWhen of Albums");
 

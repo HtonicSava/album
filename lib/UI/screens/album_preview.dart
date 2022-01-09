@@ -4,9 +4,7 @@ import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../widgets/sheet_preview.dart';
-import '../widgets/sheet_natural_redactor.dart';
 
 class AlbumPreview extends StatelessWidget {
   final int albumIndex;
@@ -14,24 +12,27 @@ class AlbumPreview extends StatelessWidget {
 
   const AlbumPreview({
     Key? key,
-    required this.albumIndex, required this.onSheetTapped,
+    required this.albumIndex,
+    required this.onSheetTapped,
   }) : super(key: key);
 
-
   void _changeActiveNaturalSheet(
-      BuildContext context, sheet, index, proportionCoef) {
-    BlocProvider.of<AlbumRedactorBloc>(context)
-        .add(GetAlbumRedactorNaturalSheet([sheet, index, proportionCoef]));
+      BuildContext context, sheet, index, width, height) {
+    BlocProvider.of<AlbumRedactorBloc>(context).add(
+        GetAlbumRedactorNaturalSheet(
+            sheet: sheet,
+            sheetIndex: index,
+            sheetWidth: width,
+            sheetHeight: height));
   }
 
   @override
   Widget build(BuildContext context) {
-
     String _pageName;
     List? _sheets;
     late double _sheetsHeight;
     late double _sheetsWidth;
-    late var _sheetIndex;
+    late int _sheetIndex;
 
     final AlbumRedactorBloc _albumRedactorBloc =
         BlocProvider.of<AlbumRedactorBloc>(context);
@@ -57,7 +58,7 @@ class AlbumPreview extends StatelessWidget {
                   return const Text('Альбом');
                 }
 
-                ;
+
               })),
       body: Column(
         children: <Widget>[
@@ -71,7 +72,13 @@ class AlbumPreview extends StatelessWidget {
                   _sheets = state.sheets;
                   _sheetsWidth = state.sheetsWidth;
                   _sheetsHeight = state.sheetsHeight;
-                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet([_sheets![0], 0, _sheetsWidth / _sheetsHeight], ));
+                  _albumRedactorBloc.add(GetAlbumRedactorNaturalSheet(
+
+                    sheet: _sheets![0],
+                    sheetIndex: 0,
+                    sheetHeight: _sheetsHeight,
+                    sheetWidth: _sheetsWidth,
+                  ));
                   return true;
                 } else {
                   return false;
@@ -79,7 +86,6 @@ class AlbumPreview extends StatelessWidget {
               },
               builder: (context, state) {
                 if (state is AlbumRedactorUpdateAlbum) {
-
                   // print(sheets);
                   // print(state);
                   _pageName = state.albumName;
@@ -87,33 +93,35 @@ class AlbumPreview extends StatelessWidget {
                       height: 150,
                       child: _sheets == null
                           ? const Center(
-                        child: CircularProgressIndicator(),
-                      )
+                              child: CircularProgressIndicator(),
+                            )
                           : ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _sheets!.length,
-                        itemBuilder: (context, index) {
-                          return SheetPreview(
-                            photos: _sheets![index]['pages'],
-                            callback: () => {
-                              _changeActiveNaturalSheet(
-                                  context,
-                                  _sheets![index],
-                                  index,
-                                  _sheetsWidth / _sheetsHeight)
-                            },
-                            width: _sheetsWidth,
-                            height: _sheetsHeight, sheetCoverLink: _sheets![index]['sheetCoverLink'],
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(width: 16);
-                        },
-                      ));
+                              scrollDirection: Axis.horizontal,
+                              itemCount: _sheets!.length,
+                              itemBuilder: (context, index) {
+                                return SheetPreview(
+                                  photos: _sheets![index]['pages'],
+                                  callback: () => {
+                                    _changeActiveNaturalSheet(
+                                        context,
+                                        _sheets![index],
+                                        index,
+                                        _sheetsWidth,
+                                        _sheetsHeight)
+                                  },
+                                  width: _sheetsWidth,
+                                  height: _sheetsHeight,
+                                  sheetCoverLink: _sheets![index]
+                                      ['sheetCoverLink'],
+                                );
+                              },
+                              separatorBuilder: (context, index) {
+                                return const SizedBox(width: 16);
+                              },
+                            ));
                 } else {
                   return const CircularProgressIndicator();
                 }
-
               },
             ),
           ),
@@ -128,16 +136,14 @@ class AlbumPreview extends StatelessWidget {
               },
               builder: (context, state) {
                 if (state is AlbumRedactorShowNaturalSheet) {
-                  _sheetIndex = state.props[1];
-                  // print((state.props[0] as Map)['pages']);
-
+                  _sheetIndex = state.sheetIndex;
                   return SheetNaturalPreview(
-                    //значения sheet в props[0]
-                    photos: (state.props[0] as Map)['pages'],
-                    //значения индекса sheet в props[1]
-                    sheetIndex: state.props[1],
-                    //значения коэффициента пропорции sheet в props[2]
-                    sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
+                    photos: state.sheet['pages'],
+                    sheetIndex: state.sheetIndex,
+                    sheetPropCoef: state.sheetWidth / state.sheetHeight,
+                    albumIndex: albumIndex,
+                    sheetName: state.sheet['name'],
+                    sheetCoverLink: state.sheet['sheetCoverLink'],
                   );
                 } else {
                   return const SizedBox();

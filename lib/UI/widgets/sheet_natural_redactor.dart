@@ -15,18 +15,18 @@ class SheetNaturalRedactor extends StatelessWidget implements SheetTemplate {
 
   final String sheetCoverLink;
   final String sheetName;
-  final photos;
-  final sheetIndex;
-  final sheetPropCoef;
+  final List photos;
+  final int sheetIndex;
+  final double sheetPropCoef;
   final int albumIndex;
   // final double sheetWidth;
   // final double sheetHeight;
 
   const SheetNaturalRedactor({
     Key? key,
-    this.photos,
+    required this.photos,
     required this.sheetIndex,
-    this.sheetPropCoef,
+    required this.sheetPropCoef,
     required this.albumIndex, required this.sheetName, required this.sheetCoverLink,
   }) : super(key: key);
 

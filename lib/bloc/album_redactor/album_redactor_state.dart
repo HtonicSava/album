@@ -28,15 +28,16 @@ class AlbumRedactorStateInitial extends AlbumRedactorState{
 }
 
 class AlbumRedactorShowNaturalSheet extends AlbumRedactorState {
-  final List<Object> sheetInfo;
+  final Map sheet;
+  final int sheetIndex;
+  final double sheetWidth;
+  final double sheetHeight;
 
-
-  const AlbumRedactorShowNaturalSheet(this.sheetInfo);
+  const AlbumRedactorShowNaturalSheet(
+      {required this.sheet, required this.sheetIndex, required this.sheetWidth, required this.sheetHeight});
 
   @override
-  List<Object> get props => sheetInfo;
-
-
+  List<Object> get props => [sheetHeight,sheet,sheetWidth,sheetIndex];
 }
 
 class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
@@ -49,7 +50,6 @@ class AlbumRedactorShowPopupSheetRedactor extends AlbumRedactorState {
 
 }
 
-// TODO обновить props
 class AlbumRedactorUpdateAlbum extends AlbumRedactorState{
   // final List<Object> albumInfo;
   final List sheets;

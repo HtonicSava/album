@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
@@ -22,14 +21,15 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   late int _chosenAlbumIndex;
   late List<Album> _albums;
 
-  Stream<AlbumRedactorState> _getTheAlbum(event) async* {
+  Stream<AlbumRedactorState> _getTheAlbumHandler(event) async* {
     await _updateFieldsFromHiveDb(event.albumIndex);
     _chosenAlbumIndex = event.albumIndex;
     yield AlbumRedactorUpdateAlbum(
-
-
         albumName: _albums[_chosenAlbumIndex].name,
-        coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink, sheets: _sheets, sheetsHeight: _sheetsHeight, sheetsWidth: _sheetsWidth);
+        coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink,
+        sheets: _sheets,
+        sheetsHeight: _sheetsHeight,
+        sheetsWidth: _sheetsWidth);
   }
 
   Stream<AlbumRedactorState> _getAlbumsHandler(event) async* {
@@ -37,15 +37,20 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
     yield AlbumRedactorShowAlbums(albums: _albums);
   }
 
-  Stream<AlbumRedactorState> _getAlbumRedactorNaturalSheetHandler(event) async* {
-    yield AlbumRedactorShowNaturalSheet(event.sheetAndId);
+  Stream<AlbumRedactorState> _getAlbumRedactorNaturalSheetHandler(
+      event) async* {
+    yield AlbumRedactorShowNaturalSheet(
+        sheetWidth: event.sheetWidth,
+        sheet: event.sheet,
+        sheetHeight: event.sheetHeight,
+        sheetIndex: event.sheetIndex);
   }
 
   Stream<AlbumRedactorState> _getAlbumRedactorPlaceholderParams(event) async* {
     if (event.props[0] != 0) {
       event.props.add(_sheetsWidth);
       event.props.add(_sheetsHeight);
-      print(event.props);
+      // print(event.props);
     }
     //TODO пофиксить подгрузку старого изображения при сохранении нового
     imageCache!.clear();
@@ -55,18 +60,25 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   Stream<AlbumRedactorState> _getUpdatedAlbum(event) async* {
     Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
     final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
-    await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
+    // print(event.updatedPlaceholderParams[0]);
+    // print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+
+    //TODO Рефакторинг event.updatedPlaceholderParams[0] на event.updatedPlaceholderParams, возможно ли избавиться от AlbumRedactorShowNaturalSheet в этом стриме?
+
+    await _updatePlaceholderState(albumBox, event.updatedPlaceholderParams[0], _chosenAlbumIndex);
     await _updateFieldsFromHiveDb(_chosenAlbumIndex);
     yield AlbumRedactorUpdateAlbum(
         sheetsWidth: _sheetsWidth,
         albumName: _albums[_chosenAlbumIndex].name,
-        coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink, sheets: _sheets, sheetsHeight: _sheetsHeight);
-    final eventPropsArgs = event.props[0] as Map;
-    yield AlbumRedactorShowNaturalSheet([
-      tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
-      eventPropsArgs['sheetIndex'],
-      _sheetsWidth / _sheetsHeight,
-    ]);
+        coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink,
+        sheets: _sheets,
+        sheetsHeight: _sheetsHeight);
+    // final eventPropsArgs = event.props[0] as Map;
+    yield AlbumRedactorShowNaturalSheet(
+        sheetHeight: _sheetsHeight,
+        sheet: tempAlbumBox!.sheets[event.updatedPlaceholderParams[0]['sheetIndex']],
+        sheetIndex: event.updatedPlaceholderParams[0]['sheetIndex'],
+        sheetWidth: _sheetsWidth);
   }
 
   @override
@@ -74,7 +86,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
     switch (event.runtimeType) {
       case GetTheAlbum:
         print('$event from GetTheAlbum');
-        yield* _getTheAlbum(event);
+        yield* _getTheAlbumHandler(event);
         break;
       case GetAlbums:
         print('$event from GetAlbums');
@@ -93,92 +105,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
         yield* _getUpdatedAlbum(event);
         break;
     }
-
-    // if (event is InitEvent) {
-    //   print('$event from init');
-    //   yield* _initEventHandler(event);
-    // } else if (event is GetAlbums) {
-    //   print('$event from GetAlbums');
-    //   yield* _getAlbumsHandler(event);
-    // } else if (event is GetAlbumRedactorNaturalSheet) {
-    //   print('$event from sheet preview');
-    //   yield* _getAlbumRedactorNaturalSheetHandler(event);
-    // } else if (event is GetAlbumRedactorPlaceholderParams) {
-    //   print('${event} from sheet natural');
-    //   // print('${event.props}');
-    //   // yield AlbumRedactorShowPopupSheetRedactor([event.proportion]);
-    //   yield* _getAlbumRedactorPlaceholderParams(event);
-    // } else if (event is GetUpdatedAlbum) {
-    //   print('$event from show general dialog');
-    //   yield* _getUpdatedAlbum(event);
-    // }
-
-
-
-      // if (event is InitEvent){
-      //   print('$event from init');
-      //   await _updateFieldsFromHiveDb(event.albumIndex);
-      //   _chosenAlbumIndex = event.albumIndex;
-      //   yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight], albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink);
-      // }
-      //
-      // else if ( event is GetAlbums) {
-      //   print('$event from GetAlbums');
-      //   _albums = await _updateAlbumsFromHiveDb();
-      //
-      //
-      //   yield AlbumRedactorShowAlbums(albums: _albums);
-      // }
-      //
-      // else if (event is GetAlbumRedactorNaturalSheet) {
-      //   print('$event from sheet preview');
-      //   //TODO Различие между передачей данных с помощью props и полей класса события
-      //   yield AlbumRedactorShowNaturalSheet(event.sheetAndId);
-      //
-      // }
-      // else if (event is GetAlbumRedactorPlaceholderParams) {
-      //   print('${event} from sheet natural');
-      //   print('${event.props}');
-      //
-      //
-      //   if (event.props[0] != 0) {
-      //     event.props.add(_sheetsWidth);
-      //     event.props.add(_sheetsHeight);
-      //     print(event.props);
-      //   }
-      //   //TODO пофиксить подгрузку старого изображения при сохранении нового
-      //   imageCache!.clear();
-      //
-      //   yield AlbumRedactorShowPopupSheetRedactor(event.props);
-      //
-      //   // yield AlbumRedactorShowPopupSheetRedactor([event.proportion]);
-      //
-      //
-      // }
-      // else if (event is GetUpdatedAlbum) {
-      //   print('$event from show general dialog');
-      //   Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
-      //   final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
-      //
-      //   await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
-      //   await _updateFieldsFromHiveDb(_chosenAlbumIndex);
-      //   yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],  albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink
-      //   );
-      //
-      //
-      //
-      //
-      //   final eventPropsArgs = event.props[0] as Map;
-      //   yield AlbumRedactorShowNaturalSheet([
-      //     tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
-      //     eventPropsArgs['sheetIndex'],
-      //     _sheetsWidth/_sheetsHeight,
-      //   ]);
-      // }
-    }
-
-
-
+  }
 
   Future _updateAlbumsFromHiveDb() async {
     Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
