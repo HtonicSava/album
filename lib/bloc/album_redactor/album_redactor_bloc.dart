@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
-
+import 'package:image/image.dart' as image_lib;
 import 'album_redactor_event.dart';
 import 'album_redactor_state.dart';
 
@@ -21,34 +21,27 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   late int _chosenAlbumIndex;
   late List<Album> _albums;
 
-
-
   @override
   Stream<AlbumRedactorState> mapEventToState(AlbumRedactorEvent event) async* {
-    if (event is InitEvent){
+    if (event is InitEvent) {
       print('$event from init');
       await _updateFieldsFromHiveDb(event.albumIndex);
       _chosenAlbumIndex = event.albumIndex;
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight], albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink);
-    }
-
-    else if ( event is GetAlbums) {
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],
+          albumName: _albums[_chosenAlbumIndex].name,
+          coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink);
+    } else if (event is GetAlbums) {
       print('$event from GetAlbums');
       _albums = await _updateAlbumsFromHiveDb();
 
-
       yield AlbumRedactorShowAlbums(albums: _albums);
-    }
-
-    else if (event is GetAlbumRedactorNaturalSheet) {
+    } else if (event is GetAlbumRedactorNaturalSheet) {
       print('$event from sheet preview');
       //TODO Различие между передачей данных с помощью props и полей класса события
       yield AlbumRedactorShowNaturalSheet(event.sheetAndId);
-
     } else if (event is GetAlbumRedactorPlaceholderParams) {
       print('${event} from sheet natural');
       print('${event.props}');
-
 
       if (event.props[0] != 0) {
         event.props.add(_sheetsWidth);
@@ -62,33 +55,36 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
       // yield AlbumRedactorShowPopupSheetRedactor([event.proportion]);
 
-
     } else if (event is GetUpdatedAlbum) {
       print('$event from show general dialog');
+
+
+
       Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
-      final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
 
-      await _updatePlaceholderState(albumBox, event.props[0], _chosenAlbumIndex);
+      await _updatePlaceholderState(
+          albumBox, event.props[0], _chosenAlbumIndex, event.image);
       await _updateFieldsFromHiveDb(_chosenAlbumIndex);
-      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],  albumName: _albums[_chosenAlbumIndex].name, coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink
-      );
+      yield AlbumRedactorUpdateAlbum([sheets, _sheetsWidth, _sheetsHeight],
+          albumName: _albums[_chosenAlbumIndex].name,
+          coverAlbumLink: _albums[_chosenAlbumIndex].coverAlbumLink);
 
+      //При разделении предпросмотра и редактировании в коде ниже нет необходимости
+      // final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
 
-
-
-      final eventPropsArgs = event.props[0] as Map;
-      yield AlbumRedactorShowNaturalSheet([
-        tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
-        eventPropsArgs['sheetIndex'],
-        _sheetsWidth/_sheetsHeight,
-      ]);
+      // final eventPropsArgs = event.props[0] as Map;
+      // yield AlbumRedactorShowNaturalSheet([
+      //   tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
+      //   eventPropsArgs['sheetIndex'],
+      //   _sheetsWidth/_sheetsHeight,
+      // ]);
     }
   }
 
   Future _updateAlbumsFromHiveDb() async {
     Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
     List<Album> _tempAlbums = [];
-    for (Album album in albumBox.values){
+    for (Album album in albumBox.values) {
       _tempAlbums.add(album);
     }
     return _tempAlbums;
@@ -103,22 +99,47 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   }
 
   Future? _deleteImage(placeHolderParams) async {
-    final directory = await getExternalStorageDirectory();
-    final imagesPath = '${directory!.path}/SavedAlbumImages';
+    final directory = await getApplicationDocumentsDirectory();
+    final imagesPath = '${directory.path}/SavedAlbumImages';
     final fileForDeleting = File(
         '$imagesPath/albumImage$_chosenAlbumIndex${placeHolderParams['sheetIndex']}${placeHolderParams['placeholderIndex']}.png');
     await fileForDeleting.delete(recursive: true);
   }
 
-  Future? _updatePlaceholderState(box, placeHolderParams, albumIndex) async {
+  Future _saveImageToDirectory(
+      //TODO оптимизировать с помощью проверки существования директории
+
+      image, Map placeholderParams, int albumIndex) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final myImagePath = '${directory.path}/SavedAlbumImages';
+    await Directory(myImagePath).create();
+
+    image_lib.Image? resizedImage = image_lib.copyResize(image!,
+        width: (placeholderParams)['imageResizeParams']['width'].round(),
+        height: (placeholderParams)['imageResizeParams']['height'].round());
+
+    image_lib.Image croppedImage = image_lib.copyCrop(
+        resizedImage,
+        (placeholderParams)['imageStartCordsForCropping']['x'].round(),
+        (placeholderParams)['imageStartCordsForCropping']['y'].round(),
+        (placeholderParams)['croppingSizes']['width'].round(),
+        (placeholderParams)['croppingSizes']['height'].round());
+
+    File('$myImagePath/albumImage$albumIndex${(placeholderParams)['sheetIndex']}${(placeholderParams)['placeholderIndex']}.png')
+        .writeAsBytesSync(image_lib.encodePng(croppedImage));
+
+    (placeholderParams)['image'] =
+        '$myImagePath/albumImage$albumIndex${(placeholderParams)['sheetIndex']}${(placeholderParams)['placeholderIndex']}.png';
+  }
+
+  Future? _updatePlaceholderState(box, placeHolderParams, albumIndex, image) async {
     // print('${placeHolderParams.props[0]} from _updatePlaceholderState');
     var tempAlbumBox = box.getAt(albumIndex);
     List tempSheets = [];
-
+    //TODO Реализовать похожим образом на удаление загрузку изображения
     //TODO Оптимизация условия загрузки изображения в бд
     for (int i = 0; i < tempAlbumBox!.sheets.length; i++) {
       if (i != placeHolderParams['sheetIndex']) {
-
         tempSheets.add(tempAlbumBox!.sheets[i]);
       } else {
         Map tempSheet = {
@@ -132,6 +153,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
           } else {
             var tempPlaceHolder = tempAlbumBox!.sheets[i]['pages'][j];
             if (placeHolderParams['saveFlag'] == true) {
+              await _saveImageToDirectory(image, placeHolderParams, albumIndex);
               tempPlaceHolder['image'] = placeHolderParams['image'];
             } else {
               tempPlaceHolder['image'] = '';
@@ -145,7 +167,6 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
       }
     }
 
-
     box.putAt(
         albumIndex,
         Album()
@@ -154,10 +175,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
           ..sheets = tempSheets
           ..sheetsNumber = tempAlbumBox.sheetsNumber
           ..name = tempAlbumBox.name
-          ..coverAlbumLink = tempAlbumBox.coverAlbumLink
-    );
-
-
+          ..coverAlbumLink = tempAlbumBox.coverAlbumLink);
 
     // print('${box.getAt(0)!.sheets} from show general dialog before update DB');
     // print('${box.getAt(0)!.sheets[0][0]} from show general dialog before update DB');

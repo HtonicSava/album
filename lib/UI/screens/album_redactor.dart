@@ -75,9 +75,9 @@ class AlbumRedactor extends StatelessWidget {
                       //значения sheet в props[0]
                       photos: (state.props[0] as Map)['pages'],
                       //значения индекса sheet в props[1]
-                      sheetIndex: state.props[1],
+                      sheetIndex: state.props[1] as int,
                       //значения коэффициента пропорции sheet в props[2]
-                      sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
+                      sheetPropCoef: state.props[2] as double, albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
                     );
                   } else {
                     return const SizedBox();

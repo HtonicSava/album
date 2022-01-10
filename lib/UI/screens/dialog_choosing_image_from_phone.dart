@@ -37,6 +37,7 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
   var _image;
   var _image_width;
   var _image_height;
+  late double _image_proportion;
   late XFile _xfileImage;
   var imagePicker;
   var sheetIndex;
@@ -65,14 +66,14 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
     _keyBorder.currentContext?.size;
 
     final Size size = renderBox.size;
-    print(
-        'Size: ${size.width}, ${size.height} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
+    // print(
+    //     'Size: ${size.width}, ${size.height} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
 
     final Offset offset = renderBox.localToGlobal(Offset.zero);
     _borderStartXCord = offset.dx;
     _borderStartYCord = offset.dy;
-    print(
-        'Offset: ${offset.dx}, ${offset.dy} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
+    // print(
+    //     'Offset: ${offset.dx}, ${offset.dy} ОООООООООООООООООООООООООООООООООООООООООООООООООООООО');
   }
 
   bool _checkCover({solidX, solidY, solidW, solidH, x, y, w, h}) {
@@ -140,8 +141,11 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
           _image != null && _image_width != null && _image_height != null
               ? ResizableWidget(
                   //TODO Сделать подгрузку существующего изображения (при наличии такового)
-                  startHeight: _image_height,
-                  startWidth: _image_width,
+                  // startHeight: _image_height,
+                  // startWidth: _image_width,
+                  startHeight: _borderSizeCorrected.width / _image_proportion,
+                  startWidth: _borderSizeCorrected.width,
+
                   globalKeyLink: _keyPhoto,
                   child: Image.file(
                     _image,
@@ -228,10 +232,10 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                               // print('${widget.sheetWidth} ----- Ширина шаблона');
                               // print('${widget.sheetHeight} ----- Высота шаблона');
                               //
-                              // print(
-                              //     '${_borderSizeCorrected.width} ----- Скорректированная ширина ограничивающей рамки');
-                              // print(
-                              //     '${_borderSizeCorrected.height} ----- Скорректированная высота ограничивающей рамки');
+                              print(
+                                  '${_borderSizeCorrected.width} ----- Скорректированная ширина ограничивающей рамки');
+                              print(
+                                  '${_borderSizeCorrected.height} ----- Скорректированная высота ограничивающей рамки');
                               //
                               // print(
                               //     '${placeholderWidth * widget.sheetWidth} ----- Абсолютная ширина ограничивающей рамки');
@@ -287,6 +291,8 @@ class DialogChoosingImageState extends State<DialogChoosingImage> {
                         decodedImage.height.toDouble() * _generalIncreaseCoef;
                     _image_width =
                         decodedImage.width.toDouble() * _generalIncreaseCoef;
+
+                    _image_proportion = decodedImage.width.toDouble()/decodedImage.height.toDouble();
 
                     // print(
                     //     '${decodedImage.height.toDouble()} - высота загруженного изображения');
