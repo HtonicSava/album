@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:image/image.dart' as imageLib;
 
 abstract class AlbumRedactorEvent extends Equatable {
   const AlbumRedactorEvent();
@@ -48,8 +49,10 @@ class GetAlbumRedactorPlaceholderParams extends AlbumRedactorEvent {
 
 class GetUpdatedAlbum extends AlbumRedactorEvent {
   final List<Object> updatedPlaceholderParams;
+  final imageLib.Image? image;
 
-  const GetUpdatedAlbum(this.updatedPlaceholderParams);
+  const GetUpdatedAlbum(this.updatedPlaceholderParams, {this.image});
+
   //TODO поффиксить получение updatedPlaceholderParams из props
   @override
   List<Object?> get props => updatedPlaceholderParams;

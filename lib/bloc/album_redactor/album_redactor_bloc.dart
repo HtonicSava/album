@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:async';
-
+import 'package:image/image.dart' as image_lib;
 import 'album_redactor_event.dart';
 import 'album_redactor_state.dart';
 
@@ -104,6 +104,15 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
         print('$event from show general dialog');
         yield* _getUpdatedAlbum(event);
         break;
+      //При разделении предпросмотра и редактировании в коде ниже нет необходимости
+      // final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
+
+      // final eventPropsArgs = event.props[0] as Map;
+      // yield AlbumRedactorShowNaturalSheet([
+      //   tempAlbumBox!.sheets[eventPropsArgs['sheetIndex']],
+      //   eventPropsArgs['sheetIndex'],
+      //   _sheetsWidth/_sheetsHeight,
+      // ]);
     }
   }
 
@@ -125,18 +134,44 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   }
 
   Future? _deleteImage(placeHolderParams) async {
-    final directory = await getExternalStorageDirectory();
-    final imagesPath = '${directory!.path}/SavedAlbumImages';
+    final directory = await getApplicationDocumentsDirectory();
+    final imagesPath = '${directory.path}/SavedAlbumImages';
     final fileForDeleting = File(
         '$imagesPath/albumImage$_chosenAlbumIndex${placeHolderParams['sheetIndex']}${placeHolderParams['placeholderIndex']}.png');
     await fileForDeleting.delete(recursive: true);
   }
 
-  Future? _updatePlaceholderState(box, placeHolderParams, albumIndex) async {
+  Future _saveImageToDirectory(
+      //TODO оптимизировать с помощью проверки существования директории
+
+      image, Map placeholderParams, int albumIndex) async {
+    final directory = await getApplicationDocumentsDirectory();
+    final myImagePath = '${directory.path}/SavedAlbumImages';
+    await Directory(myImagePath).create();
+
+    image_lib.Image? resizedImage = image_lib.copyResize(image!,
+        width: (placeholderParams)['imageResizeParams']['width'].round(),
+        height: (placeholderParams)['imageResizeParams']['height'].round());
+
+    image_lib.Image croppedImage = image_lib.copyCrop(
+        resizedImage,
+        (placeholderParams)['imageStartCordsForCropping']['x'].round(),
+        (placeholderParams)['imageStartCordsForCropping']['y'].round(),
+        (placeholderParams)['croppingSizes']['width'].round(),
+        (placeholderParams)['croppingSizes']['height'].round());
+
+    File('$myImagePath/albumImage$albumIndex${(placeholderParams)['sheetIndex']}${(placeholderParams)['placeholderIndex']}.png')
+        .writeAsBytesSync(image_lib.encodePng(croppedImage));
+
+    (placeholderParams)['image'] =
+        '$myImagePath/albumImage$albumIndex${(placeholderParams)['sheetIndex']}${(placeholderParams)['placeholderIndex']}.png';
+  }
+
+  Future? _updatePlaceholderState(box, placeHolderParams, albumIndex, image) async {
     // print('${placeHolderParams.props[0]} from _updatePlaceholderState');
     var tempAlbumBox = box.getAt(albumIndex);
     List tempSheets = [];
-
+    //TODO Реализовать похожим образом на удаление загрузку изображения
     //TODO Оптимизация условия загрузки изображения в бд
     for (int i = 0; i < tempAlbumBox!.sheets.length; i++) {
       if (i != placeHolderParams['sheetIndex']) {
@@ -153,6 +188,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
           } else {
             var tempPlaceHolder = tempAlbumBox!.sheets[i]['pages'][j];
             if (placeHolderParams['saveFlag'] == true) {
+              await _saveImageToDirectory(image, placeHolderParams, albumIndex);
               tempPlaceHolder['image'] = placeHolderParams['image'];
             } else {
               tempPlaceHolder['image'] = '';
