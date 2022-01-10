@@ -62,12 +62,12 @@ class AlbumRedactor extends StatelessWidget {
                 builder: (context, state) {
                   if (state is AlbumRedactorShowNaturalSheet) {
                     return SheetNaturalRedactor(
-                      //значения sheet в props[0]
-                      photos: (state.props[0] as Map)['pages'],
-                      //значения индекса sheet в props[1]
-                      sheetIndex: state.props[1],
-                      //значения коэффициента пропорции sheet в props[2]
-                      sheetPropCoef: state.props[2], albumIndex: albumIndex, sheetName: (state.props[0] as Map)['name'], sheetCoverLink: (state.props[0] as Map)['sheetCoverLink'],
+                      photos: state.sheet['pages'],
+                      sheetIndex: state.sheetIndex,
+                      sheetPropCoef: state.sheetWidth / state.sheetHeight,
+                      albumIndex: albumIndex,
+                      sheetName: state.sheet['name'],
+                      sheetCoverLink: state.sheet['sheetCoverLink'],
                     );
                   } else {
                     return const SizedBox();

@@ -65,7 +65,7 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
     //TODO Рефакторинг event.updatedPlaceholderParams[0] на event.updatedPlaceholderParams, возможно ли избавиться от AlbumRedactorShowNaturalSheet в этом стриме?
 
-    await _updatePlaceholderState(albumBox, event.updatedPlaceholderParams[0], _chosenAlbumIndex);
+    await _updatePlaceholderState(albumBox, event.updatedPlaceholderParams[0], _chosenAlbumIndex, event.image);
     await _updateFieldsFromHiveDb(_chosenAlbumIndex);
     yield AlbumRedactorUpdateAlbum(
         sheetsWidth: _sheetsWidth,
