@@ -1,4 +1,5 @@
 import 'package:album/UI/icons/my_flutter_app_icons.dart';
+import 'package:album/UI/widgets/button.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -78,42 +79,10 @@ class AlbumRedactor extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: SizedBox(
-                    // width: 292,
-                    height: 65,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                      ),
-                      onPressed: () {},
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(colors: [
-                            Color(0xFFBDBBBE),
-                            Color(0xFF9D9EA3),
-                          ]),
-                          // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40.0),
-                          child: Container(
-                            alignment: Alignment.center,
-                            child: const Text(
-                              'Сохранить',
-                              style: TextStyle(
-                                fontSize: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                 Expanded(
+                  child:  Padding(
+                    padding: const EdgeInsets.only(top: 20.0, bottom: 20.0, right: 60.0, left: 0.0),
+                    child: CustomButton(buttonText: 'Сохранить', onTapped: () => {},),
                   ),
                 ),
                 Row(

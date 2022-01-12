@@ -144,10 +144,15 @@ class SheetNaturalRedactor extends StatelessWidget implements SheetTemplate {
                                       return;
                                     } else {
                                       print(exit);
+                                      print('!!!!!!!!!!');
+
                                       // Обработка приходящего из диалога ответа. При сохранении вылетает эксепшен, который не позволяет передать в блок несуществующий файл
                                       //TODO Проверка (exit as Map)['image'] на строку, заменить
-                                      imageLib.Image? _image = (exit as Map)['image'].runtimeType == String ? null : imageLib
-                                          .decodePng((exit as Map)['image'].readAsBytesSync());
+                                      imageLib.Image? _image = (exit as Map)['image'] == '' ? null : imageLib
+                                          .decodeJpg((exit as Map)['image'].readAsBytesSync());
+                                      // imageLib.Image? _image = imageLib.decodeJpg((exit as Map)['image'].readAsBytesSync());
+                                      // print(_image);
+                                      print('!!!!!!!!!!');
                                       albumRedactorBloc.add(
                                         GetUpdatedAlbum([exit],
                                             image: _image),

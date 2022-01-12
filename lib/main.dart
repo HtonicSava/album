@@ -8,6 +8,7 @@ import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
 import 'package:album/data/models/hive_album.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'bloc/album_redactor/album_redactor_bloc.dart';
@@ -217,6 +218,13 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
 
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+       statusBarColor: Color(0xFFBBAFA6),
+        // statusBarBrightness: Brightness.light,
+      )
+    );
+
     void _completeAuthorization() {
       // print(_authorizated);
       setState(() {
@@ -247,11 +255,26 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
     // print(_chosenAlbum.runtimeType);
 
     return MaterialApp(
+
       theme: ThemeData(
+        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
+          unselectedIconTheme: IconThemeData(
+              color: Color(0xFFBBAFA6)
+
+          ),
+          selectedIconTheme: IconThemeData(
+              color: Color(0xFFDB8677)
+          ),
+        ),
+        colorScheme:  const ColorScheme.light(primary: Color(0xFFFDF0E7)),
+          //Color(0xFFDB8677)
           appBarTheme: const AppBarTheme(
-        foregroundColor: Color(0xFFA5A5A5),
-        backgroundColor: Color(0xFFDDDDDD),
-      )),
+            foregroundColor: Color(0xFFBBAFA6),
+            backgroundColor: Color(0xFFFDF0E7),
+        ),
+      ),
       debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
       home: MultiBlocProvider(

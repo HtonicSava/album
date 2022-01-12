@@ -60,8 +60,8 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
   Stream<AlbumRedactorState> _getUpdatedAlbum(event) async* {
     Box<Album> albumBox = await Hive.openBox<Album>('box_for_albums');
     final tempAlbumBox = albumBox.getAt(_chosenAlbumIndex);
-    // print(event.updatedPlaceholderParams[0]);
-    // print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+    print(event.image);
+    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
     //TODO Рефакторинг event.updatedPlaceholderParams[0] на event.updatedPlaceholderParams, возможно ли избавиться от AlbumRedactorShowNaturalSheet в этом стриме?
 
@@ -143,7 +143,6 @@ class AlbumRedactorBloc extends Bloc<AlbumRedactorEvent, AlbumRedactorState> {
 
   Future _saveImageToDirectory(
       //TODO оптимизировать с помощью проверки существования директории
-
       image, Map placeholderParams, int albumIndex) async {
     final directory = await getApplicationDocumentsDirectory();
     final myImagePath = '${directory.path}/SavedAlbumImages';

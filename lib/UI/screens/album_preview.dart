@@ -1,3 +1,4 @@
+import 'package:album/UI/widgets/button.dart';
 import 'package:album/UI/widgets/sheet_natural_preview.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
@@ -151,43 +152,13 @@ class AlbumPreview extends StatelessWidget {
               },
             ),
           ),
-          Padding(
+    // onSheetTapped(_sheetIndex);
+
+      Padding(
             padding:
                 const EdgeInsets.symmetric(vertical: 20.0, horizontal: 60.0),
-            child: SizedBox(
-              // width: 292,
-              height: 65,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                ),
-                onPressed: () {
-                  onSheetTapped(_sheetIndex);
-                },
-                child: Ink(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(colors: [
-                      Color(0xFFBDBBBE),
-                      Color(0xFF9D9EA3),
-                    ]),
-                    // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
-                    borderRadius: BorderRadius.circular(30.0),
-                  ),
-                  child: Container(
-                    alignment: Alignment.center,
-                    child: const Text(
-                      'Редактировать',
-                      style: TextStyle(
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
+            child: CustomButton(onTapped: () => {onSheetTapped(_sheetIndex)}, buttonText: 'Редактировать',
               ),
-            ),
           )
         ],
       ),

@@ -6,7 +6,9 @@ import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_event.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
 import 'package:album/data/models/hive_album.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PersonalAccount extends StatelessWidget {
@@ -28,6 +30,13 @@ class PersonalAccount extends StatelessWidget {
     final AuthorizationBloc _authorizationBloc =
         BlocProvider.of<AuthorizationBloc>(context);
     _authorizationBloc.add(const AuthorizationEventGetLogin());
+
+    // SystemChrome.setSystemUIOverlayStyle(
+    //      SystemUiOverlayStyle(
+    //       statusBarColor: ThemeData.from(colorScheme: const ColorScheme.light()).appBarTheme.foregroundColor,
+    //       // statusBarBrightness: Brightness.light,
+    //     )
+    // );
 
     return Scaffold(
       drawer: Drawer(
@@ -59,6 +68,7 @@ class PersonalAccount extends StatelessWidget {
         title: const Text('Личный кабинет'),
       ),
       bottomNavigationBar: BottomNavigationBar(
+
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(IconData(0xe48d, fontFamily: 'MaterialIcons')),
@@ -83,7 +93,7 @@ class PersonalAccount extends StatelessWidget {
         child: SingleChildScrollView(
           child: Container(
             padding: const EdgeInsets.only(top: 8.0),
-            color: const Color(0xFFE5E5E5),
+            color: const Color(0xFFFDF0E7),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               // mainAxisSize: MainAxisSize.max,

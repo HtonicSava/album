@@ -1,4 +1,5 @@
 import 'package:album/UI/icons/app_icons.dart';
+import 'package:album/UI/widgets/button.dart';
 import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_event.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:permission_handler/permission_handler.dart';
+
 
 class Authorization extends StatefulWidget {
   final VoidCallback onTapped;
@@ -21,31 +24,53 @@ class _AuthorizationState extends State<
     with
         SingleTickerProviderStateMixin {
   TabController? _tabController;
+  late bool _permissionGranted;
   late bool _passwordVisible;
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  _tryLogin(String logConText, String pasConText,AuthorizationBloc bloc){
-
-    if (logConText != '' && pasConText != ''){
-      bloc.add(AuthorizationEventLogin(login: logConText, password: pasConText));
-    } else {
-      Fluttertoast.showToast(
-          msg: "Введите логин и пароль",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.grey,
-
-          fontSize: 16.0
-      );
+  Future _getStoragePermission() async {
+    if (await Permission.storage.request().isGranted) {
+      setState(() {
+        _permissionGranted = true;
+      });
+    } else if (await Permission.storage.request().isPermanentlyDenied) {
+      await openAppSettings();
+    } else if (await Permission.storage.request().isDenied) {
+      setState(() {
+        _permissionGranted = false;
+      });
     }
+  }
+
+  _tryLogin(String logConText, String pasConText,AuthorizationBloc bloc) async{
+    if (_permissionGranted){
+      if (logConText != '' && pasConText != ''){
+        bloc.add(AuthorizationEventLogin(login: logConText, password: pasConText));
+      }
+      else {
+        Fluttertoast.showToast(
+            msg: "Введите логин и пароль",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.grey,
+
+            fontSize: 16.0
+        );
+      }
+    } else {
+      await _getStoragePermission();
+
+    }
+
   }
 
   @override
   void initState() {
     _tabController = TabController(length: 2, vsync: this);
     _passwordVisible = false;
+    _permissionGranted = false;
     super.initState();
   }
 
@@ -83,7 +108,7 @@ class _AuthorizationState extends State<
                     children: [
                       Positioned(
                         child: Container(
-                          color: const Color(0xAAE5E5E5),
+                          color: Theme.of(context).colorScheme.primary,
                           width: MediaQuery.of(context).size.width,
                           child: Padding(
                             padding: const EdgeInsets.fromLTRB(0, 52, 0, 0),
@@ -101,7 +126,8 @@ class _AuthorizationState extends State<
                                               const BoxDecoration(boxShadow: [
                                             BoxShadow(
                                               color:
-                                                  Color.fromRGBO(0, 0, 0, 0.5),
+                                                  Color.fromRGBO(0, 0, 0,
+                                                      0.5),
                                               spreadRadius: -20,
                                               blurRadius: 20,
                                               offset: Offset(0,
@@ -222,13 +248,14 @@ class _AuthorizationState extends State<
                                               height: 40.0,
                                               width: 40.0,
                                               decoration: const BoxDecoration(
-                                                color: Color(0xFFDEDEDE),
+                                                color: Color(0xFFFAE4D4),
+
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(11)),
                                               ),
                                               child: const Icon(
                                                 MyFlutterApp.iconGoogle,
-                                                color: Color(0xFF5F5F5F),
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -239,59 +266,27 @@ class _AuthorizationState extends State<
                                               height: 40.0,
                                               width: 40.0,
                                               decoration: const BoxDecoration(
-                                                color: Color(0xFFDEDEDE),
+                                                color: Color(0xFFFAE4D4),
+
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(11)),
                                               ),
                                               child: const Icon(
                                                 MyFlutterApp.iconVK,
                                                 size: 18,
-                                                color: Color(0xFF5F5F5F),
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
                                         ],
                                       ),
-                                      // TODO вынести кнопку в отдельный файл
                                       Padding(
                                         padding: const EdgeInsets.only(
                                           top: 40,
                                         ),
-                                        child: SizedBox(
-                                          // width: 292,
-                                          height: 65,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.zero,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                            ),
-                                            onPressed: () => _tryLogin(_loginController.text, _passwordController.text, _authorizationBloc),
-                                            child: Ink(
-                                              decoration: BoxDecoration(
-                                                gradient: const LinearGradient(
-                                                    colors: [
-                                                      Color(0xFFBDBBBE),
-                                                      Color(0xFF9D9EA3),
-                                                    ]),
-                                                // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                child: const Text(
-                                                  'Вход',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+
+
+                                        child: CustomButton(buttonText: "ВХОД", onTapped: () => _tryLogin(_loginController.text, _passwordController.text, _authorizationBloc),),
                                       )
                                     ],
                                   ),
@@ -453,18 +448,20 @@ class _AuthorizationState extends State<
                                               padding:
                                                   const EdgeInsets.symmetric(
                                                       horizontal: 9),
+                                              //Todo вынести иконки в отдельный файл, цвета подтянуть из темы
                                               child: Container(
                                                 height: 40.0,
                                                 width: 40.0,
                                                 decoration: const BoxDecoration(
-                                                  color: Color(0xFFDEDEDE),
+                                                  color: Color(0xFFFAE4D4),
+
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(11)),
                                                 ),
                                                 child: const Icon(
                                                   MyFlutterApp.iconGoogle,
-                                                  color: Color(0xFF5F5F5F),
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
@@ -476,7 +473,8 @@ class _AuthorizationState extends State<
                                                 height: 40.0,
                                                 width: 40.0,
                                                 decoration: const BoxDecoration(
-                                                  color: Color(0xFFDEDEDE),
+                                                  color: Color(0xFFFAE4D4),
+
                                                   borderRadius:
                                                       BorderRadius.all(
                                                           Radius.circular(11)),
@@ -484,7 +482,7 @@ class _AuthorizationState extends State<
                                                 child: const Icon(
                                                   MyFlutterApp.iconVK,
                                                   size: 18,
-                                                  color: Color(0xFF5F5F5F),
+                                                  color: Colors.white,
                                                 ),
                                               ),
                                             ),
@@ -496,51 +494,17 @@ class _AuthorizationState extends State<
                                         padding: const EdgeInsets.only(
                                           top: 40,
                                         ),
-                                        child: SizedBox(
-                                          // width: 292,
-                                          height: 65,
-                                          child: ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              padding: EdgeInsets.zero,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                            ),
-                                            onPressed: () {
-                                              Fluttertoast.showToast(
-                                                  msg: "Регистрация временно недоступна",
-                                                  toastLength: Toast.LENGTH_SHORT,
-                                                  gravity: ToastGravity.BOTTOM,
-                                                  timeInSecForIosWeb: 1,
-                                                  backgroundColor: Colors.grey,
+                                        child: CustomButton(onTapped: () => {
+                                          Fluttertoast.showToast(
+                                              msg: "Регистрация временно недоступна",
+                                              toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.BOTTOM,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.grey,
 
-                                                  fontSize: 16.0
-                                              );
-                                            },
-                                            child: Ink(
-                                              decoration: BoxDecoration(
-                                                gradient: const LinearGradient(
-                                                    colors: [
-                                                      Color(0xFFBDBBBE),
-                                                      Color(0xFF9D9EA3),
-                                                    ]),
-                                                // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
-                                                borderRadius:
-                                                    BorderRadius.circular(30.0),
-                                              ),
-                                              child: Container(
-                                                alignment: Alignment.center,
-                                                child: const Text(
-                                                  'Регистрация',
-                                                  style: TextStyle(
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
+                                              fontSize: 16.0
+                                          )
+                                        },buttonText: 'Регистрация',),
                                       ),
 
                                       Padding(
@@ -601,7 +565,7 @@ class _AuthorizationState extends State<
                                   const EdgeInsets.symmetric(horizontal: 47),
                               unselectedLabelColor: Colors.black,
                               labelColor: Colors.black,
-                              indicatorColor: Colors.black,
+                              indicatorColor: const Color(0xFFDB8677),
                               tabs: const [
                                 Tab(
                                   child: Text(
