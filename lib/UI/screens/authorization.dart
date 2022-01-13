@@ -29,6 +29,18 @@ class _AuthorizationState extends State<
   final TextEditingController _loginController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
+  Future _checkStoragePermission() async{
+    if (await Permission.storage.request().isGranted) {
+      setState(() {
+        _permissionGranted = true;
+      });
+    } else {
+      setState(() {
+        _permissionGranted = false;
+      });
+    }
+  }
+
   Future _getStoragePermission() async {
     if (await Permission.storage.request().isGranted) {
       setState(() {
@@ -44,25 +56,48 @@ class _AuthorizationState extends State<
   }
 
   _tryLogin(String logConText, String pasConText,AuthorizationBloc bloc) async{
-    if (_permissionGranted){
-      if (logConText != '' && pasConText != ''){
+    await _checkStoragePermission();
+    if (logConText != '' && pasConText != ''){
+      if (_permissionGranted){
+        await _getStoragePermission();
+
         bloc.add(AuthorizationEventLogin(login: logConText, password: pasConText));
-      }
-      else {
-        Fluttertoast.showToast(
-            msg: "Введите логин и пароль",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.grey,
+      } else {
+        await _getStoragePermission();
 
-            fontSize: 16.0
-        );
       }
-    } else {
-      await _getStoragePermission();
-
     }
+    else {
+      Fluttertoast.showToast(
+          msg: "Введите логин и пароль",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.grey,
+
+          fontSize: 16.0
+      );
+    }
+
+    // if (_permissionGranted){
+    //   if (logConText != '' && pasConText != ''){
+    //     bloc.add(AuthorizationEventLogin(login: logConText, password: pasConText));
+    //   }
+    //   else {
+    //     Fluttertoast.showToast(
+    //         msg: "Введите логин и пароль",
+    //         toastLength: Toast.LENGTH_SHORT,
+    //         gravity: ToastGravity.BOTTOM,
+    //         timeInSecForIosWeb: 1,
+    //         backgroundColor: Colors.grey,
+    //
+    //         fontSize: 16.0
+    //     );
+    //   }
+    // } else {
+    //   await _getStoragePermission();
+    //
+    // }
 
   }
 
@@ -71,7 +106,7 @@ class _AuthorizationState extends State<
     _tabController = TabController(length: 2, vsync: this);
     _passwordVisible = false;
     _permissionGranted = false;
-    super.initState();
+
   }
 
   @override
@@ -150,8 +185,8 @@ class _AuthorizationState extends State<
                                                 filled: true,
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.black,
+                                                  borderSide: BorderSide(
+                                                      color: Theme.of(context).inputDecorationTheme.focusedBorder!.borderSide.color,
                                                       width: 2.0),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -184,6 +219,7 @@ class _AuthorizationState extends State<
                                             obscureText: !_passwordVisible,
                                             decoration: InputDecoration(
                                                 suffixIcon: IconButton(
+                                                  color: Theme.of(context).inputDecorationTheme.suffixStyle!.color,
                                                   icon: Icon(_passwordVisible
                                                       ? Icons.visibility
                                                       : Icons.visibility_off),
@@ -206,8 +242,8 @@ class _AuthorizationState extends State<
                                                 filled: true,
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.black,
+                                                  borderSide: BorderSide(
+                                                      color: Theme.of(context).inputDecorationTheme.focusedBorder!.borderSide.color,
                                                       width: 2.0),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -233,6 +269,7 @@ class _AuthorizationState extends State<
                                             'Забыли пароль?',
                                             style: TextStyle(
                                               color: Color(0xFF303030),
+                                              fontSize: 16
                                             ),
                                           ),
                                         ),
@@ -247,10 +284,10 @@ class _AuthorizationState extends State<
                                             child: Container(
                                               height: 40.0,
                                               width: 40.0,
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFFFAE4D4),
+                                              decoration:  BoxDecoration(
+                                                color: Theme.of(context).iconTheme.color,
 
-                                                borderRadius: BorderRadius.all(
+                                                borderRadius: const BorderRadius.all(
                                                     Radius.circular(11)),
                                               ),
                                               child: const Icon(
@@ -265,10 +302,11 @@ class _AuthorizationState extends State<
                                             child: Container(
                                               height: 40.0,
                                               width: 40.0,
-                                              decoration: const BoxDecoration(
-                                                color: Color(0xFFFAE4D4),
+                                              decoration:  BoxDecoration(
+                                                color: Theme.of(context).iconTheme.color,
 
-                                                borderRadius: BorderRadius.all(
+
+                                                borderRadius: const BorderRadius.all(
                                                     Radius.circular(11)),
                                               ),
                                               child: const Icon(
@@ -325,8 +363,8 @@ class _AuthorizationState extends State<
                                                 filled: true,
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.black,
+                                                  borderSide:  BorderSide(
+                                                      color: Theme.of(context).inputDecorationTheme.focusedBorder!.borderSide.color,
                                                       width: 2.0),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -368,8 +406,8 @@ class _AuthorizationState extends State<
                                                 filled: true,
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.black,
+                                                  borderSide:  BorderSide(
+                                                      color: Theme.of(context).inputDecorationTheme.focusedBorder!.borderSide.color,
                                                       width: 2.0),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -423,8 +461,8 @@ class _AuthorizationState extends State<
                                                 filled: true,
                                                 focusedBorder:
                                                     OutlineInputBorder(
-                                                  borderSide: const BorderSide(
-                                                      color: Colors.black,
+                                                      borderSide:  BorderSide(
+                                                        color: Theme.of(context).inputDecorationTheme.focusedBorder!.borderSide.color,
                                                       width: 2.0),
                                                   borderRadius:
                                                       BorderRadius.circular(
@@ -452,11 +490,12 @@ class _AuthorizationState extends State<
                                               child: Container(
                                                 height: 40.0,
                                                 width: 40.0,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xFFFAE4D4),
+                                                decoration: BoxDecoration(
+                                                  color: Theme.of(context).iconTheme.color,
+
 
                                                   borderRadius:
-                                                      BorderRadius.all(
+                                                      const BorderRadius.all(
                                                           Radius.circular(11)),
                                                 ),
                                                 child: const Icon(
@@ -472,11 +511,12 @@ class _AuthorizationState extends State<
                                               child: Container(
                                                 height: 40.0,
                                                 width: 40.0,
-                                                decoration: const BoxDecoration(
-                                                  color: Color(0xFFFAE4D4),
+                                                decoration:  BoxDecoration(
+                                                  color: Theme.of(context).iconTheme.color,
+
 
                                                   borderRadius:
-                                                      BorderRadius.all(
+                                                      const BorderRadius.all(
                                                           Radius.circular(11)),
                                                 ),
                                                 child: const Icon(
@@ -565,18 +605,18 @@ class _AuthorizationState extends State<
                                   const EdgeInsets.symmetric(horizontal: 47),
                               unselectedLabelColor: Colors.black,
                               labelColor: Colors.black,
-                              indicatorColor: const Color(0xFFDB8677),
+                              // indicatorColor: Theme.of(context).tapBarIndicatorColor,
                               tabs: const [
                                 Tab(
                                   child: Text(
                                     'Вход',
-                                    style: TextStyle(fontSize: 18),
+                                    // style: Theme.of(context).textTheme.copyWith(),
                                   ),
                                 ),
                                 Tab(
                                   child: Text(
                                     'Регистрация',
-                                    style: TextStyle(fontSize: 18),
+                                    // style: TextStyle(fontSize: 18),
                                   ),
                                 )
                               ],

@@ -4,6 +4,7 @@ import 'package:album/UI/screens/album_preview.dart';
 import 'package:album/UI/screens/album_redactor.dart';
 import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
+import 'package:album/theme/custom_theme.dart';
 import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
 import 'package:album/data/models/hive_album.dart';
@@ -14,6 +15,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'bloc/album_redactor/album_redactor_bloc.dart';
 import 'bloc/album_redactor/album_redactor_state.dart';
 import 'data/models/hive_user.dart';
+import 'package:album/theme/config.dart';
+import 'package:album/theme/custom_theme.dart';
+
+
 
 // TODO Объединить SheetNaturalPreview и SheetNaturalRedactor в один файл
 void main() async {
@@ -21,7 +26,6 @@ void main() async {
   //   'name': 'Страница 1',
   // 'pages': [],
   // },
-
 
   // User user = User()
   //   ..login = 'EGOR'
@@ -36,7 +40,7 @@ void main() async {
 
   // albumBox.deleteFromDisk();
 
-  if (albumBox.isEmpty){
+  if (albumBox.isEmpty) {
     Album album = Album()
       ..sheetsNumber = 7
       ..name = 'Альбом от команды №1'
@@ -48,10 +52,27 @@ void main() async {
           'name': 'Страница 1',
           'sheetCoverLink': 'assets/img/sheetback1.png',
           'pages': [
-            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.262, 'image': ''},
-            {'width': 0.35, 'height': 0.32, 'top': 0.275, 'left': 0.738, 'image': ''},
-            {'width': 0.35, 'height': 0.32, 'top': 0.729, 'left': 0.738, 'image': ''},
-
+            {
+              'width': 0.375,
+              'height': 0.597,
+              'top': 0.5,
+              'left': 0.262,
+              'image': ''
+            },
+            {
+              'width': 0.35,
+              'height': 0.32,
+              'top': 0.275,
+              'left': 0.738,
+              'image': ''
+            },
+            {
+              'width': 0.35,
+              'height': 0.32,
+              'top': 0.729,
+              'left': 0.738,
+              'image': ''
+            },
           ],
         },
         {
@@ -98,13 +119,7 @@ void main() async {
           'name': 'Страница 4',
           'sheetCoverLink': 'assets/img/sheetback1.png',
           'pages': [
-            {
-              'width': 0.3,
-              'height': 0.3,
-              'top': 0.5,
-              'left': 0.5,
-              'image': ''
-            },
+            {'width': 0.3, 'height': 0.3, 'top': 0.5, 'left': 0.5, 'image': ''},
           ],
         },
         {
@@ -123,7 +138,6 @@ void main() async {
         {
           'name': 'Страница 6',
           'sheetCoverLink': 'assets/img/sheetback3.png',
-
           'pages': [
             {
               'width': 0.375,
@@ -148,7 +162,6 @@ void main() async {
             },
           ],
         },
-
       ];
 
     Album albumSecond = Album()
@@ -162,15 +175,26 @@ void main() async {
           'name': 'Страница 1',
           'sheetCoverLink': 'assets/img/sheetback2.png',
           'pages': [
-            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.262, 'image': ''},
-
+            {
+              'width': 0.375,
+              'height': 0.597,
+              'top': 0.5,
+              'left': 0.262,
+              'image': ''
+            },
           ],
         },
         {
           'name': 'Страница 2',
           'sheetCoverLink': 'assets/img/sheetback2.png',
           'pages': [
-            {'width': 0.375, 'height': 0.597, 'top': 0.5, 'left': 0.073, 'image': ''},
+            {
+              'width': 0.375,
+              'height': 0.597,
+              'top': 0.5,
+              'left': 0.073,
+              'image': ''
+            },
           ],
         },
       ];
@@ -214,16 +238,23 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
   @override
   void initState() {
     super.initState();
+    currentTheme.addListener(() {
+      setState(() {
+
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-       statusBarColor: Color(0xFFBBAFA6),
-        // statusBarBrightness: Brightness.light,
-      )
-    );
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      statusBarColor: Color(0xFFBBAFA6),
+      // statusBarBrightness: Brightness.light,
+    ));
+
+    void _themeChanger(){
+      currentTheme.toggleTheme();
+    }
 
     void _completeAuthorization() {
       // print(_authorizated);
@@ -255,26 +286,9 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
     // print(_chosenAlbum.runtimeType);
 
     return MaterialApp(
-
-      theme: ThemeData(
-        bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-          unselectedIconTheme: IconThemeData(
-              color: Color(0xFFBBAFA6)
-
-          ),
-          selectedIconTheme: IconThemeData(
-              color: Color(0xFFDB8677)
-          ),
-        ),
-        colorScheme:  const ColorScheme.light(primary: Color(0xFFFDF0E7)),
-          //Color(0xFFDB8677)
-          appBarTheme: const AppBarTheme(
-            foregroundColor: Color(0xFFBBAFA6),
-            backgroundColor: Color(0xFFFDF0E7),
-        ),
-      ),
+      theme: CustomTheme.lightTheme,
+      darkTheme: CustomTheme.darkTheme,
+      themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
       home: MultiBlocProvider(
@@ -292,6 +306,7 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
             MaterialPage(
               key: const ValueKey('PersonalAccountPage'),
               child: PersonalAccount(
+                onThemeChangerTapped: _themeChanger,
                 onAlbumTapped: _handleAlbumTapped,
                 onAccountExit: _exitAuthorization,
               ),

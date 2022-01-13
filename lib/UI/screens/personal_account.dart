@@ -14,9 +14,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class PersonalAccount extends StatelessWidget {
   final ValueSetter onAlbumTapped;
   final VoidCallback onAccountExit;
+  final VoidCallback onThemeChangerTapped;
+
 
   const PersonalAccount(
-      {Key? key, required this.onAlbumTapped, required this.onAccountExit})
+      {Key? key, required this.onAlbumTapped, required this.onAccountExit, required this.onThemeChangerTapped})
       : super(key: key);
 
   @override
@@ -49,7 +51,16 @@ class PersonalAccount extends StatelessWidget {
                         _authorizationBloc.add(const AuthorizationEventExit()),
                         Navigator.pop(context),
                       },
-                  child: const Text('Выход'))
+
+                  child: const Text('Выход')),
+              TextButton(
+                  onPressed: () => {
+
+                    onThemeChangerTapped(),
+                    Navigator.pop(context)
+                  },
+
+                  child: const Text('Сменить тему'))
             ],
           ),
         ),
@@ -92,100 +103,100 @@ class PersonalAccount extends StatelessWidget {
         },
         child: SingleChildScrollView(
           child: Container(
-            padding: const EdgeInsets.only(top: 8.0),
-            color: const Color(0xFFFDF0E7),
+            // padding: const EdgeInsets.only(top: 8.0),
+            color: Theme.of(context).colorScheme.primary,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               // mainAxisSize: MainAxisSize.max,
               children: [
-                SizedBox(
-                  height: 290,
-                  width: MediaQuery.of(context).size.width,
-                  child: Stack(
-                    // fit: StackFit.expand,
-                    alignment: Alignment.center,
-                    // clipBehavior: Clip.none,
-                    children: [
-                      const Positioned(
-                        top: 12,
-                        right: 20.0,
-                        // left: 10,
-                        child: Icon(
-                          Icons.settings,
-                          color: Color(0xFFA5A5A5),
-                        ),
-                      ),
-                      Positioned(
-                        child: Column(
-                          children: [
-                            Container(
-                              margin:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
-                              width: 150,
-                              height: 150,
-                              decoration: const BoxDecoration(
-                                  color: Colors.grey, shape: BoxShape.circle),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-                              child: BlocBuilder<AuthorizationBloc,
-                                      AuthorizationState>(
-                                  builder: (context, state) {
-                                if (state is AuthorizationStateShowUserData) {
-                                  return Text(
-                                    state.login,
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 23),
-                                  );
-                                } else {
-                                  return const Text(
-                                    'Загрузка...',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 23),
-                                  );
-                                }
-                              }),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-                              child: Text(
-                                "Олегов Олег Олегович",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.3),
-                                    fontSize: 14),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
-                              child: Text(
-                                "oleg@oleg.com",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.3),
-                                    fontSize: 14),
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                              child: Text(
-                                "+7 800 555 35 35",
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                    color: Colors.black.withOpacity(0.3),
-                                    fontSize: 14),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // SizedBox(
+                //   height: 300,
+                //   width: MediaQuery.of(context).size.width,
+                //   child: Stack(
+                //     // fit: StackFit.expand,
+                //     alignment: Alignment.center,
+                //     // clipBehavior: Clip.none,
+                //     children: [
+                //       const Positioned(
+                //         top: 12,
+                //         right: 20.0,
+                //         // left: 10,
+                //         child: Icon(
+                //           Icons.settings,
+                //           color: Color(0xFFA5A5A5),
+                //         ),
+                //       ),
+                //       Positioned(
+                //         child: Column(
+                //           children: [
+                //             Container(
+                //               margin:
+                //                   const EdgeInsets.symmetric(vertical: 12.0),
+                //               width: 150,
+                //               height: 150,
+                //               decoration: const BoxDecoration(
+                //                   color: Colors.grey, shape: BoxShape.circle),
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                //               child: BlocBuilder<AuthorizationBloc,
+                //                       AuthorizationState>(
+                //                   builder: (context, state) {
+                //                 if (state is AuthorizationStateShowUserData) {
+                //                   return Text(
+                //                     state.login,
+                //                     textAlign: TextAlign.center,
+                //                     style: const TextStyle(
+                //                         fontWeight: FontWeight.bold,
+                //                         fontSize: 23),
+                //                   );
+                //                 } else {
+                //                   return const Text(
+                //                     'Загрузка...',
+                //                     textAlign: TextAlign.center,
+                //                     style: TextStyle(
+                //                         fontWeight: FontWeight.bold,
+                //                         fontSize: 23),
+                //                   );
+                //                 }
+                //               }),
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                //               child: Text(
+                //                 "Олегов Олег Олегович",
+                //                 textAlign: TextAlign.center,
+                //                 style: TextStyle(
+                //                     color: Colors.black.withOpacity(0.3),
+                //                     fontSize: 14),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(0, 0, 0, 4),
+                //               child: Text(
+                //                 "oleg@oleg.com",
+                //                 textAlign: TextAlign.center,
+                //                 style: TextStyle(
+                //                     color: Colors.black.withOpacity(0.3),
+                //                     fontSize: 14),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                //               child: Text(
+                //                 "+7 800 555 35 35",
+                //                 textAlign: TextAlign.center,
+                //                 style: TextStyle(
+                //                     color: Colors.black.withOpacity(0.3),
+                //                     fontSize: 14),
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
                 Container(
                   //TODO Вынести 290 в отдельную переменную
 
@@ -201,8 +212,8 @@ class PersonalAccount extends StatelessWidget {
                     children: [
                       Stack(
                         clipBehavior: Clip.none,
-                        children: [
-                          const Align(
+                        children: const [
+                          Align(
                             alignment: Alignment.centerLeft,
                             child: Padding(
                               padding: EdgeInsets.only(
@@ -214,36 +225,38 @@ class PersonalAccount extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Positioned(
-                            right: 20,
-                            top: -20,
-                            child: ElevatedButton(
-                              onPressed: () {},
-                              child: const Icon(Icons.add),
-                              style: ButtonStyle(
-                                shape: MaterialStateProperty.all(
-                                    const CircleBorder()),
-                                padding: MaterialStateProperty.all(
-                                    const EdgeInsets.all(20)),
-                                foregroundColor: MaterialStateProperty.all(
-                                    Colors.black.withOpacity(0.8)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    const Color(0xFFA5A5A5)),
-                                // <-- Button color
-                                overlayColor:
-                                    MaterialStateProperty.resolveWith<Color?>(
-                                        (states) {
-                                  if (states.contains(MaterialState.pressed)) {
-                                    return Colors.white10;
-                                  } // <-- Splash color
-                                }),
-                              ),
-                            ),
-                          ),
+                          // Positioned(
+                          //   right: 20,
+                          //   top: -20,
+                          //   child: ElevatedButton(
+                          //     onPressed: () {},
+                          //     child: const Icon(Icons.add),
+                          //     style: ButtonStyle(
+                          //       shape: MaterialStateProperty.all(
+                          //           const CircleBorder()),
+                          //       padding: MaterialStateProperty.all(
+                          //           const EdgeInsets.all(20)),
+                          //       foregroundColor: MaterialStateProperty.all(
+                          //           Colors.black.withOpacity(0.8)),
+                          //       backgroundColor: MaterialStateProperty.all(
+                          //           const Color(0xFFA5A5A5)),
+                          //       // <-- Button color
+                          //       overlayColor:
+                          //           MaterialStateProperty.resolveWith<Color?>(
+                          //               (states) {
+                          //         if (states.contains(MaterialState.pressed)) {
+                          //           return Colors.white10;
+                          //         } // <-- Splash color
+                          //       }),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height - 290,
+                        // height: MediaQuery.of(context).size.height - 290,
+                        height: MediaQuery.of(context).size.height,
+
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 32.0),
                           child: Padding(
@@ -272,6 +285,7 @@ class PersonalAccount extends StatelessWidget {
                                             child: CircularProgressIndicator(),
                                           )
                                         : ListView.separated(
+                                            primary: false,
                                             scrollDirection: Axis.vertical,
                                             itemCount: _albums!.length,
                                             itemBuilder: (context, index) {
