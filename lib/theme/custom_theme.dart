@@ -16,6 +16,7 @@ class CustomTheme with ChangeNotifier{
   }
   static ThemeData get lightTheme {
     return ThemeData(
+        // canvasColor: Colors.transparent,
         buttonTheme: ButtonThemeData(
 
         ),

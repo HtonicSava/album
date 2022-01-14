@@ -41,6 +41,8 @@ class PersonalAccount extends StatelessWidget {
     // );
 
     return Scaffold(
+      extendBody: true,
+      backgroundColor: Colors.transparent,
       drawer: Drawer(
         child: Padding(
           padding: const EdgeInsets.only(top: 16.0),
@@ -78,22 +80,49 @@ class PersonalAccount extends StatelessWidget {
         ],
         title: const Text('Личный кабинет'),
       ),
-      bottomNavigationBar: BottomNavigationBar(
+      bottomNavigationBar: ClipRRect(
+        borderRadius: const BorderRadius.only(topLeft: Radius.circular(30.0), topRight: Radius.circular(30.0), ),
+        child: BottomNavigationBar(
 
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe48d, fontFamily: 'MaterialIcons')),
-            label: 'ЛК',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xf04e, fontFamily: 'MaterialIcons')),
-            label: 'Новости',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-            label: 'Избранное',
-          ),
-        ],
+          // backgroundColor: Colors.transparent,
+          backgroundColor: Colors.white,
+          items:  <BottomNavigationBarItem>[
+
+            // BottomNavigationBarItem(
+            //   icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+            //   label: 'ЛК',
+            // ),
+            const BottomNavigationBarItem(
+              icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+              label: 'ЛК',
+            ),
+            BottomNavigationBarItem(
+              // icon: Icon(Icons.add),
+              icon: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                    color: Theme.of(context).bottomNavigationBarTheme.selectedIconTheme!.color,
+                    shape: BoxShape.circle
+                ),
+                child: const Icon(
+
+                    Icons.add,
+                    color: Colors.white,
+                ),
+              ),
+              label: 'ЛК',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+              label: 'ЛК',
+            ),
+            // BottomNavigationBarItem(
+            //   icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+            //   label: 'ЛК',
+            // ),
+          ],
+        ),
       ),
       body: BlocListener<AuthorizationBloc, AuthorizationState>(
         listener: (BuildContext context, state) {
@@ -258,7 +287,7 @@ class PersonalAccount extends StatelessWidget {
                         height: MediaQuery.of(context).size.height,
 
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 0.0),
                           child: Padding(
                             padding: const EdgeInsets.only(bottom: 32.0),
                             child: BlocBuilder<AlbumRedactorBloc,

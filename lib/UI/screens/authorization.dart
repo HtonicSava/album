@@ -48,6 +48,7 @@ class _AuthorizationState extends State<
       });
     } else if (await Permission.storage.request().isPermanentlyDenied) {
       await openAppSettings();
+
     } else if (await Permission.storage.request().isDenied) {
       setState(() {
         _permissionGranted = false;
