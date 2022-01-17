@@ -286,9 +286,9 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
     // print(_chosenAlbum.runtimeType);
 
     return MaterialApp(
-      theme: CustomTheme.lightTheme,
+      theme: CustomTheme.darkTheme,
       darkTheme: CustomTheme.darkTheme,
-      themeMode: currentTheme.currentTheme,
+      // themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
       home: MultiBlocProvider(

@@ -12,23 +12,24 @@ class AlbumPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      // width: 231,
-      height: 380,
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 18),
 
-            child: Column(
+      child: SizedBox(
+
+        // width: 231,
+        // height: 380,
+        child: Column(
+          children: [
+            Column(
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
                       albumName,
-                      style:
-                          const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     Icon(
                       Icons.more_horiz,
@@ -37,15 +38,14 @@ class AlbumPreview extends StatelessWidget {
                     ),
                   ],
                 ),
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Row(
-
                             children: [
                               Container(
                                 margin: const EdgeInsets.only(right: 4.0),
@@ -64,34 +64,38 @@ class AlbumPreview extends StatelessWidget {
                           ),
                           Text(
                             '${albumPagesNumber} стр.',
-                            style: const TextStyle(fontSize: 16, color: Color(0xFFA5A5A5)),
+                            style: const TextStyle(
+                                fontSize: 16, color: Color(0xFFA5A5A5)),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ]),
+                  ],
+                ),
               ],
             ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: AspectRatio(
-                aspectRatio: 1,
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(albumCoverLink),
-                      fit: BoxFit.fill,
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage(albumCoverLink),
+                          fit: BoxFit.fill,
+                        ),
+                        borderRadius: const BorderRadius.all(Radius.circular(16)),
+                      ),
                     ),
-                    borderRadius: const BorderRadius.all(Radius.circular(16)),
                   ),
-                ),
+                ],
               ),
             ),
-          )
-        ],
+          ],
+        ),
       ),
     );
   }

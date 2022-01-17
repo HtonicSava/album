@@ -24,14 +24,20 @@ class CustomButton extends StatelessWidget {
         onPressed: onTapped,
         child: Ink(
           decoration: BoxDecoration(
-            gradient:  LinearGradient(
-                colors: [
-                  // Color(0xFFFAE4D4),
-                  // Color(0xFFDB8677),
-                  Theme.of(context).colorScheme.secondaryVariant,
-                  Theme.of(context).colorScheme.secondary
-                ]),
-            // gradient: LinearGradient(colors: [Colors.red, Colors.yellow]),
+            color:                   const Color(0xFFEDC68B),
+
+            // gradient:  LinearGradient(
+            //   begin: Alignment.bottomLeft,
+            //     end: Alignment.topRight,
+            //     colors: [
+            //       // Color(0xFFFAE4D4),
+            //       // Color(0xFFDB8677),
+            //
+            //
+            //       Theme.of(context).colorScheme.secondaryVariant,
+            //       Theme.of(context).colorScheme.secondary
+            //     ]),
+
             borderRadius:
             BorderRadius.circular(30.0),
           ),

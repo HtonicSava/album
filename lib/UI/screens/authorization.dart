@@ -440,16 +440,18 @@ class _AuthorizationState extends State<
                                             obscureText: !_passwordVisible,
                                             decoration: InputDecoration(
                                                 suffixIcon: IconButton(
+                                                  color: Theme.of(context).inputDecorationTheme.suffixStyle!.color,
                                                   icon: Icon(_passwordVisible
                                                       ? Icons.visibility
                                                       : Icons.visibility_off),
                                                   onPressed: () {
                                                     setState(() {
                                                       _passwordVisible =
-                                                          !_passwordVisible;
+                                                      !_passwordVisible;
                                                     });
                                                   },
                                                 ),
+
                                                 enabledBorder:
                                                     OutlineInputBorder(
                                                   borderSide: const BorderSide(
@@ -549,7 +551,7 @@ class _AuthorizationState extends State<
                                       ),
 
                                       Padding(
-                                        padding: EdgeInsets.only(top: 50.0),
+                                        padding: const EdgeInsets.only(top: 50.0),
                                         child: RichText(
                                           text: const TextSpan(
                                             text:
