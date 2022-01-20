@@ -1,4 +1,5 @@
 import 'package:album/UI/widgets/album_preview.dart';
+import 'package:album/UI/widgets/custom_bottom_nav_bar.dart';
 import 'package:album/bloc/album_redactor/album_redactor_bloc.dart';
 import 'package:album/bloc/album_redactor/album_redactor_event.dart';
 import 'package:album/bloc/album_redactor/album_redactor_state.dart';
@@ -76,104 +77,114 @@ class PersonalAccount extends StatelessWidget {
         ],
         title: const Text('Личный кабинет'),
       ),
-      bottomNavigationBar: Theme(
-        data: Theme.of(context).copyWith(
-          splashColor: Colors.transparent,
-          // highlightColor: Colors.transparent,
-        ),
-        child: Container(
-          // color: Colors.white,
-          // height: 58,
-          child: ClipRRect(
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(30.0),
-              topRight: Radius.circular(30.0),
-            ),
-            child:
-
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //   children: [
-            //     IconButton(
-            //       onPressed: () {},
-            //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-            //     ),
-            //     IconButton(
-            //       onPressed: () {},
-            //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-            //     ),
-            //     ElevatedButton(
-            //       onPressed: () {},
-            //       child: Container(
-            //         width: 40,
-            //         height: 40,
-            //         decoration: BoxDecoration(
-            //             color: Theme.of(context)
-            //                 .bottomNavigationBarTheme
-            //                 .selectedIconTheme!
-            //                 .color,
-            //             shape: BoxShape.circle),
-            //         child: const Icon(
-            //           Icons.add,
-            //           color: Colors.white,
-            //         ),
-            //       ),
-            //     ),
-            //     IconButton(
-            //       onPressed: () {},
-            //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-            //     ),
-            //     IconButton(
-            //       onPressed: () {},
-            //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-            //     ),
-            //   ],
-            // ),
-            BottomNavigationBar(
-              // enableFeedback: false,
-              type: BottomNavigationBarType.fixed,
-              // iconSize: 30,
-              // backgroundColor: Colors.transparent,
-              backgroundColor: Colors.white,
-              items:  <BottomNavigationBarItem>[
-                const BottomNavigationBarItem(
-                  icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-                  label: 'ЛК',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-                  label: 'ЛК',
-                ),
-                BottomNavigationBarItem(
-                  // icon: Icon(Icons.add),
-                  icon: Container(
-                    width: 54,
-                    height: 54,
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).bottomNavigationBarTheme.selectedIconTheme!.color,
-                        shape: BoxShape.circle
-                    ),
-                    child: const Icon(
-
-                        Icons.add,
-                        color: Colors.white,
-                    ),
-                  ),
-                  label: 'ЛК',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-                  label: 'ЛК',
-                ),
-                const BottomNavigationBarItem(
-                  icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
-                  label: 'ЛК',
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      // bottomNavigationBar: Theme(
+      //   data: Theme.of(context).copyWith(
+      //     splashColor: Colors.transparent,
+      //     // highlightColor: Colors.transparent,
+      //   ),
+      //   child:
+      //
+      //     // CustomBottomNavBar(context, state)
+      //
+      //   // Container(
+      //   //   // color: Colors.white,
+      //   //   // height: 58,
+      //   //
+      //   //
+      //   //   child: ClipRRect(
+      //   //     borderRadius: const BorderRadius.only(
+      //   //       topLeft: Radius.circular(30.0),
+      //   //       topRight: Radius.circular(30.0),
+      //   //     ),
+      //   //
+      //   //
+      //   //     child:
+      //   //
+      //   //
+      //   //
+      //   //     // Row(
+      //   //     //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      //   //     //   children: [
+      //   //     //     IconButton(
+      //   //     //       onPressed: () {},
+      //   //     //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //     //     ),
+      //   //     //     IconButton(
+      //   //     //       onPressed: () {},
+      //   //     //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //     //     ),
+      //   //     //     ElevatedButton(
+      //   //     //       onPressed: () {},
+      //   //     //       child: Container(
+      //   //     //         width: 40,
+      //   //     //         height: 40,
+      //   //     //         decoration: BoxDecoration(
+      //   //     //             color: Theme.of(context)
+      //   //     //                 .bottomNavigationBarTheme
+      //   //     //                 .selectedIconTheme!
+      //   //     //                 .color,
+      //   //     //             shape: BoxShape.circle),
+      //   //     //         child: const Icon(
+      //   //     //           Icons.add,
+      //   //     //           color: Colors.white,
+      //   //     //         ),
+      //   //     //       ),
+      //   //     //     ),
+      //   //     //     IconButton(
+      //   //     //       onPressed: () {},
+      //   //     //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //     //     ),
+      //   //     //     IconButton(
+      //   //     //       onPressed: () {},
+      //   //     //       icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //     //     ),
+      //   //     //   ],
+      //   //     // ),
+      //   //     BottomNavigationBar(
+      //   //       // enableFeedback: false,
+      //   //       type: BottomNavigationBarType.fixed,
+      //   //       // iconSize: 30,
+      //   //       // backgroundColor: Colors.transparent,
+      //   //       backgroundColor: Colors.white,
+      //   //       items:  <BottomNavigationBarItem>[
+      //   //         const BottomNavigationBarItem(
+      //   //           icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //           label: 'ЛК',
+      //   //         ),
+      //   //         const BottomNavigationBarItem(
+      //   //           icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //           label: 'ЛК',
+      //   //         ),
+      //   //         BottomNavigationBarItem(
+      //   //           // icon: Icon(Icons.add),
+      //   //           icon: Container(
+      //   //             width: 54,
+      //   //             height: 54,
+      //   //             decoration: BoxDecoration(
+      //   //                 color: Theme.of(context).bottomNavigationBarTheme.selectedIconTheme!.color,
+      //   //                 shape: BoxShape.circle
+      //   //             ),
+      //   //             child: const Icon(
+      //   //
+      //   //                 Icons.add,
+      //   //                 color: Colors.white,
+      //   //             ),
+      //   //           ),
+      //   //           label: 'ЛК',
+      //   //         ),
+      //   //         const BottomNavigationBarItem(
+      //   //           icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //           label: 'ЛК',
+      //   //         ),
+      //   //         const BottomNavigationBarItem(
+      //   //           icon: Icon(IconData(0xe958, fontFamily: 'MaterialIcons')),
+      //   //           label: 'ЛК',
+      //   //         ),
+      //   //       ],
+      //   //     ),
+      //   //   ),
+      //   // ),
+      // ),
       body: BlocListener<AuthorizationBloc, AuthorizationState>(
         listener: (BuildContext context, state) {
           if (state is AuthorizationStateUserRemoved) {

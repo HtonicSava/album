@@ -4,6 +4,9 @@ import 'package:album/UI/screens/album_preview.dart';
 import 'package:album/UI/screens/album_redactor.dart';
 import 'package:album/UI/screens/authorization.dart';
 import 'package:album/UI/screens/personal_account.dart';
+import 'package:album/navigator/app_root.dart';
+import 'package:album/router/pages_models/main_page.dart';
+import 'package:album/router/pages_models/root.dart';
 import 'package:album/theme/custom_theme.dart';
 import 'package:album/bloc/authorization/authorization_bloc.dart';
 import 'package:album/bloc/authorization/authorization_state.dart';
@@ -218,7 +221,13 @@ void main() async {
 
   // userBox.deleteFromDisk();
 
-  runApp(const OnlineAlbum());
+  // runApp(const OnlineAlbum());
+
+  // Bloc.observer = SimpleBlocObserver();
+
+  // runApp(AppRoot());
+
+  runApp(RootApp());
 }
 
 class OnlineAlbum extends StatefulWidget {
@@ -291,6 +300,7 @@ class _OnlineAlbumState extends State<OnlineAlbum> {
       // themeMode: currentTheme.currentTheme,
       debugShowCheckedModeBanner: false,
       title: 'Онлайн альбом',
+
       home: MultiBlocProvider(
         providers: [
           BlocProvider(
