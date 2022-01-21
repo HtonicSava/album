@@ -113,6 +113,9 @@ flutter:
     - family: BottomNavBar
       fonts:
         - asset: assets/fonts/BottomNavBar.ttf
+    - family: PersonalAccountIcons
+      fonts:
+        - asset: assets/fonts/PersonalAccountIcons.ttf
 
   #   - family: Schyler
   #     fonts:

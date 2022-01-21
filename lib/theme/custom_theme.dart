@@ -16,8 +16,9 @@ class CustomTheme with ChangeNotifier{
   }
   static ThemeData get lightTheme {
     return ThemeData(
-        // canvasColor: Colors.transparent,
-        buttonTheme: ButtonThemeData(
+        canvasColor: const Color(0xFFFFF6EF),
+
+        buttonTheme: const ButtonThemeData(
 
         ),
         indicatorColor: const Color(0xFFDB8677),
@@ -33,7 +34,7 @@ class CustomTheme with ChangeNotifier{
           ),
         ),
         iconTheme: const IconThemeData(
-          color: Color(0xFFFAE4D4)
+          color: Color(0xFFBBAFA6)
         ),
         //secondary устанавливает цвет эффекта окончания скрола
         colorScheme:  const ColorScheme.light(primary: Color(0xFFFFF5EE),secondary: Color(0xFFDB8677), secondaryVariant: Color(0xFFFAE4D4)),
@@ -56,11 +57,22 @@ class CustomTheme with ChangeNotifier{
             )
         ),
 
-        textTheme: GoogleFonts.montserratTextTheme(
-
+        textTheme: TextTheme(
+          headline4: GoogleFonts.montserrat(
+              fontWeight: FontWeight.w400,
+              fontSize: 12,
+              color: const Color(0xFFBBAFA6)
+          ),
+          //Для личного кабинета, имени
+          headline5: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            color: const Color(0xFF303030)
+          )
         ),
         tabBarTheme: TabBarTheme(
           labelStyle: GoogleFonts.montserrat(
+
             fontSize: 18,
             fontWeight: FontWeight.w400,
             color: const Color(0xFF303030)

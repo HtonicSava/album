@@ -12,6 +12,8 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
+
       body: AutoTabsRouter(
         // animationCurve:
         // appBarBuilder: (_, tabsRouter) => AppBar(
@@ -31,6 +33,8 @@ class MainPage extends StatelessWidget {
           // TODO оболочка для страниц, чтобы избежать постоянного копирования кода AppBar (добавить блок, чтобы избежать полной перерисовки)
 
           return Scaffold(
+            extendBody: true,
+
             body: FadeTransition(
               opacity: animation,
               child: child,
